@@ -1,0 +1,20 @@
+
+.cylinderStatus{
+    border: 2px outset grey;
+    background-color: whitesmoke;
+    color:black;
+    border-radius: .1rem;
+    margin: 0;
+    width: 100%
+}
+
+.selectedCylinderStatus{
+    background: red;
+    color: whitesmoke
+}
+
+.cylinderStatus:disabled{
+    border: 1px solid grey;
+    background-color: silver;
+    color: grey
+}

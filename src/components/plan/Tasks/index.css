@@ -1,0 +1,31 @@
+.filterRow{
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.paginate{
+    display: flex;
+    width: 100%;
+    /* height: 3rem; */
+    align-items: center;
+    justify-content: center;
+}
+.taskDeviceList{
+    height: calc(100% - 7rem);
+    overflow-y: auto;
+    margin: .5rem 0;
+    box-shadow: 0 0 .5rem black;
+}
+.pageContent{
+    height: calc(100% - 5rem)
+}
+@media(max-width: 900px) {
+    .filterRow{
+        font-size: 70%;
+    }
+    .taskDeviceList{
+        height: calc(100% - 6rem);
+    }
+}

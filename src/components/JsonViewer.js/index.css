@@ -1,0 +1,26 @@
+.JsonViewerBackground{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    padding: .5rem;
+    font-size: .8rem;
+}
+.JsonViewerLine{
+    text-align: justify;
+}
+.JsonViewerTitle{
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    text-decoration: underline;
+}
+.JsonViewerLineTitle{
+    display: flex;
+    height: fit-content;
+    float: left;
+    font-weight: bold;
+    margin-right: .5rem;
+}

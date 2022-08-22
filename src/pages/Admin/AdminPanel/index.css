@@ -1,0 +1,21 @@
+.adminBackground{
+    display: flex;
+    max-height: 100%;
+    width: 100%;
+    overflow-y: auto;
+}
+.adminOptionSelected{
+    display: flex;
+    flex-grow: 1;
+    height: 100%;
+    overflow-y: auto;
+}
+@media(max-width:900px){
+    .adminBackground{
+        flex-direction: column;
+    }
+    .adminOptionSelected{
+        width: 100%;
+        height: calc(100% - 2rem);
+    }
+}

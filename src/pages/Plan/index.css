@@ -1,0 +1,124 @@
+.planContainer{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    height: 100%;
+}
+.planBackground{
+    height: calc(100% - 9rem);
+}
+.pendantTask{
+    border: 2px solid red
+}
+.coursedTask{
+    border: 2px solid orange    
+}
+.doneTask{
+    border: 2px solid lightgreen
+}
+.completedTask{
+    border: 2px solid green
+}
+.planRow{
+    display: flex;
+    align-items: center;
+    border-radius: .5rem;
+    margin: .1rem;
+}
+.planCard{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 80%;
+    margin: .1rem
+}
+.planDate{
+    display: flex;
+    align-items: center;
+    background: linear-gradient(45deg, black, grey, black);
+    color: white;
+    font-weight: bold;
+    font-size: 90%;
+    border-radius: .5rem;
+    padding: .2rem;
+    margin: -.1rem .2rem -.1rem -.1rem;
+    height: calc(100% + .2rem);
+    width: 5rem;
+    justify-content: center;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+.planDeviceCard{
+    width: 20rem;
+}
+.planPeopleCard{
+    width: 15rem;
+}
+.planTaskCard{
+    width: 20rem;
+}
+.percentTask{
+    text-align: center;
+    padding: 0 .2rem;
+}
+/* .planTable{
+    text-align: center;
+}
+.planTableBody{
+    font-size: 70%;
+} */
+@media(max-width:900px){
+    .planDate{
+        width: calc(100% + .2rem);
+        margin: -.1rem;
+        border-radius: .5rem;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        padding: 0;
+    }
+    .planRow{
+        width: 95%;
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: .8rem;
+    }
+    .planCard{
+        width: fit-content;
+    }
+    .planPeopleCard, .planTaskCard{
+        padding: 0 .2rem;
+    }
+    .planTaskCard, .percentTask{
+        display: block;
+    }
+    .percentTask{
+        width: calc(100% + .2rem);
+        margin: -.1rem;
+        border-bottom-left-radius: .4rem;
+        border-bottom-right-radius: .4rem;
+    }
+    .bgpendantTask{
+        background-color: red;
+        color: whitesmoke;
+    }
+    .bgcoursedTask{
+        background-color: orange;
+        color: whitesmoke;
+    }
+    .bgdoneTask{
+        background-color: lightgreen;
+        color: whitesmoke;
+    }
+    .bgdoneTask{
+        background-color: green;
+        color: whitesmoke;
+    }
+    .planBackground{
+        height: calc(100% - 9rem);
+    }
+    .planContainer{
+        height: calc(100% - 4rem);
+        overflow-y: auto;
+    }
+}

@@ -102,3 +102,8 @@ dist
 
 # TernJS port file
 .tern-port
+
+tablas_en_csv/
+loadFromCsv/
+
+src/apiConfig.js

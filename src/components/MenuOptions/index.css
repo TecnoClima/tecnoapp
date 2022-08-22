@@ -1,0 +1,29 @@
+.listMenuOption{
+    text-align: center;
+    color: whitesmoke;
+    background:none;
+}
+.listMenuOption>*:hover{
+    color: whitesmoke
+}
+.listMenuOption:hover{
+    border: 1px solid white;
+}
+.activeListOption{
+    background-color: grey;
+    color: white;
+}
+.menuOptionsBackground{
+    width: 10rem;
+}
+@media(max-width: 768px){
+    .listMenuOption{
+        width: 100%;
+    }
+    .menuOptionsBackground{
+        width: 100%;
+        flex-direction: row;
+        height: fit-content;
+        justify-content: space-evenly;
+    }
+}

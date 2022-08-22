@@ -1,0 +1,36 @@
+.warningBackground{
+    position: absolute;
+    left:0;
+    right:0;
+    top:0;
+    bottom: 0;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: whitesmoke;
+    box-shadow: 0 0 .5rem black;
+    border-radius: 1rem;
+    width: 15rem;
+    max-width: 90vw;
+    height: fit-content
+}
+.warningQuestion{
+    margin: 1rem 0;
+    text-align: center;
+}
+.okButton{
+    width: 5rem;
+    background-color: green;
+}
+.okButton:hover{
+    background-color: lightgreen;
+    color: darkslategray
+}
+.cancelButton{
+    width: 5rem;
+}
+.warningRow{
+    justify-content: space-evenly;
+    font-weight: bold;
+}

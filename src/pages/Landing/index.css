@@ -1,0 +1,100 @@
+.landingLogo{
+    width: 100%;
+    max-height: 15vh;
+    background-color: whitesmoke;
+    border-radius: 15px;
+    padding: 10px;
+    margin: 2vh;
+}
+.landingBackground{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('../../assets/icons/backgroundT.png');
+    background-size: 5vw;
+    margin: auto;
+    overflow-y: auto;
+}
+
+.landingWelcome{
+    width: 70%;
+    height: fit-content;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    background-color: whitesmoke;
+    padding: .75em;
+    border-radius: 1em;
+    border: 1px solid grey;
+
+}
+.landingCorp{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 55%;
+    min-width: 25em;
+}
+.landingForms{
+    display: flex;
+    flex-direction: column;
+    width: 20rem;
+    justify-content: center;
+    align-items: center;
+    margin-left: .75em;;
+    min-width: 18em;
+}
+.landingForms > h1, h2{
+    margin-block-start: .4rem;
+    margin-block-end: .4rem;
+    text-align: center;
+    width: 100%;
+}
+
+
+.testButtons{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items:flex-end;
+}
+.internButton{    
+    background-color: cornflowerblue;
+    color: white;
+}
+.clientButton{
+    background-color: grey;
+    color: white;
+}
+.superAdminButton{
+    border: 2px solid red;
+    background-color: yellow;
+    color: red;
+}
+.supervButton{
+    background-color: cornsilk;
+    color: black;
+}
+.testButtons>a>button:hover{
+    background-color: red;
+    color: whitesmoke;
+    border-color: whitesmoke;
+    font-weight: bold;
+}
+
+@media(max-width:900px){
+    .carouselContainer{
+        display: none;
+    }
+    .landingForms{
+        width: 80%
+    }
+    .landingLogo{
+        width: 65vw;
+    }
+    .landingWelcome{
+        width: 90%;
+    }
+}

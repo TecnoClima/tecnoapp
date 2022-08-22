@@ -1,0 +1,25 @@
+.calendarBody{
+    height: calc(100% - 5rem);
+    width: 100%;
+}
+.longLabel{
+    background-color: whitesmoke;
+    color: grey;
+    margin: 0 .5rem;
+    border-radius: .5rem;
+    padding: 0 .5rem;
+}
+
+.rowForm{
+    display: flex;
+    width: 100%;
+}
+.menu{
+    justify-content: flex-start;
+    width: 15rem;
+    padding: 0;
+}
+.content{
+    width: 100%;
+    padding: 0;
+}

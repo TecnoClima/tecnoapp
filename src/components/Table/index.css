@@ -1,0 +1,64 @@
+.tableBackground{
+    height: 100%;
+    overflow-y: auto;
+    font-size: .8rem;
+    text-align: center;
+}
+.tableHead, .tableBody, .tableHeadRow, .tableBodyRow {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+.tableHead {
+    width: calc( 100% - .5em )
+}
+.tableHeadRow{
+    border-bottom: 2px solid grey;
+}
+.tableIndex{
+    width: 2rem;
+}
+.mCell{
+    width: 5rem;
+}
+.lCell{
+    width: 10rem
+}
+.xlCell{
+    width: 12rem
+}
+.xxlCell{
+    width: 15rem;
+}
+.tableHeader{
+    padding: 0 .2rem;
+}
+.tableValue{
+    font-size: .75rem;
+    padding: 0 .2rem;
+}
+
+.tableBodyRow{
+    border-bottom: 1px solid grey;
+    cursor: pointer;
+    width: calc(100% - .5rem);
+}
+.tableBodyRow:hover{
+    transform: translateX(-3px);
+    background-color: skyblue;
+    box-shadow: 2px 2px 2px grey;
+}
+.tableBodyRow:active{
+    transform: scaleY(.98);
+    box-shadow: 0px 0px 2px grey;    
+}
+.tableBody{
+    display: block;
+    height: calc(100% - 2rem);
+    overflow-y: auto;
+    width: 100%;
+}
+.activeRow{
+    background-color: navy;
+    color: whitesmoke;
+}

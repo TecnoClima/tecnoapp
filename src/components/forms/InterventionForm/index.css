@@ -1,0 +1,146 @@
+.formModal{
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0,0,0,0.2);
+}
+.formBody{
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: fit-content;
+    height: fit-content;
+    background: silver;
+    padding: .5rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 1rem black;
+}
+.formTitle{
+    width: 100%;
+    text-align: center;
+}
+.aIFtitle{
+    margin-top: .5rem;
+}
+.formCloseButton{
+    float: right;
+    margin: 0
+}
+.addInterventionSection{
+    display: flex;
+    justify-content: space-evenly;
+    /* flex-wrap: wrap; */
+    align-items: flex-start;
+    width: 100%;
+    margin: .5rem 0
+}
+.addInterventionField{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.formInterventionItemDate{
+    display: flex;
+    justify-content: right;
+    width: 9rem;
+}
+.formInterventionItem{
+    width: 100%;
+    align-items: center;
+    justify-content: space-evenly;
+}
+#addInterventionTask{
+    min-width: 20rem;
+    width: 50vw;
+    max-width: 30rem;
+    height: 3rem;
+}
+.formOpenSection{
+    background: linear-gradient(45deg, grey, whitesmoke, grey);
+    width: fit-content;
+    margin: .5rem;
+    padding: 0 1rem;
+    font-weight: bold;
+    border-radius: 1rem;
+    color: black;
+    box-shadow: 0 0 .2rem black;
+}
+.openSection:hover{
+    box-shadow: 0 0 .4rem green;
+}
+.closeSection:hover{
+    box-shadow: 0 0 .4rem darkred;
+}
+.formOpenSection:active{
+    transform: scale(.95);
+    box-shadow: 0 0 .1rem gray;
+    background: linear-gradient(45deg, grey, silver, grey);
+}
+.addButton{
+    background: green;
+    padding: .2rem .5rem;
+    margin: .5rem auto
+}
+.addButton:hover{
+    background: greenyellow;
+    color: grey
+}
+
+.trashIcon{
+    height: 1.2rem;
+}
+.formInterventionRefrigerant{
+    width: 5rem;
+}
+.disabledButton, .disabledButton:hover{
+    background: linear-gradient(45deg, grey, silver, grey);
+    color: silver;
+    text-shadow: 2px 2px 2px grey;
+    cursor: pointer
+}
+
+
+
+.formListItem{
+    border-top: 1px dashed black;
+    border-bottom: 1px dashed black;
+}
+.fr211{
+    display: grid;
+    width: 90%;
+    grid-template-columns: 2fr 1fr 1fr;
+}
+.listField{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: whitesmoke;
+    width: 100%;
+    height: 1.5rem;
+}
+
+
+
+
+
+@media(max-width: 900px){
+    #addInterventionTask{
+        width: 80vw;
+        min-width: 0;
+    }
+    .formBody{
+        width: 90%;
+    }
+    .aIKGInput{
+        height: 1.3rem;
+    }
+    .gasAISection{
+        width: 95%;
+    }    
+}

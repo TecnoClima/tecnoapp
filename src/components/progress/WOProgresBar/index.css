@@ -1,0 +1,92 @@
+.barContainer{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0 .5rem;
+}
+.WOProgressValue{
+  display: flex;
+  margin-top:.5rem;
+  width: 4rem;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1rem;
+}
+.barContainer{
+  width: 100%;
+}
+.barData{
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.WOProgress{
+  width: 100%;
+}
+
+.WOProgress,
+.WOProgress::-webkit-slider-runnable-track,
+.WOProgress::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+
+.WOProgress{
+    height: .75rem;
+    background-color: var(--main-bg-color);
+    border: 1px outset #333;
+    border-radius: .2rem;
+}
+
+.WOProgress::-webkit-slider-thumb {
+    background-color: var(--main-bg-color);
+    width: 20px;
+    height: 20px;
+    border: 1px solid white;
+    border-radius: 50%;
+    margin-top: -9px;
+  }
+
+  .WOProgress:focus {
+    outline: none;
+  }
+  
+ 
+  .WOProgress::-moz-range-thumb {
+    background-color: #777;
+    width: 15px;
+    height: 15px;
+    border: 1px solid #333;
+    border-radius: 50%;
+  }
+  
+  .WOProgress::-ms-thumb {
+    background-color: #777;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #333;
+    border-radius: 50%;
+  }
+  
+  .WOProgress::-webkit-slider-runnable-track {
+    background: var(--main-bg-color);
+    height: 3px;
+  }
+  
+  .WOProgress:focus::-webkit-slider-runnable-track {
+    outline: none;
+  }
+  
+  .WOProgress::-moz-range-track {
+    background-color: #777;
+    height: 3px;
+  }
+  
+  .WOProgress::-ms-track {
+    background-color: #777;
+    height: 3px;
+  }
+  @media(max-width:900px){
+    .WOProgress{
+      height: .7rem;
+    }
+  }

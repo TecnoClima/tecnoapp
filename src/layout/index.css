@@ -1,0 +1,12 @@
+.main-content{
+    background: linear-gradient(45deg, silver, whitesmoke, silver);
+    height: calc(100%);
+    width: 100vw;
+    overflow-y: auto;
+}
+@media(max-width:900px) {
+    .main-content{
+        height: calc( 100% - 3rem );
+        padding:0
+    }    
+}

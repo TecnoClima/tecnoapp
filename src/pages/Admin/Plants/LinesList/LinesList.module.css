@@ -1,0 +1,46 @@
+.divScroll {
+    overflow-y:scroll;
+    height:500px;
+    width: 262px;
+}
+
+.removeButton{
+    background-color: none;
+    height: 1rem;
+    min-width: 2rem;
+    background-image: url('../../../../assets/icons/trash2.png');
+    background-size: 50%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .editButton{
+    background-color: lightseagreen;
+    height: 1rem;
+    width: 1.5rem;
+    background-image: url('../../../../assets/icons/editIcon.png');
+    background-size: 80%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .cuerpo{
+    display: grid;
+    grid-template-areas:
+    "input label button button";
+    grid-template-columns: 15% 1fr 18%;
+    align-items: center;
+    justify-items: stretch;
+    margin-right: 10px;
+    /* grid-template-rows: 80px 1fr 50px; */
+  }
+  
+  /* .containerLabel{
+    display: flex;
+    flex-direction: column;
+} */
+/* .containerLabel label{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+} */

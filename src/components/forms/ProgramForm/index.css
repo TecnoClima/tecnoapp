@@ -1,0 +1,15 @@
+.programForm{
+    background-color: silver;
+    border: 2px outset white;
+    padding: .5rem
+}
+.formItemList{
+    margin: .5rem;
+    height: 10rem;
+    overflow-y: auto;
+    border: 2px inset white
+}
+.discard{
+    text-decoration: line-through;
+    color: grey; 
+}
