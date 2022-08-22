@@ -105,5 +105,3 @@ dist
 
 tablas_en_csv/
 loadFromCsv/
-
-src/apiConfig.js
