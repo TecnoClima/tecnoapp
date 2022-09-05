@@ -6,6 +6,6 @@ const appConfig = {
   },
 };
 
-//line to check if gitignore worked.
+//line to check if gitignore worked. 05/09/22
 
 export { appConfig };

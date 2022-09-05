@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addUser } from "../../../actions/peopleActions";
+// import { addUser } from "../../../actions/peopleActions";
 import { peopleActions } from "../../../actions/StoreActions";
 import { FormInput, FormSelector } from "../../../pages/Admin/Devices";
+import { ErrorModal, SuccessModal } from "../../warnings";
 import "./index.css";
 
 export default function UserDetail(props) {
   //Create, View and Update
   const { user } = props;
-  const { selectedUser } = useSelector((state) => state.people);
+  const { peopleResult } = useSelector((state) => state.people);
+  // const { selectedUser } = useSelector((state) => state.people);
   const [newUser, setNewUser] = useState(user === "new" ? {} : { ...user });
   const dispatch = useDispatch();
 
@@ -46,7 +48,7 @@ export default function UserDetail(props) {
   function handleSubmit(e) {
     e.preventDefault();
     if (user === "new") {
-      dispatch(addUser(newUser));
+      dispatch(peopleActions.addNew(newUser));
     } else {
       const update = { ...newUser };
       for (let key of Object.keys(update))
@@ -116,6 +118,18 @@ export default function UserDetail(props) {
           </div>
         </div>
       </form>
+      {peopleResult.success && (
+        <SuccessModal
+          message="Usuario creado exitosamente"
+          close={() => dispatch(peopleActions.resetResult())}
+        />
+      )}
+      {peopleResult.error && (
+        <ErrorModal
+          message="peopleResult.error"
+          close={() => dispatch(peopleActions.resetResult())}
+        />
+      )}
     </div>
   );
 }
