@@ -31,6 +31,7 @@ export default function ElementSection(props) {
 
   function handleSetData(e) {
     e.preventDefault();
+    if (item === "servicePoint") return;
     const { value } = e.target;
     const prop = e.target.name;
     let propValue = undefined;
@@ -56,7 +57,7 @@ export default function ElementSection(props) {
           />
         )}
         <div className="flex align-items-center gap-4 mb-1 w-100">
-          <h5 className="my-0 w-50">{headersRef[item]}s</h5>
+          <h5 className="my-0 w-50">{headersRef[item]}</h5>
           <button
             className="btn btn-success w-50"
             onClick={() => setCreation(true)}
@@ -78,14 +79,31 @@ export default function ElementSection(props) {
                     name={item}
                     value={name}
                     className={`btn ${
-                      data[item] && data[item].name === name
+                      item === "servicePoint"
+                        ? "btn-outline-secondary"
+                        : data[item] && data[item].name === name
                         ? "btn-primary"
                         : "btn-outline-primary"
                     } w-100 flex flex-grow-1 justify-content-start align-items-center`}
                     key={"divCuerpo" + name}
                     onClick={(e) => handleSetData(e)}
                   >
-                    [{element.code}] {name}
+                    <div>
+                      <div className="text-start">
+                        [{element.code}] {name}
+                      </div>
+                      {item === "servicePoint" && (
+                        <div className="flex gap-1">
+                          {Object.keys(element)
+                            .filter((k) => element[k] === true)
+                            .map((k, i) => (
+                              <div key={i} className="badge bg-primary">
+                                {headersRef[k]}
+                              </div>
+                            ))}
+                        </div>
+                      )}
+                    </div>
                   </button>
 
                   <button

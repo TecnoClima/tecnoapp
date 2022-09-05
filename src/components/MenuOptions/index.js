@@ -23,7 +23,7 @@ export default function MenuOptions(props) {
 
   return (
     <div
-      className="menuOptionsBackground d-flex flex-column h-100 list-group list-group-flush bg-dark"
+      className="menuOptionsBackground list-group list-group-flush bg-dark"
       style={{ minWidth: "10rem" }}
     >
       {options && options.map(buildLIOption)}

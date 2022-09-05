@@ -11,7 +11,7 @@ export default function plantReducer(state = initialState, action) {
   const { error, success } = action.payload || {};
   let newList = [];
 
-  console.log("action.payload", action.payload);
+  // console.log("action.payload", action.payload);
 
   function update(array) {
     if (success) {

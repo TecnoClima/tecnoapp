@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getPlantList } from "../../../actions/dataActions";
-import { peopleActions } from "../../../actions/StoreActions";
+// import { getPlantList } from "../../../actions/dataActions";
+import { peopleActions, plantActions } from "../../../actions/StoreActions";
 import UserCard from "../../../components/Cards/UserCards/UserCard";
 // import DropdownChoice from "../../../components/dropdown/DropdownChoice";
 import UserDetail from "../../../components/forms/UserDetail";
 
-import { cloneJson } from "../../../utils/utils";
 import { FormSelector } from "../Devices";
 import { appConfig } from "../../../config";
 import "./index.css";
@@ -14,32 +13,50 @@ const { headersRef } = appConfig;
 
 export default function AdminUsers() {
   const { userList, userOptions } = useSelector((state) => state.people);
-  const { locationTree } = useSelector((state) => state.data);
+  // const { locationTree } = useSelector((state) => state.data);
+  const { plantList } = useSelector((state) => state.plants);
   const [options, setOption] = useState({ active: true });
   const dispatch = useDispatch();
   const [userDetail, setUserDetail] = useState(null);
+  const [filteredList, setFilteredList] = useState([]);
 
   useEffect(() => {
     dispatch(peopleActions.getOptions());
-    dispatch(getPlantList());
+    dispatch(plantActions.getPlants());
   }, [dispatch]);
 
+  // useEffect(() => console.log("plantList", plantList), [plantList]);
+  // useEffect(() => console.log("options", options), [options]);
+
   function setUserFilters(e) {
-    const item = e.target.name,
-      value = e.target.value;
-    const newOption = cloneJson(options);
-    if (value === "0" || value === false) {
+    const item = e.target.name;
+    const { value, checked } = e.target;
+    let checkBox = Object.keys(e.target).includes("checked");
+
+    const newOption = { ...options };
+    if (!value || checked) {
       delete newOption[item];
     } else {
-      newOption[item] = value;
+      newOption[item] = checkBox ? !checked : value;
     }
     setOption(newOption);
-    dispatch(peopleActions.getAllUsers(options));
+    // dispatch(peopleActions.getAllUsers(options));
   }
 
+  useEffect(
+    () => dispatch(peopleActions.getAllUsers({ active: "all" })),
+    [dispatch]
+  );
   useEffect(() => {
-    options && dispatch(peopleActions.getAllUsers(options));
-  }, [dispatch, options]);
+    setFilteredList(
+      userList.filter((u) => {
+        const keys = Object.keys(options);
+        let check = true;
+        for (let key of keys) if (u[key] !== options[key]) check = false;
+        return check;
+      })
+    );
+  }, [dispatch, userList, options]);
 
   return (
     <div className="adminOptionSelected">
@@ -47,11 +64,11 @@ export default function AdminUsers() {
         <div className="row">
           <h4>Lista de Usuarios</h4>
         </div>
-        {userOptions && locationTree && (
+        {userOptions && plantList && (
           <div className="row">
             <FormSelector
               label="Planta"
-              array={locationTree}
+              array={plantList.map((p) => p.name)}
               item="plant"
               select={setUserFilters}
             />
@@ -71,9 +88,10 @@ export default function AdminUsers() {
               <label>
                 Incluir inactivos
                 <input
+                  name="active"
                   type="checkbox"
                   className="checkFilter"
-                  onChange={(e) => setUserFilters("active", !e.target.checked)}
+                  onChange={setUserFilters}
                 />
               </label>
               <button
@@ -87,21 +105,20 @@ export default function AdminUsers() {
         )}
         <br />
         <div className="cardList">
-          {userList &&
-            userList.map((element, index) => (
-              <UserCard
-                user={element}
-                key={index}
-                editButton={() => setUserDetail(element)}
-              />
-            ))}
+          {filteredList.map((element, index) => (
+            <UserCard
+              user={element}
+              key={index}
+              editButton={() => setUserDetail(element)}
+            />
+          ))}
         </div>
         {userDetail && (
           <UserDetail
             user={userDetail}
             charge={userOptions.charge}
             access={userOptions.access.map((e) => headersRef[e] || e)}
-            plant={locationTree}
+            plant={plantList.map((p) => p.name)}
             close={() => setUserDetail(null)}
           />
         )}

@@ -21,6 +21,8 @@ export function FormInput({
   defaultValue,
   result,
   error,
+  onChange,
+  value,
 }) {
   return (
     <div className={textArea ? "col-md-12" : className || "col-md-3"}>
@@ -49,6 +51,8 @@ export function FormInput({
             aria-label="Sizing example input"
             defaultValue={defaultValue || (result && result[item])}
             name={item}
+            value={value}
+            onChange={onChange}
             min={min || "0"}
             max={max || Infinity}
             onBlur={select}

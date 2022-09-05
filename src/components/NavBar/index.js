@@ -27,7 +27,7 @@ function PasswordForm({ close }) {
   function handleSubmit(e) {
     e.preventDefault();
     dispatch(
-      peopleActions.update(userData.id, {
+      peopleActions.updateUser(userData.id, {
         currentPassword: password,
         newPassword: newPassword,
       })

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { plantActions } from "../../../actions/StoreActions";
@@ -10,12 +10,25 @@ import {
 import { appConfig } from "../../../config.js";
 
 const { headersRef } = appConfig;
+const servicePoint = "servicePoint";
 
 export default function CreateElement(props) {
   const { item, close, element, save, data } = props;
   const { plantResult } = useSelector((state) => state.plants);
   const [code, setCode] = useState(element ? element.code : "");
   const [name, setName] = useState(element ? element.name : "");
+
+  const [adds, setAdds] = useState(
+    item === servicePoint
+      ? {
+          steelMine: element ? element.steelMine : false,
+          calory: element ? element.calory : false,
+          dangerTask: element ? element.dangerTask : false,
+          insalubrity: element ? element.insalubrity : false,
+        }
+      : undefined
+  );
+
   const [error, setError] = useState(undefined);
   const [bodyArray, setBodyArray] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -28,13 +41,25 @@ export default function CreateElement(props) {
     servicePoint: "line",
   };
 
-  useEffect(() => console.log("bodyArray", bodyArray), [bodyArray]);
+  // useEffect(() => console.log("bodyArray", bodyArray), [bodyArray]);
+  // useEffect(() => console.log("code", code), [code]);
+  // useEffect(() => console.log("name", name), [name]);
+  // useEffect(() => console.log("adds", adds), [adds]);
+
+  function setAddValue(e) {
+    e.preventDefault();
+    const { value } = e.target;
+    setAdds({
+      ...adds,
+      [value]: !adds[value],
+    });
+  }
 
   function saveData(e) {
     e.preventDefault();
     const body = {};
     if (element) {
-      body[item] = { code, name };
+      body[item] = { code, name, ...adds };
       body.previous = element;
     } else {
       const key = item + "s";
@@ -48,22 +73,34 @@ export default function CreateElement(props) {
 
   function addToArrayBody(e) {
     e.preventDefault();
-    const check = bodyArray.find((e) => e.code === code || e.name === name);
+    const check = bodyArray.find(
+      (e) => (code && e.code === code) || (name && e.name === name)
+    );
     if (check) {
       setError("Código o Nombre ya presentes en la lista");
     } else {
-      setBodyArray([
-        ...bodyArray,
-        { code: code.toUpperCase(), name: name.toUpperCase() },
-      ]);
+      let newItem = {};
+      if (code) newItem.code = code;
+      if (name) newItem.name = name;
+      if (adds) newItem = { ...newItem, ...adds };
+      setBodyArray([...bodyArray, newItem]);
       setCode("");
       setName("");
+      let resetAdds = { ...adds };
+      Object.keys(resetAdds).map((k) => (resetAdds[k] = false));
+      setAdds(resetAdds);
     }
   }
+
   function handleDelete(e, element) {
     e.preventDefault();
-    setBodyArray(bodyArray.filter((e) => e.code !== element.code));
+    setBodyArray(
+      bodyArray.filter((e) =>
+        e.code ? e.code !== element.code : e.name !== element.name
+      )
+    );
   }
+
   useEffect(() => {
     if (!error) return;
     !bodyArray.find(
@@ -89,26 +126,46 @@ export default function CreateElement(props) {
             {headersRef[parent[item]]}: {data[parent[item]].name}
           </div>
         )}
-        <FormInput
-          label="Código"
-          value={code}
-          placeholder={`ingrese código de ${headersRef[item]}`}
-          changeInput={(e) => setCode(e.target.value)}
-        />
+        {item !== servicePoint && (
+          <FormInput
+            label="Código"
+            value={code}
+            placeholder={`ingrese código de ${headersRef[item]}`}
+            changeInput={(e) => setCode(e.target.value)}
+          />
+        )}
         <FormInput
           label="Nombre"
           value={name}
           placeholder={`ingrese nombre de ${headersRef[item]}`}
           changeInput={(e) => setName(e.target.value)}
         />
+        {item === servicePoint && (
+          <div>
+            {["steelMine", "calory", "dangerTask", "insalubrity"].map(
+              (key, i) => (
+                <button
+                  key={i}
+                  value={key}
+                  className={`btn ${
+                    adds[key] ? "btn-primary" : "btn-outline-secondary"
+                  }`}
+                  onClick={setAddValue}
+                >
+                  {headersRef[key]}
+                </button>
+              )
+            )}
+          </div>
+        )}
         {!element && (
-          <div className="row">
+          <div className="row justify-content-center pt-2">
             {error ? (
               <div class="alert alert-danger">{error}</div>
             ) : (
               <button
-                className="btn btn-info w-100 py-0"
-                disabled={!code || !name}
+                className="btn btn-info w-auto py-0"
+                disabled={(item !== servicePoint && !code) || !name}
                 onClick={(e) => addToArrayBody(e)}
               >
                 Agregar {headersRef[item]} a crear
@@ -119,9 +176,23 @@ export default function CreateElement(props) {
         {bodyArray.map((element, i) => (
           <div
             key={i}
-            className="flex w-100 justify-content-between align-items-center mt-1 border-bottom"
+            className="flex border-4 justify-content-between align-items-center mt-1 border-bottom"
           >
-            [{element.code}] {element.name}
+            <div>
+              <div>
+                {element.code && "[" + element.code + "]"} {element.name}
+              </div>
+              <div className="d-flex gap-1">
+                {Object.keys(element)
+                  .filter((k) => k !== "code" && k !== "name" && element[k])
+                  .map((k, i) => (
+                    <span key={i} class="badge bg-primary">
+                      {headersRef[k]}
+                    </span>
+                  ))}
+              </div>
+            </div>
+
             <button
               className="btn btn-danger py-0"
               onClick={(event) => handleDelete(event, element)}

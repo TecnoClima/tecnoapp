@@ -40,7 +40,12 @@ export function LoadLocations(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    dispatch(addServPoint(toCreate));
+    dispatch(addServPoint({ servicePoints: toCreate }));
+  }
+
+  function handleClose() {
+    dispatch(addPlantCreationReset);
+    close();
   }
 
   return (
@@ -118,15 +123,9 @@ export function LoadLocations(props) {
             creationResult.success.length > 0 && (
               <div className="d-flex flex-column align-items-center gap-2">
                 <div className="fw-bold text-success">
-                  Lugares de servicio creados: {creationResult.length}
+                  Lugares de servicio creados: {creationResult.success.length}
                 </div>
-                <button
-                  className="btn btn-info"
-                  onClick={() => {
-                    addPlantCreationReset();
-                    close();
-                  }}
-                >
+                <button className="btn btn-info" onClick={handleClose}>
                   OK
                 </button>
               </div>

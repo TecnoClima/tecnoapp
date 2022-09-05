@@ -1,5 +1,5 @@
 import * as xlsx from "xlsx/xlsx.mjs";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deviceActions } from "../../../actions/StoreActions";
 import { appConfig } from "../../../config";
@@ -26,6 +26,7 @@ export function LoadExcel() {
   const [data, setData] = useState({});
   const [options, setOptions] = useState({});
   const [filters, setFilters] = useState({});
+  const inputRef = useRef(null);
 
   useEffect(() => dispatch(allOptions()), [dispatch]);
 
@@ -173,6 +174,12 @@ export function LoadExcel() {
     dispatch(postExcel(data));
   }
 
+  function closeLoadLocations() {
+    inputRef.current.value = null;
+    setAddLocations(false);
+    dispatch(allOptions());
+  }
+
   return (
     <div className="adminOptionSelected p-4">
       <div className="w-100">
@@ -269,6 +276,7 @@ export function LoadExcel() {
             <input
               type="file"
               name="file"
+              ref={inputRef}
               onChange={changeFile}
               onClick={() => setErrors(null)}
             />
@@ -312,7 +320,7 @@ export function LoadExcel() {
       {addLocations && errors && errors.find((e) => e.ls) && (
         <LoadLocations
           locations={errors.map((e) => e.ls).flat(1)}
-          close={() => setAddLocations(false)}
+          close={closeLoadLocations}
         />
       )}
     </div>

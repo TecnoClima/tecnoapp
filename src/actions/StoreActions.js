@@ -20,7 +20,7 @@ export function serverAction(data) {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: "Bearer" + token,
+        Authorization: "Bearer " + token,
       },
       body: data.body ? JSON.stringify(data.body) : undefined,
     })
@@ -68,10 +68,12 @@ export const peopleActions = {
   getOptions: () => getAction("users/options", "USER_OPTIONS"),
   getAllUsers: (filters) =>
     getAction(`users${jsonToQuery(filters)}`, "USER_LIST"),
-  update: (idNumber, update) =>
-    postAction(`users/detail/${idNumber}`, update, "SELECTED_USER"), //updateUser //should be a PUT action
+  getUser: (id) => getAction("users?id=" + id, "SELECTED_USER"),
+  updateUser: (id, update) => putAction(`users`, { id, update }, "UPDATE_USER"), //updateUser //should be a PUT action
   addNew: (user) => postAction("users", user, "NEW_USER"), //addUser
   resetResult: () => ({ type: "RESET_PEOPLE_RESULT" }),
+  auth: (loginData) => postAction("users/auth", loginData, "LOGIN"),
+  getFromToken: (token) => getAction("users/userByToken", "USER_DATA"),
 };
 
 export const deviceActions = {
@@ -133,10 +135,11 @@ export const plantActions = {
   updateLine: (body) => putAction("lines", body, "UPDATE_LINE"),
   deleteLine: (area) => deleteAction(`lines?lineId=${area._id}`, "DELETE_LINE"),
 
-  createSP: (body) => postAction(`areas`, body, "NEW_SP"),
-  getSPs: () => getAction(`areas`, "SP_LIST"),
-  updateSP: (body) => putAction("areas", body, "UPDATE_SP"),
-  deleteSP: (area) => deleteAction(`areas?areaId=${area._id}`, "DELETE_SP"),
+  createSP: (body) => postAction(`servicePoints`, body, "NEW_SP"),
+  getSPs: () => getAction(`servicePoints`, "SP_LIST"),
+  updateSP: (body) => putAction("servicePoints", body, "UPDATE_SP"),
+  deleteSP: (item) =>
+    deleteAction(`servicePoints?spId=${item._id || item.id}`, "DELETE_SP"),
 };
 
 //review all these device actions...
@@ -158,52 +161,52 @@ export function getDevicesList(selectedData) {
   };
 }
 
-export function getOptionsList() {
-  return async function (dispatch) {
-    return fetch(`${appConfig.url}/abmdevices/options`)
-      .then((response) => response.json())
-      .then((json) => {
-        dispatch({
-          type: "GET_ALLOPTIONS",
-          payload: json,
-        });
-      });
-  };
-}
+// export function getOptionsList() {
+//   return async function (dispatch) {
+//     return fetch(`${appConfig.url}/abmdevices/options`)
+//       .then((response) => response.json())
+//       .then((json) => {
+//         dispatch({
+//           type: "GET_ALLOPTIONS",
+//           payload: json,
+//         });
+//       });
+//   };
+// }
 
-export function addDevice(device) {
-  return async function (dispatch) {
-    return fetch(`${appConfig.url}/abmdevices/`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(device),
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        return json;
-      });
-  };
-}
+// export function addDevice(device) {
+//   return async function (dispatch) {
+//     return fetch(`${appConfig.url}/abmdevices/`, {
+//       method: "POST",
+//       headers: {
+//         Accept: "application/json",
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(device),
+//     })
+//       .then((response) => response.json())
+//       .then((json) => {
+//         return json;
+//       });
+//   };
+// }
 
-export function deleteDevice(device) {
-  return async function (dispatch) {
-    return fetch(`${appConfig.url}/abmdevices/delete`, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(device),
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        return json;
-      });
-  };
-}
+// export function deleteDevice(device) {
+//   return async function (dispatch) {
+//     return fetch(`${appConfig.url}/abmdevices/delete`, {
+//       method: "DELETE",
+//       headers: {
+//         Accept: "application/json",
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(device),
+//     })
+//       .then((response) => response.json())
+//       .then((json) => {
+//         return json;
+//       });
+//   };
+// }
 
 export const getDeviceData = (payload) => {
   return {
@@ -219,22 +222,22 @@ export const resetDeviceData = (payload) => {
   };
 };
 
-export function updateDevice(device) {
-  return async function (dispatch) {
-    return fetch(`${appConfig.url}/abmdevices/update`, {
-      method: "PUT",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(device),
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        return json;
-      });
-  };
-}
+// export function updateDevice(device) {
+//   return async function (dispatch) {
+//     return fetch(`${appConfig.url}/abmdevices/update`, {
+//       method: "PUT",
+//       headers: {
+//         Accept: "application/json",
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(device),
+//     })
+//       .then((response) => response.json())
+//       .then((json) => {
+//         return json;
+//       });
+//   };
+// }
 
 //check if this equals to peopleActions.getAllUsers()
 export const getEmpleados = () => getAction("users", "GET_WORKERS");

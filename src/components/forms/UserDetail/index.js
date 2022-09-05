@@ -1,22 +1,34 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addUser, updateUser } from "../../../actions/peopleActions";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser } from "../../../actions/peopleActions";
+import { peopleActions } from "../../../actions/StoreActions";
 import { FormInput, FormSelector } from "../../../pages/Admin/Devices";
 import "./index.css";
 
 export default function UserDetail(props) {
   //Create, View and Update
   const { user } = props;
+  const { selectedUser } = useSelector((state) => state.people);
   const [newUser, setNewUser] = useState(user === "new" ? {} : { ...user });
   const dispatch = useDispatch();
 
+  useEffect(() => setNewUser(user), [user]);
+
   const inputFields = [
     { label: "Nombre", item: "name", placeholder: "Nombre y Apellido" },
-    { label: "Usuario", item: "name", placeholder: "Nombre de usuario" },
-    { label: "Contraseña", item: "name", placeholder: "Contraseña Temporal" },
-    { label: "N° ID", item: "name", placeholder: "DNI sin puntos ni espacios" },
-    { label: "Email", item: "name", placeholder: "ejemplo@host.com" },
-    { label: "Teléfono", item: "name", placeholder: "Teléfono de contacto" },
+    { label: "Usuario", item: "username", placeholder: "Nombre de usuario" },
+    {
+      label: "Contraseña",
+      item: "password",
+      placeholder: "Contraseña Temporal",
+    },
+    {
+      label: "N° ID",
+      item: "idNumber",
+      placeholder: "DNI sin puntos ni espacios",
+    },
+    { label: "Email", item: "email", placeholder: "ejemplo@host.com" },
+    { label: "Teléfono", item: "phone", placeholder: "Teléfono de contacto" },
   ];
 
   const selectFields = [
@@ -31,34 +43,15 @@ export default function UserDetail(props) {
     setNewUser({ ...newUser, [item]: value });
   }
 
-  //   function UserField(props) {
-  //     return (
-  //       <div className="formInput">
-  //         <label className="dropdownLabel">{props.label}</label>
-  //         <input
-  //           className="textInput"
-  //           id={`user${props.item}`}
-  //           placeholder={props.placeholder}
-  //           defaultValue={
-  //             props.item === "password"
-  //               ? undefined
-  //               : user[props.item] || undefined
-  //           }
-  //           onBlur={(event) =>
-  //             setNewUser({ ...newUser, [props.item]: event.target.value })
-  //           }
-  //           readOnly={false}
-  //         />
-  //       </div>
-  //     );
-  //   }
-
   function handleSubmit(e) {
     e.preventDefault();
     if (user === "new") {
       dispatch(addUser(newUser));
     } else {
-      dispatch(updateUser(user.idNumber, newUser));
+      const update = { ...newUser };
+      for (let key of Object.keys(update))
+        if (update[key] === user[key]) delete update[key];
+      dispatch(peopleActions.updateUser(user._id, update));
     }
   }
 
@@ -81,14 +74,15 @@ export default function UserDetail(props) {
 
           <div className="row">
             <div className="col">
-              {inputFields.map((e) => (
-                <div className="d-flex w-100">
+              {inputFields.map((e, i) => (
+                <div className="d-flex w-100" key={i}>
                   <FormInput
                     className={"w-100"}
                     label={e.label}
                     item={e.item}
+                    value={newUser[e.item]}
                     placeholder={e.placeholder}
-                    select={updateNewUser}
+                    onChange={updateNewUser}
                     type={e.item === "password" ? "password" : undefined}
                   />
                 </div>
@@ -96,15 +90,18 @@ export default function UserDetail(props) {
               {props.charge &&
                 props.plant &&
                 props.access &&
-                selectFields.map((e) => (
-                  <FormSelector
-                    className={"w-100"}
-                    label={e.label}
-                    array={e.array}
-                    item={e.item}
-                    placeholder={props[e.item] || undefined}
-                    select={updateNewUser}
-                  />
+                selectFields.map((e, i) => (
+                  <div key={i}>
+                    <FormSelector
+                      className={"w-100"}
+                      label={e.label}
+                      array={e.array}
+                      item={e.item}
+                      placeholder={props[e.item] || undefined}
+                      value={user[e.item]}
+                      select={updateNewUser}
+                    />
+                  </div>
                 ))}
             </div>
           </div>
@@ -118,64 +115,6 @@ export default function UserDetail(props) {
             </button>
           </div>
         </div>
-        {/* 
-        {UserField({
-          label: "Nombre",
-          placeholder: "Nombre y apellido",
-          item: "name",
-        })}
-        {UserField({
-          label: "Usuario",
-          placeholder: "ingrese nombre de usuario",
-          item: "username",
-        })}
-        {UserField({
-          label: "Contraseña",
-          placeholder: "Contraseña temporal",
-          item: "password",
-        })}
-        {UserField({
-          label: "N° ID",
-          placeholder: "Ingrese DNI",
-          item: "idNumber",
-        })}
-        {UserField({
-          label: "Email",
-          placeholder: "Ingrese correo electrónico",
-          item: "email",
-        })}
-        {UserField({
-          label: "Teléfono",
-          placeholder: "Ingrese teléfono de contacto",
-          item: "phone",
-        })} */}
-
-        {/* {DropdownChoice(
-          "charge",
-          props.charge,
-          (item, value) => setNewUser({ ...newUser, [item]: value }),
-          user.charge || undefined
-        )}
-        {DropdownChoice(
-          "access",
-          props.access,
-          (item, value) => setNewUser({ ...newUser, [item]: value }),
-          user.access || undefined
-        )}
-        {DropdownChoice(
-          "plant",
-          props.plant,
-          (item, value) => setNewUser({ ...newUser, [item]: value }),
-          user.plant ? user.plant.name : undefined
-        )} */}
-
-        {/* <button
-          type="submit"
-          className="btn btn-success m-1"
-          disabled={JSON.stringify(newUser) === JSON.stringify(user)}
-        >
-          GUARDAR USUARIO
-        </button> */}
       </form>
     </div>
   );

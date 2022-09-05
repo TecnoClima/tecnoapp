@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { plantActions } from "../../../actions/StoreActions";
 import ElementSection from "./ElementSection.js";
@@ -20,16 +20,6 @@ export default function AdminPlants() {
     if (prop === "plant") delete newData.area;
     setData(newData);
   }
-
-  // useEffect(() => console.log("data.plant", data.plant), [data]);
-  // useEffect(
-  //   () =>
-  //     console.log(
-  //       "areaList",
-  //       areaList.filter((a) => (data.plant ? a.plant === data.plant._id : a))
-  //     ),
-  //   [areaList, data]
-  // );
 
   return (
     <div className="adminOptionSelected">
@@ -80,8 +70,10 @@ export default function AdminPlants() {
 
         <ElementSection
           item="servicePoint"
-          array={spList.filter((a) =>
-            data.line ? a.line === data.line._id : a
+          array={spList.filter((i) =>
+            data.line
+              ? i.lineId === data.line._id || i.line === data.line._id
+              : i
           )}
           data={data}
           setData={handleSetData}
