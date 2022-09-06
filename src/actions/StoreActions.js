@@ -142,6 +142,33 @@ export const plantActions = {
     deleteAction(`servicePoints?spId=${item._id || item.id}`, "DELETE_SP"),
 };
 
+export const planActions = {
+  selectStrategy: (strategy) => ({
+    type: "SELECT_STRATEGY",
+    payload: strategy,
+  }),
+  createStrategy: (body) => postAction(`strategies`, body, "NEW_PROGRAM"),
+  resetPlanResult: () => ({
+    type: "RESET_PLAN_RESULT",
+    payload: {},
+  }),
+  updateStrategy: (data) => putAction(`strategies`, data, "NEW_PROGRAM"),
+  getStrategies: (conditions) =>
+    getAction(`strategies${jsonToQuery(conditions)}`, "ALL_PROGRAMS"),
+  selectTask: (task) => ({
+    type: "SELECT_TASK",
+    payload: task,
+  }),
+  dateOrder: (body) => putAction("tasks", body, "UPDATE_DATE"),
+  getPlan: (conditions) =>
+    getAction(`dates/plan${jsonToQuery(conditions)}`, "GET_PLAN"),
+  setDates: (dates) => postAction("dates", dates, "ADD_DATE"),
+  getDates: (conditions) =>
+    getAction(`dates${jsonToQuery(conditions)}`, "DATES"),
+  getPlanDevices: (conditions) =>
+    getAction(`tasks${jsonToQuery(conditions)}`, "PLAN_DEVICES"),
+};
+
 //review all these device actions...
 export function getDevicesList(selectedData) {
   return async function (dispatch) {

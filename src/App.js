@@ -10,9 +10,8 @@ import WorkOrders from "./pages/WorkOrders";
 import { useDispatch, useSelector } from "react-redux";
 import AdminPanel from "./pages/Admin/AdminPanel";
 import WorkOrder from "./pages/WorkOrder";
-import { getPlan } from "./actions/planActions";
 import Device from "./pages/Device";
-import { peopleActions } from "./actions/StoreActions";
+import { peopleActions, planActions } from "./actions/StoreActions";
 
 function App() {
   const { userData } = useSelector((state) => state.people);
@@ -31,12 +30,13 @@ function App() {
         isLogged: !!userData.user,
         isAdmin: userData.access === "Admin",
       });
-    console.log("userData", userData);
     if (userData && userData.user) {
       const { plant, user, access } = userData;
       const year = new Date().getFullYear();
       dispatch(
-        getPlan(plant && access !== "admin" ? { year, plant, user } : { year })
+        planActions.getPlan(
+          plant && access !== "admin" ? { year, plant, user } : { year }
+        )
       );
     }
   }, [dispatch, userData]);

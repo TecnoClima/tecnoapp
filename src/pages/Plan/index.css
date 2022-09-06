@@ -21,6 +21,7 @@
     border: 2px solid green
 }
 .planRow{
+    max-width: 100%;
     display: flex;
     align-items: center;
     border-radius: .5rem;

@@ -33,7 +33,6 @@ export default function LoginForm() {
       window.location = "/panel";
     }
   }, [peopleResult]);
-  useEffect(() => console.log("loginData", loginData), [loginData]);
 
   return (
     <form className="container" onSubmit={(e) => login(e)}>

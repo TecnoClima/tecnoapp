@@ -1,60 +1,113 @@
-import { useEffect, useState } from "react"
-import './index.css'
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { planActions } from "../../../actions/StoreActions";
+import DateFilter from "../DateFilter";
+import LocationFilter from "../LocationFilter";
+import ProgressFilter from "../ProgressFilter";
+import "./index.css";
 
-export default function ProgramFilters(props){
-    const {programList} = props
-    const [filters, setFilters]=useState({})
-    const [workers, setWorkers]=useState([])
+export default function ProgramFilters(props) {
+  const { plantList } = useSelector((state) => state.plants);
+  const { programList } = useSelector((state) => state.plan);
+  const { select, responsibles, supervisors } = props;
+  const [filters, setFilters] = useState({
+    date: { year: new Date().getFullYear() },
+  });
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
-    useEffect(()=>{
-        let workers = []
-        const list = filters.name?
-            programList.filter(program=>program.name===filters.name)
-            :programList
-        for (let program of list){
-            for (let worker of program.people){
-                const found = workers.find(element=>element.id === worker.id)
-                if(!found) workers.push(worker)
-        }}
-        workers.sort((a,b)=>a.name>b.name? 1 : -1)
-        setWorkers(workers)
-    },[filters, programList])
-
-    function handleValue (item,value){
-        const newFilters = {...filters}
-        if(value===''){
-            delete newFilters[item]
-        }else{
-            newFilters[item]= Number(value) || value
-        }
-        setFilters(newFilters)
-        props.select(newFilters)
+  // ensure all data for dropdown menues
+  useEffect(() => {
+    const { year } = filters.date;
+    if (programList[0]) setLoading(false);
+    if (loading) return;
+    const plant = filters.plant || (plantList[0] && plantList[0].name);
+    if (plant) {
+      if (!programList[0]) {
+        dispatch(planActions.getStrategies({ year, plant }));
+        setLoading(true);
+      }
     }
-    function handleDates(boolean){
-        const newFilters = {...filters}
-        if (boolean) newFilters.dates=[]
-        if (!boolean) delete newFilters.dates
-        setFilters(newFilters)
-        props.select(newFilters)
+  }, [dispatch, programList, plantList, filters, loading]);
+
+  function setFilter(e) {
+    const { name, value } = e.target;
+    const program = filters.program || {};
+    if (!value) {
+      delete program[name];
+    } else {
+      program[name] = value;
     }
+    let newFilter = { ...filters, program };
+    setFilters(newFilter);
+    select && select(newFilter);
+  }
+  function updateFilters(newFilter) {
+    setFilters(newFilter);
+    select && select(newFilter);
+  }
 
-
-    return(<div className="input-group m-0">
-        <select className='form-select py-0' onChange={(e)=>handleValue('strategy',e.target.value)} disabled={!programList}>
-            <option value = ''>{programList?'todos los programas':'Seleccione Planta y año'}</option>
-            {programList && programList.map(element=>element.name).map(name=>
-                <option key={name} value={name}>{name}</option>
-            )}
-        </select>
-        <select className='form-select py-0' onChange={(e)=>handleValue('responsible', e.target.value)} disabled={!programList}>
-            <option value = ''>Todos los responsables</option>
-            {workers.map(worker=>
-                <option key={worker.id} value={worker.id}>{worker.name}</option>
-            )}
-        </select>
-        <button className="btn btn-info py-0" onClick={()=>handleDates(!filters.dates)}>
-            {filters.dates?'Mostrar todos los equipos':'Mostrar equipos sin fecha'}
-        </button>
-
-    </div>)
+  return (
+    <div className="container">
+      <div className="row">
+        <DateFilter select={(nf) => updateFilters({ ...filters, date: nf })} />
+        <LocationFilter
+          select={(nf) => updateFilters({ ...filters, location: nf })}
+        />
+      </div>
+      <div className="row align-items-center">
+        <div className="col-lg-6">
+          <div className="input-group">
+            <span className="input-group-text py-0 px-1 fw-bold">PROGRAMA</span>
+            <select
+              name="program"
+              className="form-control p-0 pe-3 w-auto"
+              value={filters.program ? filters.program.program : ""}
+              onInput={setFilter}
+            >
+              <option value="">PROGRAMA</option>
+              {programList.map((p, i) => (
+                <option key={i} value={p.name}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+            <select
+              name="responsible"
+              className="form-control p-0 pe-3 w-auto"
+              value={filters.program ? filters.program.responsible : ""}
+              onChange={setFilter}
+            >
+              <option value="">Responsable</option>
+              {responsibles.map((r, i) => (
+                <option key={i} value={r.id}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
+            <select
+              name="supervisor"
+              className="form-control p-0 pe-3 w-auto"
+              value={filters.program ? filters.program.supervisor : ""}
+              onChange={setFilter}
+            >
+              <option value="">Supervisor</option>
+              {supervisors.map((s, i) => (
+                <option key={i} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="col-lg-6">
+          <div className="input-group py-auto">
+            <ProgressFilter
+              select={(nf) => updateFilters({ ...filters, progress: nf })}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -1,5 +1,4 @@
 import { useDispatch } from "react-redux";
-import { updateUser } from "../../../actions/peopleActions";
 import { peopleActions } from "../../../actions/StoreActions";
 import worker from "../../../assets/icons/worker.png";
 import "./index.css";

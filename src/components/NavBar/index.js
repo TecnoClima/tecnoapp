@@ -160,7 +160,7 @@ function NavBar() {
       <nav className="navBar bg-nav text-light d-flex align-items-center">
         <div className="container-fluid p-0">
           <div className="row m-0">
-            <div className="col-sm-auto d-flex p-0 justify-content-between">
+            <div className="col-md-auto d-flex p-0 justify-content-between">
               <Link
                 className="mx-1 my-0 p-0"
                 to="/panel"

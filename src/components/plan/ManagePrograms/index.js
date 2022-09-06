@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getStrategies } from "../../../actions/planActions";
+import { planActions } from "../../../actions/StoreActions";
 import NewProgram from "../../forms/NewProgram";
 import "./index.css";
 
@@ -58,7 +58,7 @@ export default function ProgramManagement(props) {
   const dispatch = useDispatch();
 
   useEffect(
-    () => dispatch(getStrategies({ plant, year })),
+    () => dispatch(planActions.getStrategies({ plant, year })),
     [dispatch, plant, year]
   );
 

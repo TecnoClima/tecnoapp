@@ -25,9 +25,6 @@ export default function AdminUsers() {
     dispatch(plantActions.getPlants());
   }, [dispatch]);
 
-  // useEffect(() => console.log("plantList", plantList), [plantList]);
-  // useEffect(() => console.log("options", options), [options]);
-
   function setUserFilters(e) {
     const item = e.target.name;
     const { value, checked } = e.target;

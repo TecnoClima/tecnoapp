@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setDeviceStrategy,
-  getPlanDevices,
-  getStrategies,
   // updatePlan
 } from "../../../actions/planActions";
 import DeviceFilters from "../../filters/DeviceFilters";
@@ -12,7 +10,7 @@ import PlanDevice from "../../Cards/PlanDevice";
 import "./index.css";
 import { getDeviceOptions } from "../../../actions/deviceActions";
 import ProgramForm from "../../forms/ProgramForm";
-import { cylinderActions } from "../../../actions/StoreActions";
+import { cylinderActions, planActions } from "../../../actions/StoreActions";
 
 export default function PlanTask() {
   const { plant, year } = useSelector((state) => state.data);
@@ -24,13 +22,11 @@ export default function PlanTask() {
   const [filteredList, setFilteredList] = useState(devicePlanList);
   const dispatch = useDispatch();
 
-  // useEffect(()=>console.log(filteredList,filteredList),[filteredList])
-
   useEffect(() => {
     dispatch(getDeviceOptions());
-    dispatch(getStrategies({ plant, year }));
+    dispatch(planActions.getStrategies({ plant, year }));
     dispatch(cylinderActions.getGases());
-    dispatch(getPlanDevices({ plant, year }));
+    dispatch(planActions.getPlanDevices({ plantName: plant, year }));
   }, [dispatch, plant, year]);
 
   async function handleSave(json) {

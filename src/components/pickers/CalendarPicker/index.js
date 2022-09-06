@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setDates } from "../../../actions/planActions";
+import { planActions } from "../../../actions/StoreActions";
 import "./index.css";
 
 export default function CalendarPicker(props) {
@@ -48,10 +48,7 @@ export default function CalendarPicker(props) {
   useEffect(
     () =>
       setStringDates(
-        taskDates.map((date) => {
-          // console.log('date', date)
-          return date.toLocaleDateString().split(" ")[0];
-        })
+        taskDates.map((date) => date.toLocaleDateString().split(" ")[0])
       ),
     [taskDates]
   );
@@ -77,7 +74,6 @@ export default function CalendarPicker(props) {
           if (monthDates[0]) newDate = new Date(monthDates[0]);
         }
       }
-      console.log("newDate", newDate);
       //finally got date
       date = newDate;
     }
@@ -93,7 +89,7 @@ export default function CalendarPicker(props) {
     );
 
     dispatch(
-      setDates({
+      planActions.setDates({
         year,
         strategy: task.strategy,
         device: task.code,

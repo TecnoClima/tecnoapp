@@ -48,7 +48,6 @@ export default function addPlantsReducer(state = initialState, action) {
         actualData: action.payload,
       };
     case "CREATION_RESULTS":
-      console.log("action.payload", action.payload);
       return {
         state,
         creationResult: action.payload,

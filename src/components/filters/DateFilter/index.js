@@ -9,7 +9,7 @@ const months = Array(12);
 for (let i = 0; i < months.length; i++) months[i] = i;
 
 export default function DateFilter(props) {
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState({ year: new Date().getFullYear() });
   const [days, setDays] = useState([]);
 
   function getDays(year, month) {
@@ -44,11 +44,11 @@ export default function DateFilter(props) {
   );
 
   return (
-    <div className="container mb-2 col-md-3">
+    <div className="container mb-2 col-lg-3">
       <div className="row">
         <div className="col">
           <div className="input-group">
-            <span class="input-group-text py-0 px-1">FECHA</span>
+            <span className="input-group-text py-0 px-1 fw-bold">FECHA</span>
             <select
               name="year"
               className="form-control p-0 pe-3"

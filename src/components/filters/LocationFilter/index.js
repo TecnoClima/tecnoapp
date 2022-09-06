@@ -8,7 +8,7 @@ export default function LocationFilter(props) {
   );
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({});
-  const [filteredSP, setFilteredSP] = useState([]);
+  // const [filteredSP, setFilteredSP] = useState([]);
   const dispatch = useDispatch();
 
   /**
@@ -52,26 +52,14 @@ export default function LocationFilter(props) {
     props.select && props.select(f);
   }
 
-  useEffect(() => {
-    if (!filters.plant) return;
-    let { plant } = filters;
-    let areas = filters.area
-      ? [filters.area]
-      : areaList.filter((a) => a.plant === plant).map((item) => item._id);
-    let lines = filters.line
-      ? [filters.line]
-      : lineList.filter((l) => areas.includes(l.area)).map((item) => item._id);
-    setFilteredSP(spList.filter((sp) => lines.includes(sp.line)));
-  }, [filters, areaList, lineList, spList]);
-
-  useEffect(() => console.log("filters", filters), [filters]);
-
   return (
-    <div className="container mb-2 col-md-9">
+    <div className="container mb-2 col-lg-9">
       <div className="row">
         <div className="col">
           <div className="input-group">
-            <span class="input-group-text py-0 px-1">UBICACION</span>
+            <span className="input-group-text py-0 px-1 fw-bold">
+              UBICACION
+            </span>
             <select
               name="plant"
               className="form-control p-0 pe-3 w-auto"
@@ -80,7 +68,7 @@ export default function LocationFilter(props) {
             >
               <option value="">PLANTA</option>
               {plantList.map((item, i) => (
-                <option key={i} value={item._id}>
+                <option key={i} value={item.name}>
                   {item.name}
                 </option>
               ))}
@@ -94,9 +82,14 @@ export default function LocationFilter(props) {
             >
               <option value="">Area</option>
               {areaList
-                .filter((a) => a.plant === filters.plant)
+                .filter((a) =>
+                  filters.plant
+                    ? a.plant ===
+                      plantList.find((p) => p.name === filters.plant)._id
+                    : a
+                )
                 .map((item, i) => (
-                  <option key={i} value={item._id}>
+                  <option key={i} value={item.name}>
                     {item.name}
                   </option>
                 ))}
@@ -110,21 +103,26 @@ export default function LocationFilter(props) {
             >
               <option value="">Línea</option>
               {lineList
-                .filter((item) => item.area === filters.area)
+                .filter((item) =>
+                  filters.area
+                    ? item.area ===
+                      areaList.find((a) => a.name === filters.area)._id
+                    : item
+                )
                 .map((item, i) => (
-                  <option key={i} value={item._id}>
+                  <option key={i} value={item.name}>
                     {item.name}
                   </option>
                 ))}
             </select>
-            <input
+            {/* <input
               className="form-control p-0 pe-3 w-auto"
               placeholder="Lugar de Servicio"
               name="servicePoint"
               value={filters.servicePoint || ""}
               disabled={!filters.plant}
               onChange={setFilter}
-            />
+            /> */}
             <input
               className="form-control p-0 pe-3 w-auto"
               placeholder="Equipo"
@@ -133,19 +131,6 @@ export default function LocationFilter(props) {
               disabled={!filters.plant}
               onChange={setFilter}
             />
-
-            {/* <input
-              placeholder="Lugar de Servicio"
-              type="search"
-              list="servicePointList"
-              disabled={!filters.plant}
-              onChange={setFilter}
-            /> */}
-            {/* <datalist id="servicePointList">
-              {filteredSP.map((sp, i) => (
-                <option key={i} value={sp.name} />
-              ))}
-            </datalist> */}
           </div>
         </div>
       </div>

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { dateOrder, selectTask } from "../../actions/planActions";
-import { deviceActions } from "../../actions/StoreActions";
+import { deviceActions, planActions } from "../../actions/StoreActions";
 import {
   getWOOptions,
   newIntervention,
@@ -75,7 +74,9 @@ export default function WorkOrder() {
       order.taskDate &&
       planDates[0] &&
       dispatch(
-        selectTask(planDates.find((date) => date.id === order.taskDate))
+        planActions.selectTask(
+          planDates.find((date) => date.id === order.taskDate)
+        )
       ),
     [order, planDates, dispatch]
   );
@@ -128,7 +129,7 @@ export default function WorkOrder() {
     setDevice(device ? buildDevice(device) : {});
     setDeviceCode(device.code);
     setSupervisor(orderDetail.supervisor);
-    // dispatch(selectTask(plan.find(date=>date.id === orderDetail.taskDate)))
+    // dispatch(planActions.selectTask(plan.find(date=>date.id === orderDetail.taskDate)))
     setOrder(orderDetail);
     setInterventions(orderDetail.interventions);
   }, [orderDetail, dispatch, plan]);
@@ -263,7 +264,7 @@ export default function WorkOrder() {
           userId: userData.id,
         })
       );
-      dispatch(dateOrder(otCode, update.taskDate));
+      dispatch(planActions.dateOrder({ order: otCode, date: update.taskDate }));
     } else {
       const sendOrder = {
         ...order,

@@ -41,11 +41,6 @@ export default function CreateElement(props) {
     servicePoint: "line",
   };
 
-  // useEffect(() => console.log("bodyArray", bodyArray), [bodyArray]);
-  // useEffect(() => console.log("code", code), [code]);
-  // useEffect(() => console.log("name", name), [name]);
-  // useEffect(() => console.log("adds", adds), [adds]);
-
   function setAddValue(e) {
     e.preventDefault();
     const { value } = e.target;
@@ -161,7 +156,7 @@ export default function CreateElement(props) {
         {!element && (
           <div className="row justify-content-center pt-2">
             {error ? (
-              <div class="alert alert-danger">{error}</div>
+              <div className="alert alert-danger">{error}</div>
             ) : (
               <button
                 className="btn btn-info w-auto py-0"
@@ -186,7 +181,7 @@ export default function CreateElement(props) {
                 {Object.keys(element)
                   .filter((k) => k !== "code" && k !== "name" && element[k])
                   .map((k, i) => (
-                    <span key={i} class="badge bg-primary">
+                    <span key={i} className="badge bg-primary">
                       {headersRef[k]}
                     </span>
                   ))}

@@ -3,8 +3,8 @@ import { PlantSelector } from "../../dropdown/PlantSelector.js";
 import "./index.css";
 import { appConfig } from "../../../config";
 import { useDispatch, useSelector } from "react-redux";
-import { getStrategies } from "../../../actions/planActions";
 import { FormSelector, FormTextArea } from "../FormInput/index.js";
+import { planActions } from "../../../actions/StoreActions.js";
 const { frequencies } = appConfig;
 
 export default function ProgramForm(props) {
@@ -19,7 +19,6 @@ export default function ProgramForm(props) {
   const dispatch = useDispatch();
 
   useEffect(() => setProgramList(fullProgramList), [fullProgramList]);
-  useEffect(() => console.log("selection", selection), [selection]);
 
   function selectProgram(name) {
     const program = programList.find((program) => program.name === name);
@@ -47,7 +46,7 @@ export default function ProgramForm(props) {
     newProgram.device = selection
       .filter((dev) => dev.plant === plant)
       .map((dev) => dev.code);
-    dispatch(getStrategies({ plant, year }));
+    dispatch(planActions.getStrategies({ plant, year }));
     setPlanProgram(newProgram);
   }, [plant, selection, year, dispatch]);
 

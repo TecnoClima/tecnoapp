@@ -11,7 +11,7 @@ const initialState = {
 };
 
 export default function workOrderReducer(state = initialState, action) {
-  console.log(action.type, action.payload);
+  // console.log(action.type, action.payload);
   switch (action.type) {
     case "USER_DATA":
       return {
@@ -31,7 +31,6 @@ export default function workOrderReducer(state = initialState, action) {
     case "UPDATE_USER":
       let newList = [...state.userList];
       let index = state.userList.findIndex((u) => u._id === action.payload._id);
-      console.log("index", index);
       index >= 0
         ? (newList[index] = action.payload)
         : (newList = [action.payload]);
@@ -68,7 +67,6 @@ export default function workOrderReducer(state = initialState, action) {
         selectedUser: action.payload,
       };
     case "NEW_USER":
-      console.log("in");
       return {
         ...state,
         peopleResult: action.payload,
