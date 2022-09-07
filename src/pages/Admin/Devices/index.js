@@ -435,7 +435,7 @@ function CreateDevice({ close }) {
                       aria-expanded="true"
                       aria-controls="collapseOne"
                     >
-                      Seleccionar puntos de Servicio
+                      Seleccionar Lugares de Servicio
                     </button>
                   </h2>
                   <div
@@ -536,19 +536,26 @@ export default function DeviceAdmin() {
   const [locOptions, setLocOptions] = useState([]); // Location Options
   const [filters, setFilters] = useState({});
   const [create, setCreate] = useState(false);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!filteredList[0])
+    if (loading) return;
+    if (filteredList[0]) setLoading(false);
+    if (!filteredList[0]) {
       dispatch(
         deviceActions.getFullList(
           userData.access === "Admin" ? undefined : userData.plant
         )
       );
-  }, [userData, filteredList, dispatch]);
+      setLoading(true);
+    }
+  }, [loading, userData, filteredList, dispatch]);
+
   useEffect(() => {
     if (deviceFullList && deviceFullList[0]) setFilteredList(deviceFullList);
   }, [deviceFullList]);
+
   useEffect(() => {
     if (filteredList[0])
       setLocOptions([
@@ -611,9 +618,9 @@ export default function DeviceAdmin() {
   return (
     <div className="adminOptionSelected">
       <div className="container">
-        <div className="row">
+        <div className="row py-2">
           <div className="col col-8">
-            <h3 className="text-center">Administración de Equipos</h3>
+            <h3>Administración de Equipos</h3>
           </div>
           <div className="col col-4">
             <div className="d-grid gap-2">
@@ -671,7 +678,11 @@ export default function DeviceAdmin() {
         <div className="row">
           <table
             className="table table-striped"
-            style={{ fontSize: "85%", maxHeight: "inherit", overflowY: "auto" }}
+            style={{
+              fontSize: "85%",
+              maxHeight: "inherit",
+              overflowY: "auto",
+            }}
           >
             <thead className="fixed-header">
               <tr>
@@ -683,13 +694,16 @@ export default function DeviceAdmin() {
                 <th scope="col">Tipo</th>
                 <th scope="col">Potencia</th>
                 <th scope="col">Refrigerante</th>
+                <th scope="col">Acción</th>
               </tr>
             </thead>
             <tbody>
               {filteredList.map((device) => (
                 <tr key={device.code}>
                   <th scope="row">
-                    <Link to={`/equipos/${device.code}`}>{device.code}</Link>
+                    <Link to={`/equipos/${device.code}`}>
+                      <p style={{ minWidth: "4rem" }}>{device.code}</p>
+                    </Link>
                   </th>
                   <td className="col-1">{device.plant}</td>
                   <td>{device.area}</td>
@@ -697,11 +711,29 @@ export default function DeviceAdmin() {
                   <td>{device.name}</td>
                   <td>{device.type}</td>
                   <td>
-                    {device.power >= 9000
+                    {!isNaN(device.power) && device.power >= 9000
                       ? `${Math.floor(device.power / 3000)} tnRef`
                       : `${device.power} frig`}
                   </td>
                   <td>{device.refrigerant}</td>
+                  <td>
+                    <div className="d-flex">
+                      <button
+                        className="btn btn-info"
+                        title="Modificar"
+                        style={{ margin: "0 .2rem" }}
+                      >
+                        <i className="fas fa-pencil-alt" />
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        title="Desactivar"
+                        style={{ margin: "0" }}
+                      >
+                        <i className="fa fa-minus" />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -1,4 +1,5 @@
 import { appConfig } from "../apiConfig";
+const token = "Bearer " + localStorage.getItem("tecnoToken");
 
 export function authentication(data) {
   return async function (dispatch) {
@@ -7,6 +8,7 @@ export function authentication(data) {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Authorization: token,
       },
       body: JSON.stringify(data),
     })
@@ -32,7 +34,7 @@ export function getUserFromToken() {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `bearer ${token}`,
+          Authorization: token,
         },
       })
         .then((response) => response.json())
