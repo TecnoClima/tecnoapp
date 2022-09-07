@@ -722,6 +722,7 @@ export default function DeviceAdmin() {
                         className="btn btn-info"
                         title="Modificar"
                         style={{ margin: "0 .2rem" }}
+                        disabled
                       >
                         <i className="fas fa-pencil-alt" />
                       </button>
@@ -729,6 +730,7 @@ export default function DeviceAdmin() {
                         className="btn btn-danger"
                         title="Desactivar"
                         style={{ margin: "0" }}
+                        disabled
                       >
                         <i className="fa fa-minus" />
                       </button>
