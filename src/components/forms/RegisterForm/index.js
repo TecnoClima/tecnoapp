@@ -151,10 +151,10 @@ export default function RegisterForm() {
       </div>
       <div className="row">
         <div className="col">
-          {formFields.map((item) => {
+          {formFields.map((item, i) => {
             const { validation } = item;
             return (
-              <div>
+              <div key={i}>
                 <FormInput
                   label={item.label}
                   placeholder={item.placeholder}

@@ -100,7 +100,7 @@ export default function UserDetail(props) {
                       array={e.array}
                       item={e.item}
                       placeholder={props[e.item] || undefined}
-                      value={user[e.item]}
+                      value={newUser[e.item]}
                       select={updateNewUser}
                     />
                   </div>
@@ -120,7 +120,7 @@ export default function UserDetail(props) {
       </form>
       {peopleResult.success && (
         <SuccessModal
-          message="Usuario creado exitosamente"
+          message="Los cambios se han guardado"
           close={() => dispatch(peopleActions.resetResult())}
         />
       )}

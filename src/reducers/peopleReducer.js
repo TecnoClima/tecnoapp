@@ -36,6 +36,7 @@ export default function workOrderReducer(state = initialState, action) {
         : (newList = [action.payload]);
       return {
         ...state,
+        peopleResult: { success: action.payload },
         userList: newList,
       };
     case "WORKERS_LIST":
