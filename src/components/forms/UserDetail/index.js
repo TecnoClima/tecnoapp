@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// import { addUser } from "../../../actions/peopleActions";
 import { peopleActions } from "../../../actions/StoreActions";
-import { FormInput, FormSelector } from "../../../pages/Admin/Devices";
+// import { FormInput, FormSelector } from "../../../pages/Admin/Devices";
+import { FormInput, FormSelector } from "../../../components/forms/FormInput";
+
 import { ErrorModal, SuccessModal } from "../../warnings";
 import "./index.css";
 
 export default function UserDetail(props) {
-  //Create, View and Update
   const { user } = props;
   const { peopleResult } = useSelector((state) => state.people);
-  // const { selectedUser } = useSelector((state) => state.people);
   const [newUser, setNewUser] = useState(user === "new" ? {} : { ...user });
   const dispatch = useDispatch();
 
@@ -77,14 +76,14 @@ export default function UserDetail(props) {
           <div className="row">
             <div className="col">
               {inputFields.map((e, i) => (
-                <div className="d-flex w-100" key={i}>
+                <div className="d-flex w-100 mb-1" key={i}>
                   <FormInput
                     className={"w-100"}
                     label={e.label}
-                    item={e.item}
+                    name={e.item}
                     value={newUser[e.item]}
                     placeholder={e.placeholder}
-                    onChange={updateNewUser}
+                    changeInput={updateNewUser}
                     type={e.item === "password" ? "password" : undefined}
                   />
                 </div>
@@ -95,13 +94,13 @@ export default function UserDetail(props) {
                 selectFields.map((e, i) => (
                   <div key={i}>
                     <FormSelector
-                      className={"w-100"}
+                      className={"w-100 mb-1"}
                       label={e.label}
-                      array={e.array}
-                      item={e.item}
+                      options={e.array}
+                      name={e.item}
                       placeholder={props[e.item] || undefined}
                       value={newUser[e.item]}
-                      select={updateNewUser}
+                      onSelect={updateNewUser}
                     />
                   </div>
                 ))}

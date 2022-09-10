@@ -1,19 +1,16 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// import { getPlantList } from "../../../actions/dataActions";
 import { peopleActions, plantActions } from "../../../actions/StoreActions";
 import UserCard from "../../../components/Cards/UserCards/UserCard";
-// import DropdownChoice from "../../../components/dropdown/DropdownChoice";
 import UserDetail from "../../../components/forms/UserDetail";
 
-import { FormSelector } from "../Devices";
+import { FormSelector } from "../../../components/forms/FormInput";
 import { appConfig } from "../../../config";
 import "./index.css";
 const { headersRef } = appConfig;
 
 export default function AdminUsers() {
   const { userList, userOptions } = useSelector((state) => state.people);
-  // const { locationTree } = useSelector((state) => state.data);
   const { plantList } = useSelector((state) => state.plants);
   const [options, setOption] = useState({ active: true });
   const dispatch = useDispatch();
@@ -37,7 +34,6 @@ export default function AdminUsers() {
       newOption[item] = checkBox ? !checked : value;
     }
     setOption(newOption);
-    // dispatch(peopleActions.getAllUsers(options));
   }
 
   useEffect(
@@ -59,44 +55,56 @@ export default function AdminUsers() {
     <div className="adminOptionSelected">
       <div className="container p-4">
         <div className="row">
-          <h4>Lista de Usuarios</h4>
+          <div className="col-md-8 py-1">
+            <h4>Lista de Usuarios</h4>
+          </div>
+          <div className="col-md-4">
+            <button
+              className="btn btn-success w-100"
+              onClick={() => setUserDetail("new")}
+            >
+              CREAR USUARIO
+            </button>
+          </div>
         </div>
         {userOptions && plantList && (
           <div className="row">
-            <FormSelector
-              label="Planta"
-              array={plantList.map((p) => p.name)}
-              item="plant"
-              select={setUserFilters}
-            />
-            <FormSelector
-              label="Cargo"
-              array={userOptions.charge}
-              item="charge"
-              select={setUserFilters}
-            />
-            <FormSelector
-              label="Acceso"
-              array={userOptions.access}
-              item="access"
-              select={setUserFilters}
-            />
-            <div className="d-flex gap-4 align-items-center">
-              <label>
-                Incluir inactivos
-                <input
-                  name="active"
-                  type="checkbox"
-                  className="checkFilter"
-                  onChange={setUserFilters}
-                />
-              </label>
-              <button
-                className="btn btn-success"
-                onClick={() => setUserDetail("new")}
-              >
-                CREAR USUARIO
-              </button>
+            <div className="col-md-3">
+              <FormSelector
+                label="Planta"
+                options={plantList.map((p) => p.name)}
+                name="plant"
+                onSelect={setUserFilters}
+              />
+            </div>
+            <div className="col-md-3">
+              <FormSelector
+                label="Cargo"
+                options={userOptions.charge}
+                name="charge"
+                onSelect={setUserFilters}
+              />
+            </div>
+            <div className="col-md-3">
+              <FormSelector
+                label="Acceso"
+                options={userOptions.access}
+                name="access"
+                onSelect={setUserFilters}
+              />
+            </div>
+            <div className="col-md-3">
+              <div className="d-flex gap-4 align-items-center">
+                <label>
+                  <input
+                    name="active"
+                    type="checkbox"
+                    className="checkFilter"
+                    onChange={setUserFilters}
+                  />
+                  Incluir inactivos
+                </label>
+              </div>
             </div>
           </div>
         )}
