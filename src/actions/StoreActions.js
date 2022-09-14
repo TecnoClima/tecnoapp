@@ -25,10 +25,7 @@ export function serverAction(data) {
       body: data.body ? JSON.stringify(data.body) : undefined,
     })
       .then((response) => response.json())
-      .then((json) => {
-        console.log("json", json);
-        return dispatch({ type: data.type, payload: json });
-      })
+      .then((json) => dispatch({ type: data.type, payload: json }))
       .catch((e) => console.error(e));
   };
 }

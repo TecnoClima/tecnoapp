@@ -75,7 +75,7 @@ export default function plantReducer(state = initialState, action) {
         areaList: action.payload,
       };
     case "NEW_AREAS":
-      return newItems("plantList");
+      return newItems("areaList");
     case "UPDATE_AREA":
       return update("areaList");
     case "DELETE_AREA":

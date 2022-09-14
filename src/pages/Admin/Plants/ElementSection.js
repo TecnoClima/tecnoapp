@@ -39,10 +39,10 @@ export default function ElementSection(props) {
     setData(prop, propValue);
   }
 
-  function handleDeleteData(e, i) {
+  function handleDeleteData(e, code) {
     e.preventDefault();
     setDeleting(true);
-    dispatch(deleteAction(array[i]));
+    dispatch(deleteAction(array.find((e) => e.code === code)));
   }
 
   return (
@@ -109,7 +109,7 @@ export default function ElementSection(props) {
                   <button
                     className="btn btn-danger m-1 p-1"
                     title="Eliminar"
-                    onClick={(e) => handleDeleteData(e, i)}
+                    onClick={(e) => handleDeleteData(e, element.code)}
                   >
                     <i className="fas fa-trash-alt" />
                   </button>
@@ -131,27 +131,28 @@ export default function ElementSection(props) {
                       data={data}
                     />
                   )}
-                  {plantResult.error && plantResult.item === item && (
-                    <ErrorModal
-                      message={plantResult.error}
-                      close={() => dispatch(plantActions.resetResult())}
-                    />
-                  )}
-                  {plantResult.success &&
-                    plantResult.item === item &&
-                    deleting && (
-                      <SuccessModal
-                        message={plantResult.success}
-                        close={() => {
-                          dispatch(plantActions.resetResult());
-                          setDeleting(false);
-                        }}
-                      />
-                    )}
                 </div>
               );
             })}
       </div>
+      {!editElement && plantResult.error && plantResult.item === item && (
+        <ErrorModal
+          message={plantResult.error}
+          close={() => dispatch(plantActions.resetResult())}
+        />
+      )}
+      {!editElement &&
+        plantResult.success &&
+        plantResult.item === item &&
+        deleting && (
+          <SuccessModal
+            message={plantResult.success}
+            close={() => {
+              dispatch(plantActions.resetResult());
+              setDeleting(false);
+            }}
+          />
+        )}
     </div>
   );
 }

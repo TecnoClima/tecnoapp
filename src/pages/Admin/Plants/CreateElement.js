@@ -15,8 +15,22 @@ const servicePoint = "servicePoint";
 export default function CreateElement(props) {
   const { item, close, element, save, data } = props;
   const { plantResult } = useSelector((state) => state.plants);
-  const [code, setCode] = useState(element ? element.code : "");
-  const [name, setName] = useState(element ? element.name : "");
+  // const [code, setCode] = useState(element ? element.code : "");
+  // const [name, setName] = useState(element ? element.name : "");
+  const [codeName, setCodeName] = useState(
+    element
+      ? { code: element.code, name: element.name }
+      : { code: "", name: "" }
+  );
+  const [error, setError] = useState(undefined);
+  const [bodyArray, setBodyArray] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const dispatch = useDispatch();
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setCodeName({ ...codeName, [name]: value.toUpperCase() });
+  }
 
   const [adds, setAdds] = useState(
     item === servicePoint
@@ -28,11 +42,6 @@ export default function CreateElement(props) {
         }
       : undefined
   );
-
-  const [error, setError] = useState(undefined);
-  const [bodyArray, setBodyArray] = useState([]);
-  const [saving, setSaving] = useState(false);
-  const dispatch = useDispatch();
 
   const parent = {
     plant: null,
@@ -54,7 +63,7 @@ export default function CreateElement(props) {
     e.preventDefault();
     const body = {};
     if (element) {
-      body[item] = { code, name, ...adds };
+      body[item] = { ...codeName, ...adds };
       body.previous = element;
     } else {
       const key = item + "s";
@@ -68,19 +77,17 @@ export default function CreateElement(props) {
 
   function addToArrayBody(e) {
     e.preventDefault();
+    const { code, name } = codeName;
     const check = bodyArray.find(
       (e) => (code && e.code === code) || (name && e.name === name)
     );
     if (check) {
       setError("Código o Nombre ya presentes en la lista");
     } else {
-      let newItem = {};
-      if (code) newItem.code = code;
-      if (name) newItem.name = name;
+      let newItem = { ...codeName };
       if (adds) newItem = { ...newItem, ...adds };
       setBodyArray([...bodyArray, newItem]);
-      setCode("");
-      setName("");
+      setCodeName({ code: "", name: "" });
       let resetAdds = { ...adds };
       Object.keys(resetAdds).map((k) => (resetAdds[k] = false));
       setAdds(resetAdds);
@@ -100,10 +107,10 @@ export default function CreateElement(props) {
     if (!error) return;
     !bodyArray.find(
       (e) =>
-        e.code.toLowerCase() === code.toLowerCase() ||
-        e.name.toLowerCase() === name.toLowerCase()
+        e.code.toLowerCase() === codeName.code.toLowerCase() ||
+        e.name.toLowerCase() === codeName.name.toLowerCase()
     ) && setError(undefined);
-  }, [code, name, bodyArray, error]);
+  }, [codeName, bodyArray, error]);
 
   return (
     <div className="modal">
@@ -124,16 +131,18 @@ export default function CreateElement(props) {
         {item !== servicePoint && (
           <FormInput
             label="Código"
-            value={code}
+            name="code"
+            value={codeName.code}
             placeholder={`ingrese código de ${headersRef[item]}`}
-            changeInput={(e) => setCode(e.target.value)}
+            changeInput={handleChange}
           />
         )}
         <FormInput
           label="Nombre"
-          value={name}
+          name="name"
+          value={codeName.name}
           placeholder={`ingrese nombre de ${headersRef[item]}`}
-          changeInput={(e) => setName(e.target.value)}
+          changeInput={handleChange}
         />
         {item === servicePoint && (
           <div>
@@ -160,7 +169,9 @@ export default function CreateElement(props) {
             ) : (
               <button
                 className="btn btn-info w-auto py-0"
-                disabled={(item !== servicePoint && !code) || !name}
+                disabled={
+                  (item !== servicePoint && !codeName.code) || !codeName.name
+                }
                 onClick={(e) => addToArrayBody(e)}
               >
                 Agregar {headersRef[item]} a crear
@@ -197,7 +208,11 @@ export default function CreateElement(props) {
           </div>
         ))}
         <div className="flex w-100 justify-content-evenly mt-4">
-          <button className="btn btn-success col-5" onClick={saveData}>
+          <button
+            className="btn btn-success col-5"
+            onClick={saveData}
+            disabled={!bodyArray[0]}
+          >
             GUARDAR
           </button>
         </div>

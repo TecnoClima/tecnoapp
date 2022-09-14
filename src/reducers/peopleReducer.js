@@ -11,7 +11,7 @@ const initialState = {
 };
 
 export default function workOrderReducer(state = initialState, action) {
-  // console.log(action.type, action.payload);
+  const { error, success } = action.payload || {};
   switch (action.type) {
     case "USER_DATA":
       return {
@@ -71,6 +71,7 @@ export default function workOrderReducer(state = initialState, action) {
       return {
         ...state,
         peopleResult: action.payload,
+        userList: error ? state.userList : [...state.userList, success],
       };
     case "RESET_PEOPLE_RESULT":
       return {
