@@ -209,7 +209,7 @@ export default function CreateElement(props) {
           <button
             className="btn btn-success col-5"
             onClick={saveData}
-            disabled={!bodyArray[0]}
+            disabled={!bodyArray[0] && element === codeName}
           >
             GUARDAR
           </button>

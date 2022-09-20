@@ -30,6 +30,11 @@ export default function deviceReducer(state = initialState, action) {
         deviceResult: action.payload,
         deviceFullList: newList,
       };
+    case "LOAD_DEVICE_EXCEL":
+      return {
+        ...state,
+        deviceResult: action.payload,
+      };
     case "NEW_DEVICE":
       return {
         ...state,

@@ -1,16 +1,21 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addServPoint,
-  addPlantCreationReset,
-} from "../../../../actions/addPlantsActions";
+import { plantActions } from "../../../../actions/StoreActions";
 import { appConfig } from "../../../../config";
 const { headersRef } = appConfig;
 
 export function LoadLocations(props) {
   const { close, locations } = props;
-  const { creationResult } = useSelector((state) => state.addPlants);
-  const [newLocations, setNewLocations] = useState(locations);
+  const { plantResult } = useSelector((state) => state.plants);
+  const [newLocations, setNewLocations] = useState(
+    locations.filter(
+      (loc, i) =>
+        !!loc &&
+        !locations
+          .slice(0, i)
+          .find((sp) => !!sp && sp.servicePoint === loc.servicePoint)
+    )
+  );
   const [toCreate, setToCreate] = useState([]);
   const [keys, setKeys] = useState([]);
 
@@ -40,11 +45,11 @@ export function LoadLocations(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    dispatch(addServPoint({ servicePoints: toCreate }));
+    dispatch(plantActions.createSP({ servicePoints: toCreate }));
   }
 
   function handleClose() {
-    dispatch(addPlantCreationReset);
+    dispatch(plantActions.resetResult());
     close();
   }
 
@@ -52,6 +57,7 @@ export function LoadLocations(props) {
     <div className="modal">
       <form
         className="bg-light p-4 rounded-2"
+        style={{ maxHeight: "100vh", overflowY: "auto" }}
         onSubmit={(e) => handleSubmit(e)}
       >
         <div className="d-flex flex-row justify-content-end">
@@ -103,34 +109,32 @@ export function LoadLocations(props) {
           </tbody>
         </table>
         <div className="flex w-100 justify-content-center">
-          {creationResult &&
-            creationResult.error &&
-            creationResult.error.length && (
-              <div className="alert alert-danger" role="alert">
-                Se encontraron los siguientes errores:
-                <ul>
-                  {creationResult.error.map((sp) => (
-                    <li>
-                      <b>{`${sp.plant}>${sp.area}>${sp.line}>${sp.name}`}:</b>{" "}
-                      {sp.error}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          {creationResult &&
-            creationResult.success &&
-            creationResult.success.length > 0 && (
+          {plantResult && plantResult.error && plantResult.error.length && (
+            <div className="alert alert-danger" role="alert">
+              Se encontraron los siguientes errores:
+              <ul>
+                {plantResult.error.map((sp) => (
+                  <li>
+                    <b>{`${sp.plant}>${sp.area}>${sp.line}>${sp.name}`}:</b>{" "}
+                    {sp.error}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {plantResult &&
+            plantResult.success &&
+            plantResult.success.length > 0 && (
               <div className="d-flex flex-column align-items-center gap-2">
                 <div className="fw-bold text-success">
-                  Lugares de servicio creados: {creationResult.success.length}
+                  Lugares de servicio creados: {plantResult.success.length}
                 </div>
                 <button className="btn btn-info" onClick={handleClose}>
                   OK
                 </button>
               </div>
             )}
-          {!creationResult && (
+          {!plantResult.success && (
             <button
               className="btn btn-success mx-auto"
               type="submit"

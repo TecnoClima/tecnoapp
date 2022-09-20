@@ -6,6 +6,7 @@ import { appConfig } from "../../../config";
 import "./index.css";
 import { excelDateToJSDate } from "../../../utils/utils";
 import { LoadLocations } from "./form";
+import { ErrorModal } from "../../../components/warnings";
 const { postExcel, allOptions } = deviceActions;
 const { headersRef } = appConfig;
 
@@ -17,10 +18,11 @@ function buildXLSX(data) {
 }
 
 export function LoadExcel() {
-  const { deviceOptions } = useSelector((state) => state.devices);
+  const { deviceOptions, deviceResult } = useSelector((state) => state.devices);
   const [errors, setErrors] = useState(null);
   const [deviceList, setDeviceList] = useState(null);
   const [addLocations, setAddLocations] = useState(false);
+  const [file, setFile] = useState(null);
   const dispatch = useDispatch();
 
   const [data, setData] = useState({});
@@ -76,8 +78,13 @@ export function LoadExcel() {
     e.preventDefault();
     if (!e.target.files || !e.target.files[0]) return;
     const file = e.target.files[0];
-    const fileData = await file.arrayBuffer();
     /* data is an ArrayBuffer */
+    const fileData = await file.arrayBuffer();
+    setFile(fileData);
+    checkAndUpload(fileData);
+  }
+
+  function checkAndUpload(fileData) {
     const workbook = xlsx.read(fileData);
     const worksheet = workbook.Sheets["Equipos_a_cargar"];
     const rows = xlsx.utils.sheet_to_json(worksheet);
@@ -177,6 +184,7 @@ export function LoadExcel() {
   function closeLoadLocations() {
     inputRef.current.value = null;
     setAddLocations(false);
+    checkAndUpload(file);
     dispatch(allOptions());
   }
 
@@ -321,6 +329,18 @@ export function LoadExcel() {
         <LoadLocations
           locations={errors.map((e) => e.ls).flat(1)}
           close={closeLoadLocations}
+        />
+      )}
+      {deviceResult.error && (
+        <ErrorModal
+          message={deviceResult.error}
+          close={() => dispatch(deviceActions.resetResult())}
+        />
+      )}
+      {deviceResult.success && (
+        <ErrorModal
+          message="Equipos cargados exitosamente"
+          close={() => dispatch(deviceActions.resetResult())}
         />
       )}
     </div>
