@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { peopleActions } from "../../../actions/StoreActions";
 // import { FormInput, FormSelector } from "../../../pages/Admin/Devices";
@@ -8,12 +8,23 @@ import { ErrorModal, SuccessModal } from "../../warnings";
 import "./index.css";
 
 export default function UserDetail(props) {
-  const { user } = props;
+  const emptyUser = {
+    name: "",
+    username: "",
+    password: "",
+    idNumber: "",
+    email: "",
+    phone: "",
+    charge: "",
+    access: "",
+    plant: "",
+  };
+  const [user, setUser] = useState(props.user);
   const { peopleResult } = useSelector((state) => state.people);
-  const [newUser, setNewUser] = useState(user === "new" ? {} : { ...user });
+  const [newUser, setNewUser] = useState(
+    user === "new" ? emptyUser : { ...user }
+  );
   const dispatch = useDispatch();
-
-  useEffect(() => setNewUser(user), [user]);
 
   const inputFields = [
     { label: "Nombre", item: "name", placeholder: "Nombre y Apellido" },
@@ -46,6 +57,8 @@ export default function UserDetail(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
+    for (let key of Object.keys(newUser))
+      if (!newUser[key]) delete newUser[key];
     if (user === "new") {
       dispatch(peopleActions.addNew(newUser));
     } else {
@@ -56,18 +69,21 @@ export default function UserDetail(props) {
     }
   }
 
+  function handleCloseSuccess() {
+    dispatch(peopleActions.resetResult());
+    if (props.user === "new") {
+      setNewUser(emptyUser);
+    } else {
+      setUser(newUser);
+    }
+  }
+
   return (
     <div className="modal">
-      <form
-        className="bg-light rounded-2 w-auto"
-        onSubmit={(e) => handleSubmit(e)}
-      >
+      <form className="bg-light rounded-2 w-auto" onSubmit={handleSubmit}>
         <div className="container px-3 pb-3">
           <div className="row justify-content-end mt-2">
-            <button
-              className="btn btn-close float-end"
-              onClick={() => props.close()}
-            />
+            <button className="btn btn-close float-end" onClick={props.close} />
           </div>
           <div className="row">
             <h4>{`${user === "new" ? "Nuevo" : "Editar"} usuario`}</h4>
@@ -120,12 +136,12 @@ export default function UserDetail(props) {
       {peopleResult.success && (
         <SuccessModal
           message="Los cambios se han guardado"
-          close={() => dispatch(peopleActions.resetResult())}
+          close={handleCloseSuccess}
         />
       )}
       {peopleResult.error && (
         <ErrorModal
-          message="peopleResult.error"
+          message={peopleResult.error}
           close={() => dispatch(peopleActions.resetResult())}
         />
       )}

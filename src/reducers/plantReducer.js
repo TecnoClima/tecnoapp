@@ -3,6 +3,8 @@ const initialState = {
   areaList: [],
   lineList: [],
   spList: [],
+  lineDetail: {},
+
   selectedPlant: "",
   plantResult: {},
 };
@@ -85,6 +87,11 @@ export default function plantReducer(state = initialState, action) {
       return {
         ...state,
         lineList: action.payload,
+      };
+    case "LINE_DETAIL":
+      return {
+        ...state,
+        lineDetail: action.payload,
       };
     case "NEW_LINES":
       return newItems("lineList");

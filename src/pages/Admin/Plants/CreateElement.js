@@ -15,8 +15,6 @@ const servicePoint = "servicePoint";
 export default function CreateElement(props) {
   const { item, close, element, save, data } = props;
   const { plantResult } = useSelector((state) => state.plants);
-  // const [code, setCode] = useState(element ? element.code : "");
-  // const [name, setName] = useState(element ? element.name : "");
   const [codeName, setCodeName] = useState(
     element
       ? { code: element.code, name: element.name }

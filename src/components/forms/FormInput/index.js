@@ -118,6 +118,7 @@ export function FormTextArea({
   changeInput,
   name,
   readOnly,
+  value,
   placeholder,
 }) {
   // const {label, disabled, defaultValue, changeInput, name, readOnly, placeholder}=props
@@ -133,11 +134,13 @@ export function FormTextArea({
         className="form-control"
         disabled={disabled}
         defaultValue={defaultValue}
+        value={value}
         readOnly={readOnly}
         placeholder={placeholder}
         type={"text"}
         name={name}
-        onBlur={(e) => changeInput && changeInput(e)}
+        onChange={(e) => changeInput && changeInput(e)}
+        // onBlur={(e) => changeInput && changeInput(e)}
       />
     </div>
   );

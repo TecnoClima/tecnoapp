@@ -82,9 +82,10 @@ export const deviceActions = {
   getDetail: (id) => getAction(`devices/id?id=${id}`, "DEVICE_DETAIL"),
   getHistory: (id) => getAction(`devices/history?code=${id}`, "DEVICE_HISTORY"),
   allOptions: () => getAction(`devices/fullOptions`, "DEVICE_OPTIONS"),
-  createNew: (device) => postAction(`devices`, device, "DEVICE_DETAIL"),
+  createNew: (device) => postAction(`devices`, device, "NEW_DEVICE"),
   resetResult: () => ({ type: "RESET_DEVICE_RESULT" }),
   resetDevice: () => ({ type: "RESET_DEVICE" }),
+  updateDevice: (device) => putAction("devices", device, "UPDATE_DEVICE"),
 
   getFullList: (plant) =>
     getAction(`devices/all?plant=${plant}`, "FULL_DEVICE_LIST"),
@@ -132,6 +133,8 @@ export const plantActions = {
 
   createLine: (body) => postAction(`lines`, body, "NEW_LINES"),
   getLines: () => getAction(`lines`, "LINE_LIST"),
+  getLine: (conditions) =>
+    getAction(`lines${jsonToQuery(conditions)}`, "LINE_DETAIL"),
   updateLine: (body) => putAction("lines", body, "UPDATE_LINE"),
   deleteLine: (area) => deleteAction(`lines?lineId=${area._id}`, "DELETE_LINE"),
 
