@@ -93,73 +93,77 @@ export function LoadExcel() {
   useEffect(() => {
     if (!file && data && deviceOptions) return;
     function checkAndUpload(fileData) {
-      setErrors(null);
-      const workbook = xlsx.read(fileData);
-      const worksheet = workbook.Sheets["Equipos_a_cargar"];
-      const rows = xlsx.utils.sheet_to_json(worksheet);
-      const keys = Object.keys(data);
-      for (let row of rows)
-        for (let key of keys) {
-          row[key] = row[headersRef[key]];
-          delete row[headersRef[key]];
-        }
-      const errors = [];
-      for (let device of rows) {
-        const { plant, area, line, spCode } = device;
-        let error = {};
-        const servicePoints = device.servicePoints.split(";");
-        let ls = [];
-        for (let sp of servicePoints) {
-          const location = deviceOptions.locations.find(
-            (loc) =>
-              loc.name === sp &&
-              loc.area === area &&
-              loc.line === line &&
-              loc.plant === plant
-          );
-          if (!location)
-            ls.push({ plant, area, line, code: spCode, servicePoint: sp });
-        }
-        if (ls[0]) {
-          error.ls = ls;
-        } else {
-          device.servicePoints = servicePoints;
-        }
-        for (let key of keys) {
-          if (!["code", "spCode"].includes(key)) {
-            const { examples } = data[key];
-            if (examples[0]) {
-              if (typeof examples[0] === "string") {
-                if (!device[key] && key !== "extraDetails") {
-                  error[key] = `dato no completado`;
-                } else if (key === "regDate") {
-                  if (excelDateToJSDate(device[key]) > new Date()) {
-                    error[key] = "La fecha debe ser menor a la fecha actual";
+      try {
+        setErrors(null);
+        const workbook = xlsx.read(fileData);
+        const worksheet = workbook.Sheets["Equipos_a_cargar"];
+        const rows = xlsx.utils.sheet_to_json(worksheet);
+        const keys = Object.keys(data);
+        for (let row of rows)
+          for (let key of keys) {
+            row[key] = row[headersRef[key]];
+            delete row[headersRef[key]];
+          }
+        const errors = [];
+        for (let device of rows) {
+          const { plant, area, line, spCode } = device;
+          let error = {};
+          const servicePoints = device.servicePoints.split(";");
+          let ls = [];
+          for (let sp of servicePoints) {
+            const location = deviceOptions.locations.find(
+              (loc) =>
+                loc.name === sp &&
+                loc.area === area &&
+                loc.line === line &&
+                loc.plant === plant
+            );
+            if (!location)
+              ls.push({ plant, area, line, code: spCode, servicePoint: sp });
+          }
+          if (ls[0]) {
+            error.ls = ls;
+          } else {
+            device.servicePoints = servicePoints;
+          }
+          for (let key of keys) {
+            if (!["code", "spCode"].includes(key)) {
+              const { examples } = data[key];
+              if (examples[0]) {
+                if (typeof examples[0] === "string") {
+                  if (!device[key] && key !== "extraDetails") {
+                    error[key] = `dato no completado`;
+                  } else if (key === "regDate") {
+                    if (excelDateToJSDate(device[key]) > new Date()) {
+                      error[key] = "La fecha debe ser menor a la fecha actual";
+                    }
+                  } else if (
+                    !(
+                      examples.includes(device[key]) ||
+                      examples.includes(...device[key])
+                    )
+                  ) {
+                    error[key] = `${
+                      device[key]
+                    } no es una opción valida para ${headersRef[
+                      key
+                    ].toUpperCase()}`;
                   }
-                } else if (
-                  !(
-                    examples.includes(device[key]) ||
-                    examples.includes(...device[key])
-                  )
-                ) {
-                  error[key] = `${
-                    device[key]
-                  } no es una opción valida para ${headersRef[
-                    key
-                  ].toUpperCase()}`;
                 }
               }
             }
           }
+          if (Object.keys(error).length)
+            errors.push({ device: device.name, ...error });
         }
-        if (Object.keys(error).length)
-          errors.push({ device: device.name, ...error });
-      }
-      if (errors.find((e) => e.ls)) setAddLocations(true);
-      if (errors.length) {
-        setErrors(errors);
-      } else {
-        setDeviceList(rows);
+        if (errors.find((e) => e.ls)) setAddLocations(true);
+        if (errors.length) {
+          setErrors(errors);
+        } else {
+          setDeviceList(rows);
+        }
+      } catch (e) {
+        alert("No se pudo procesar archivo: " + e.message);
       }
     }
     checkAndUpload(file);
@@ -327,7 +331,7 @@ export function LoadExcel() {
                 <button
                   className="btn btn-outline-warning mx-2"
                   type="submit"
-                  disabled={!deviceList}
+                  disabled={!(deviceList && deviceList[0])}
                 >
                   <i className="fas fa-file-upload me-2" />
                   Subir
@@ -352,7 +356,7 @@ export function LoadExcel() {
         )}
 
         {errors && (
-          <div className="alert-danger">
+          <div className="alert-danger h-50 overflow-auto">
             Ooops! Hubo algunos errores... Hay que corregir lo siguiente para
             poder subir el archivo
             {errors.map((error, index) => (

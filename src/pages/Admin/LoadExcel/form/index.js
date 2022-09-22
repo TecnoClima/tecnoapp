@@ -54,6 +54,15 @@ export function LoadLocations(props) {
     close && close(loaded);
   }
 
+  function handleSelectAll(e) {
+    e.preventDefault();
+    const locations = [...newLocations];
+    const checked = newLocations[0].checked;
+    locations.map((loc) => (loc.checked = !checked));
+    setToCreate(locations.filter((loc) => loc.checked));
+    setNewLocations(locations);
+  }
+
   useEffect(
     () => plantResult.success && dispatch(deviceActions.allOptions()),
     [dispatch, plantResult]
@@ -62,58 +71,76 @@ export function LoadLocations(props) {
   return (
     <div className="modal">
       <form
-        className="bg-light p-4 rounded-2"
+        className="bg-light container p-4 rounded-2"
         style={{ maxHeight: "100vh", overflowY: "auto" }}
         onSubmit={(e) => handleSubmit(e)}
       >
-        <div className="d-flex flex-row justify-content-end">
+        <div className="row justify-content-end">
           <button className="btn btn-close" onClick={() => close()} />
         </div>
-        <h4>Los siguientes lugares de servicios no existen en base de datos</h4>
-        <p>
-          Por favor revise que hayan sido escritos correctamente y tilde los que
-          desee dar de alta en este momento
-        </p>
-        <table className="table" style={{ maxHeight: "50vh" }}>
-          <thead className="text-center">
-            <tr>
-              {keys
-                .filter((key) => key !== "checked")
-                .map((key, index) => (
-                  <th key={index}>{headersRef[key] || key}</th>
-                ))}
-              <th scope="col">Cargar</th>
-            </tr>
-          </thead>
-          <tbody>
-            {newLocations.map((location, index) => (
-              <tr
-                key={index}
-                className={location.checked ? "alert-success" : ""}
+        <div className="row">
+          <div className="col-md-9">
+            <h4>
+              Los siguientes lugares de servicios no existen en base de datos
+            </h4>
+            <p>
+              Por favor revise que hayan sido escritos correctamente y tilde los
+              que desee dar de alta en este momento
+            </p>
+          </div>
+          <div className="col-md-3">
+            <div className="d-flex w-100 justify-content-end">
+              <button
+                className="btn btn-outline-info mr-auto"
+                onClick={handleSelectAll}
               >
+                Seleccionar Todos
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="row overflow-auto mb-3" style={{ maxHeight: "50vh" }}>
+          <table className="table">
+            <thead className="text-center sticky-top bg-light">
+              <tr>
                 {keys
-                  .filter((key) => !extraKeys.includes(key))
-                  .map((key, i) => (
-                    <td key={i}>{location[key]}</td>
+                  .filter((key) => key !== "checked")
+                  .map((key, index) => (
+                    <th key={index}>{headersRef[key] || key}</th>
                   ))}
-                {extraKeys.map((key, i) => (
-                  <td key={i}>
-                    <div className="flex w-100 h-100 justify-content-center">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        name={key}
-                        id={index}
-                        checked={location[key] || false}
-                        onChange={(e) => onCheck(e)}
-                      />
-                    </div>
-                  </td>
-                ))}
+                <th scope="col">Cargar</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {newLocations.map((location, index) => (
+                <tr
+                  key={index}
+                  className={location.checked ? "alert-success" : ""}
+                >
+                  {keys
+                    .filter((key) => !extraKeys.includes(key))
+                    .map((key, i) => (
+                      <td key={i}>{location[key]}</td>
+                    ))}
+                  {extraKeys.map((key, i) => (
+                    <td key={i}>
+                      <div className="flex w-100 h-100 justify-content-center">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          name={key}
+                          id={index}
+                          checked={location[key] || false}
+                          onChange={(e) => onCheck(e)}
+                        />
+                      </div>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <div className="flex flex-column w-100 align-items-center">
           {plantResult.success && plantResult.success[0] && (
             <div className="d-flex flex-column align-items-center gap-2">
@@ -134,8 +161,12 @@ export function LoadLocations(props) {
               <ul>
                 {plantResult.errors.map((sp) => (
                   <li>
-                    <b>{`${sp.plant}>${sp.area}>${sp.line}>${sp.name}`}:</b>{" "}
-                    {sp.error}
+                    <div className="w-100 border border-danger px-1 rounded-3">
+                      <div className="fw-bold" style={{ fontSize: "80%" }}>
+                        {`${sp.plant}>${sp.area}>${sp.line}>${sp.servicePoint}`}
+                      </div>
+                      <div>{sp.error}</div>
+                    </div>
                   </li>
                 ))}
               </ul>
