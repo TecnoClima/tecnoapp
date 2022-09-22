@@ -45,6 +45,8 @@ export default function ElementSection(props) {
     dispatch(deleteAction(array.find((e) => e.code === code)));
   }
 
+  useEffect(() => dispatch(plantActions.resetResult()), [dispatch]);
+
   return (
     <div className="container-fluid px-0 mb-4">
       <div className="row">

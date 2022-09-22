@@ -6,7 +6,8 @@ import { appConfig } from "../../../config";
 import "./index.css";
 import { excelDateToJSDate } from "../../../utils/utils";
 import { LoadLocations } from "./form";
-import { ErrorModal } from "../../../components/warnings";
+import { ErrorModal, SuccessModal } from "../../../components/warnings";
+import waiting from "../../../assets/searching.gif";
 const { postExcel, allOptions } = deviceActions;
 const { headersRef } = appConfig;
 
@@ -29,6 +30,7 @@ export function LoadExcel() {
   const [options, setOptions] = useState({});
   const [filters, setFilters] = useState({});
   const inputRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => dispatch(allOptions()), [dispatch]);
 
@@ -40,10 +42,12 @@ export function LoadExcel() {
       plant: { subtitle: "(texto, de lista)", examples: [] },
       area: { subtitle: "(texto, de lista)", examples: [] },
       line: { subtitle: "(texto, de lista)", examples: [] },
+      spCode: { subtitle: "texto, (único)", examples: [] },
       servicePoints: {
-        subtitle: "Textos separados por punto y coma",
+        subtitle: "texto",
         examples: [],
       },
+      code: { subtitle: "texto, (único)", examples: ["AAA-001"] },
       name: { subtitle: "texto, (único)", examples: [] },
       type: { subtitle: "(texto, de lista)", examples: [] },
       power: { subtitle: "Número en kCal", examples: [] },
@@ -60,13 +64,16 @@ export function LoadExcel() {
     keys
       .filter(
         (key) =>
-          !["power", "name", "extraDetails", "regDate", "active"].includes(key)
+          !["power", "code", "name", "extraDetails", "regDate"].includes(key)
       )
       .map(
         (key) =>
           (items[key].examples = [
             ...new Set(
-              options[key] || options.locations.map((loc) => loc[key])
+              options[key] ||
+                options.locations.map(
+                  (loc) => loc[key === "spCode" ? "code" : key]
+                )
             ),
           ])
       );
@@ -81,73 +88,82 @@ export function LoadExcel() {
     /* data is an ArrayBuffer */
     const fileData = await file.arrayBuffer();
     setFile(fileData);
-    checkAndUpload(fileData);
   }
 
-  function checkAndUpload(fileData) {
-    const workbook = xlsx.read(fileData);
-    const worksheet = workbook.Sheets["Equipos_a_cargar"];
-    const rows = xlsx.utils.sheet_to_json(worksheet);
-    const keys = Object.keys(data);
-    for (let row of rows)
-      for (let key of keys) {
-        row[key] = row[headersRef[key]];
-        delete row[headersRef[key]];
-      }
-    const errors = [];
-    for (let device of rows) {
-      const { plant, area, line } = device;
-      let error = {};
-      const servicePoints = device.servicePoints.split(";");
-      let ls = [];
-      for (let sp of servicePoints) {
-        const location = deviceOptions.locations.find(
-          (loc) =>
-            loc.name === sp &&
-            loc.area === area &&
-            loc.line === line &&
-            loc.plant === plant
-        );
-        if (!location) ls.push({ plant, area, line, servicePoint: sp });
-      }
-      if (ls[0]) {
-        error.ls = ls;
-      } else {
-        device.servicePoints = servicePoints;
-      }
-      for (let key of keys) {
-        const { examples } = data[key];
-        if (examples[0]) {
-          if (typeof examples[0] === "string") {
-            if (!device[key] && key !== "extraDetails") {
-              error[key] = `dato no completado`;
-            } else if (key === "regDate") {
-              if (excelDateToJSDate(device[key]) > new Date()) {
-                error[key] = "La fecha debe ser menor a la fecha actual";
+  useEffect(() => {
+    if (!file && data && deviceOptions) return;
+    function checkAndUpload(fileData) {
+      setErrors(null);
+      const workbook = xlsx.read(fileData);
+      const worksheet = workbook.Sheets["Equipos_a_cargar"];
+      const rows = xlsx.utils.sheet_to_json(worksheet);
+      const keys = Object.keys(data);
+      for (let row of rows)
+        for (let key of keys) {
+          row[key] = row[headersRef[key]];
+          delete row[headersRef[key]];
+        }
+      const errors = [];
+      for (let device of rows) {
+        const { plant, area, line, spCode } = device;
+        let error = {};
+        const servicePoints = device.servicePoints.split(";");
+        let ls = [];
+        for (let sp of servicePoints) {
+          const location = deviceOptions.locations.find(
+            (loc) =>
+              loc.name === sp &&
+              loc.area === area &&
+              loc.line === line &&
+              loc.plant === plant
+          );
+          if (!location)
+            ls.push({ plant, area, line, code: spCode, servicePoint: sp });
+        }
+        if (ls[0]) {
+          error.ls = ls;
+        } else {
+          device.servicePoints = servicePoints;
+        }
+        for (let key of keys) {
+          if (!["code", "spCode"].includes(key)) {
+            const { examples } = data[key];
+            if (examples[0]) {
+              if (typeof examples[0] === "string") {
+                if (!device[key] && key !== "extraDetails") {
+                  error[key] = `dato no completado`;
+                } else if (key === "regDate") {
+                  if (excelDateToJSDate(device[key]) > new Date()) {
+                    error[key] = "La fecha debe ser menor a la fecha actual";
+                  }
+                } else if (
+                  !(
+                    examples.includes(device[key]) ||
+                    examples.includes(...device[key])
+                  )
+                ) {
+                  error[key] = `${
+                    device[key]
+                  } no es una opción valida para ${headersRef[
+                    key
+                  ].toUpperCase()}`;
+                }
               }
-            } else if (
-              !(
-                examples.includes(device[key]) ||
-                examples.includes(...device[key])
-              )
-            ) {
-              error[key] = `${
-                device[key]
-              } no es una opción valida para ${headersRef[key].toUpperCase()}`;
             }
           }
         }
+        if (Object.keys(error).length)
+          errors.push({ device: device.name, ...error });
       }
-      if (Object.keys(error).length)
-        errors.push({ device: device.name, ...error });
+      if (errors.find((e) => e.ls)) setAddLocations(true);
+      if (errors.length) {
+        setErrors(errors);
+      } else {
+        setDeviceList(rows);
+      }
     }
-    setAddLocations(true);
-    if (errors.length) {
-      setErrors(errors);
-    } else {
-      setDeviceList(rows);
-    }
-  }
+    checkAndUpload(file);
+  }, [file, data, deviceOptions]);
 
   function filterLocation(field, value) {
     if (!["plant", "area", "line"].includes(field)) return;
@@ -178,19 +194,28 @@ export function LoadExcel() {
       schema: "Device",
       items: deviceList,
     };
+    // console.log("data", data);
     dispatch(postExcel(data));
+    setUploading(true);
   }
 
-  function closeLoadLocations() {
+  useEffect(() => setUploading(false), [deviceResult]);
+  useEffect(() => {
+    if (uploading && deviceResult.success) {
+      setFile(null);
+      setDeviceList(null);
+    }
+  }, [uploading, deviceResult]);
+
+  function closeLoadLocations(loaded) {
     inputRef.current.value = null;
     setAddLocations(false);
-    checkAndUpload(file);
-    dispatch(allOptions());
+    loaded && dispatch(allOptions());
   }
 
   return (
     <div className="adminOptionSelected p-4">
-      <div className="w-100">
+      <div className="w-100 flex flex-column">
         <h3>Cargar datos desde archivo excel</h3>
         <div className="w-100 overflow-auto">
           <table
@@ -275,37 +300,57 @@ export function LoadExcel() {
             </tbody>
           </table>
         </div>
-        <div className="d-flex my-3">
-          <form
-            onSubmit={handleSubmit}
-            method="POST"
-            encType="multipart/form-data"
+        {uploading && (
+          <div
+            className="w-25 flex flex-column text-center align-self-center"
+            style={{ minWidth: "10rem" }}
           >
-            <input
-              type="file"
-              name="file"
-              ref={inputRef}
-              onChange={changeFile}
-              onClick={() => setErrors(null)}
-            />
-            <button
-              className="btn btn-outline-warning mx-2"
-              type="submit"
-              disabled={!deviceList}
-            >
-              <i className="fas fa-file-upload me-2" />
-              Subir
-            </button>
-          </form>
-          <button
-            className="btn btn-outline-info"
-            onClick={() =>
-              buildXLSX(Object.keys(data).map((key) => headersRef[key]))
-            }
-          >
-            Descargar plantilla
-          </button>
-        </div>
+            <img className="" src={waiting} alt="ventilador girando" />
+            <b>Cargando Equipos</b>
+          </div>
+        )}
+        {!uploading && (
+          <div>
+            <div className="d-flex my-3">
+              <form
+                onSubmit={handleSubmit}
+                method="POST"
+                encType="multipart/form-data"
+              >
+                <input
+                  type="file"
+                  name="file"
+                  ref={inputRef}
+                  onChange={changeFile}
+                  onClick={() => setErrors(null)}
+                />
+                <button
+                  className="btn btn-outline-warning mx-2"
+                  type="submit"
+                  disabled={!deviceList}
+                >
+                  <i className="fas fa-file-upload me-2" />
+                  Subir
+                </button>
+              </form>
+              <button
+                className="btn btn-outline-info"
+                onClick={() =>
+                  buildXLSX(Object.keys(data).map((key) => headersRef[key]))
+                }
+              >
+                Descargar plantilla
+              </button>
+            </div>
+            {deviceList && !errors && (
+              <div className="alert alert-success">
+                Click en [<i className="fas fa-file-upload me-2" />
+                Subir] para cargar los equipos
+              </div>
+            )}
+          </div>
+        )}
+
         {errors && (
           <div className="alert-danger">
             Ooops! Hubo algunos errores... Hay que corregir lo siguiente para
@@ -325,9 +370,9 @@ export function LoadExcel() {
           </div>
         )}
       </div>
-      {addLocations && errors && errors.find((e) => e.ls) && (
+      {addLocations && (
         <LoadLocations
-          locations={errors.map((e) => e.ls).flat(1)}
+          locations={errors ? errors.map((e) => e.ls).flat(1) : []}
           close={closeLoadLocations}
         />
       )}
@@ -338,7 +383,7 @@ export function LoadExcel() {
         />
       )}
       {deviceResult.success && (
-        <ErrorModal
+        <SuccessModal
           message="Equipos cargados exitosamente"
           close={() => dispatch(deviceActions.resetResult())}
         />

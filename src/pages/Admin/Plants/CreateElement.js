@@ -187,13 +187,14 @@ export default function CreateElement(props) {
                 {element.code && "[" + element.code + "]"} {element.name}
               </div>
               <div className="d-flex gap-1">
-                {Object.keys(element)
-                  .filter((k) => k !== "code" && k !== "name" && element[k])
-                  .map((k, i) => (
-                    <span key={i} className="badge bg-primary">
-                      {headersRef[k]}
-                    </span>
-                  ))}
+                {adds &&
+                  Object.keys(adds)
+                    .filter((k) => !!element[k])
+                    .map((k, i) => (
+                      <span key={i} className="badge bg-primary">
+                        {headersRef[k]}
+                      </span>
+                    ))}
               </div>
             </div>
 

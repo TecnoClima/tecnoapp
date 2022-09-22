@@ -72,6 +72,7 @@ const appConfig = {
     people: "Personal",
 
     //SP
+    spCode: "CódigoLS",
     calory: "Caloría",
     dangerTask: "Tarea Peligrosa",
     steelMine: "Acería",

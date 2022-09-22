@@ -170,6 +170,8 @@ export const planActions = {
     getAction(`dates${jsonToQuery(conditions)}`, "DATES"),
   getPlanDevices: (conditions) =>
     getAction(`tasks${jsonToQuery(conditions)}`, "PLAN_DEVICES"),
+  deleteStrategy: (id) =>
+    deleteAction(`strategies?id=${id}`, "DELETE_STRATEGIES"),
 };
 
 //review all these device actions...

@@ -122,7 +122,10 @@ export default function AdminUsers() {
           <UserDetail
             user={userDetail}
             charge={userOptions.charge}
-            access={userOptions.access.map((e) => headersRef[e] || e)}
+            access={userOptions.access.map((e) => ({
+              access: e,
+              acceso: headersRef[e] || e,
+            }))}
             plant={plantList.map((p) => p.name)}
             close={() => setUserDetail(null)}
           />

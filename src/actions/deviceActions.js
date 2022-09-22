@@ -119,7 +119,14 @@ export function deviceByName(string) {
 
 export function getDeviceOptions() {
   return async function (dispatch) {
-    return fetch(`${appConfig.url}/devices/options`)
+    return fetch(`${appConfig.url}/devices/options`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    })
       .then((response) => response.json())
       .then((json) =>
         dispatch({

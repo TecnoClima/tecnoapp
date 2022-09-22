@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { plantActions } from "../../../../actions/StoreActions";
+import { deviceActions, plantActions } from "../../../../actions/StoreActions";
 import { appConfig } from "../../../../config";
 const { headersRef } = appConfig;
 
@@ -48,10 +48,16 @@ export function LoadLocations(props) {
     dispatch(plantActions.createSP({ servicePoints: toCreate }));
   }
 
-  function handleClose() {
+  function handleClose(e, loaded) {
+    e.preventDefault();
     dispatch(plantActions.resetResult());
-    close();
+    close && close(loaded);
   }
+
+  useEffect(
+    () => plantResult.success && dispatch(deviceActions.allOptions()),
+    [dispatch, plantResult]
+  );
 
   return (
     <div className="modal">
@@ -68,7 +74,7 @@ export function LoadLocations(props) {
           Por favor revise que hayan sido escritos correctamente y tilde los que
           desee dar de alta en este momento
         </p>
-        <table className="table">
+        <table className="table" style={{ maxHeight: "50vh" }}>
           <thead className="text-center">
             <tr>
               {keys
@@ -108,12 +114,25 @@ export function LoadLocations(props) {
             ))}
           </tbody>
         </table>
-        <div className="flex w-100 justify-content-center">
-          {plantResult && plantResult.error && plantResult.error.length && (
+        <div className="flex flex-column w-100 align-items-center">
+          {plantResult.success && plantResult.success[0] && (
+            <div className="d-flex flex-column align-items-center gap-2">
+              <div className="fw-bold text-success">
+                Lugares de servicio creados: {plantResult.success.length}
+              </div>
+              <button
+                className="btn btn-info"
+                onClick={(e) => handleClose(e, true)}
+              >
+                OK
+              </button>
+            </div>
+          )}
+          {plantResult.errors && plantResult.errors[0] && (
             <div className="alert alert-danger" role="alert">
               Se encontraron los siguientes errores:
               <ul>
-                {plantResult.error.map((sp) => (
+                {plantResult.errors.map((sp) => (
                   <li>
                     <b>{`${sp.plant}>${sp.area}>${sp.line}>${sp.name}`}:</b>{" "}
                     {sp.error}
@@ -122,18 +141,6 @@ export function LoadLocations(props) {
               </ul>
             </div>
           )}
-          {plantResult &&
-            plantResult.success &&
-            plantResult.success.length > 0 && (
-              <div className="d-flex flex-column align-items-center gap-2">
-                <div className="fw-bold text-success">
-                  Lugares de servicio creados: {plantResult.success.length}
-                </div>
-                <button className="btn btn-info" onClick={handleClose}>
-                  OK
-                </button>
-              </div>
-            )}
           {!plantResult.success && (
             <button
               className="btn btn-success mx-auto"

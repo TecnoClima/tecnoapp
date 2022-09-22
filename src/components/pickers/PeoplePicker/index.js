@@ -17,7 +17,7 @@ const PeopleCard = (props) => {
       id={item.id}
     >
       <button
-        className={`btn container p-2 ${
+        className={`rounded-3 container p-2 ${
           isSelected ? "btn-info" : "btn-outline-secondary"
         }`}
         onClick={handleSelect}
@@ -99,9 +99,10 @@ export default function PeoplePicker(props) {
       <div className="accordion" id="accordionExample">
         <div className="accordion-item d-grid gap-2">
           <button
-            className={`btn ${
+            className={`rounded-3 ${
               idList[0] && idList[0].name ? "btn-primary" : "btn-secondary"
             } d-flex flex-wrap p-1`}
+            style={{ zIndex: "unset" }}
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#collapseOne"
@@ -111,7 +112,10 @@ export default function PeoplePicker(props) {
             {idList[0] && idList[0].name
               ? idList.map((worker, index) => {
                   return (
-                    <div key={index} className="btn btn-info m-1 p-0">
+                    <div
+                      key={index}
+                      className="rounded-3 px-1 btn-info m-1 p-0"
+                    >
                       {worker.name}
                     </div>
                   );

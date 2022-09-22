@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { planActions } from "../../../actions/StoreActions";
 import NewProgram from "../../forms/NewProgram";
+import { ErrorModal, SuccessModal } from "../../warnings";
 import "./index.css";
 
 const ProgramCard = ({ strategy }) => {
   const [edit, setEdit] = useState(false);
+  const dispatch = useDispatch();
 
   function openEdit(e) {
     if (e) e.preventDefault();
@@ -41,7 +43,10 @@ const ProgramCard = ({ strategy }) => {
             {edit && <NewProgram close={closeEdit} editProgram={strategy} />}
           </div>
           <div className="col d-grid gap-2 p-0">
-            <button className="btn btn-danger">
+            <button
+              className="btn btn-danger"
+              onClick={() => dispatch(planActions.deleteStrategy(strategy.id))}
+            >
               <i className="fas fa-trash-alt" />
             </button>
           </div>
@@ -54,7 +59,7 @@ const ProgramCard = ({ strategy }) => {
 export default function ProgramManagement(props) {
   const [create, setCreate] = useState(false);
   const { plant, year } = useSelector((state) => state.data);
-  const { programList } = useSelector((state) => state.plan);
+  const { programList, planResult } = useSelector((state) => state.plan);
   const dispatch = useDispatch();
 
   useEffect(
@@ -85,6 +90,18 @@ export default function ProgramManagement(props) {
               <ProgramCard key={index} strategy={element} />
             ))}
           </div>
+          {planResult.error && planResult.id && (
+            <ErrorModal
+              message={planResult.error}
+              close={() => dispatch(planActions.resetPlanResult())}
+            />
+          )}
+          {planResult.success && planResult.id && (
+            <SuccessModal
+              message={planResult.success}
+              close={() => dispatch(planActions.resetPlanResult())}
+            />
+          )}
         </div>
       )}
     </div>

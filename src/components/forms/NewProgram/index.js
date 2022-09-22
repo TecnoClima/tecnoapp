@@ -136,7 +136,7 @@ export default function NewProgram(props) {
               <FormInput
                 label="Nombre"
                 name="name"
-                defaultValue={program.name}
+                value={program.name}
                 changeInput={handleValue}
               />
             </div>
@@ -144,9 +144,9 @@ export default function NewProgram(props) {
               <FormSelector
                 key={program.supervisor}
                 label="Supervisor"
-                defaultValue={`${program.supervisor}`}
+                value={`${program.supervisor}`}
                 options={supervisors}
-                valueField="id"
+                valueField="idNumber"
                 name="supervisor"
                 captionField="name"
                 onSelect={handleValue}
@@ -164,7 +164,10 @@ export default function NewProgram(props) {
               <div className="form-control p-0 d-grid gap-2">
                 <PeoplePicker
                   name="Seleccionar..."
-                  options={workersList}
+                  options={workersList.map((w) => {
+                    w.id = w.idNumber;
+                    return w;
+                  })}
                   update={(idArray) =>
                     setProgram({ ...program, people: idArray.map((e) => e.id) })
                   }
@@ -208,9 +211,8 @@ export default function NewProgram(props) {
       )}
       {planResult.success && (
         <SuccessModal
-          message={"Programa modificado exitosamente!"}
+          message={"Programa guardado exitosamente!"}
           close={() => {
-            close();
             dispatch(planActions.resetPlanResult());
           }}
         />

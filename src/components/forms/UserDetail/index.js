@@ -45,7 +45,13 @@ export default function UserDetail(props) {
 
   const selectFields = [
     { label: "Cargo", item: "charge", array: props.charge },
-    { label: "Acceso", item: "access", array: props.access },
+    {
+      label: "Acceso",
+      item: "access",
+      array: props.access,
+      valueField: "access",
+      captionField: "acceso",
+    },
     { label: "Planta", item: "plant", array: props.plant },
   ];
 
@@ -113,6 +119,8 @@ export default function UserDetail(props) {
                       className={"w-100 mb-1"}
                       label={e.label}
                       options={e.array}
+                      valueField={e.valueField || undefined}
+                      captionField={e.captionField || undefined}
                       name={e.item}
                       placeholder={props[e.item] || undefined}
                       value={newUser[e.item]}

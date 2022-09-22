@@ -10,6 +10,10 @@ const initialState = {
 
 export default function planReducer(state = initialState, action) {
   let list = [];
+  const {
+    // error,
+    success,
+  } = action.payload || {};
   switch (action.type) {
     case "SELECT_STRATEGY":
       return {
@@ -21,20 +25,25 @@ export default function planReducer(state = initialState, action) {
         ...state,
         planResult: {},
       };
+    case "DELETE_STRATEGIES":
+      return {
+        ...state,
+        planResult: action.payload,
+        programList: state.programList.filter((p) =>
+          success ? p.id !== action.payload.id : true
+        ),
+      };
     case "NEW_PROGRAM":
-      list = state.programList.filter(
-        (element) => element.name !== action.payload.name
-      );
-      list.push(action.payload);
-      if (action.payload.error) {
-        return { ...state, planResult: { error: action.payload.error } };
-      } else {
-        return {
-          ...state,
-          programList: list.sort((a, b) => (a.name > b.name ? 1 : -1)),
-          planResult: { success: action.payload.id },
-        };
+      list = state.programList;
+      if (success) {
+        list = list.filter((element) => element.id !== success.id);
+        list.push(success);
       }
+      return {
+        ...state,
+        programList: list.sort((a, b) => (a.name > b.name ? 1 : -1)),
+        planResult: action.payload,
+      };
     case "DATES":
       return {
         ...state,
