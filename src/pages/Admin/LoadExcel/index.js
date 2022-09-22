@@ -373,6 +373,18 @@ export function LoadExcel() {
             ))}
           </div>
         )}
+        {deviceResult.errors && deviceResult.errors[0] && (
+          <div className="alert alert-danger h-50 overflow-auto" role="alert">
+            <div className="fw-bold">
+              Se encontraron los siguientes errores:
+            </div>
+            <ul>
+              {deviceResult.errors.map((item) => (
+                <li>{item.error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       {addLocations && (
         <LoadLocations
