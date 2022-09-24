@@ -4,8 +4,7 @@ const initialState = {
   lineList: [],
   spList: [],
   lineDetail: {},
-
-  selectedPlant: "",
+  selectedPlant: {},
   plantResult: {},
 };
 
@@ -52,17 +51,17 @@ export default function plantReducer(state = initialState, action) {
     case "PLANT_LIST":
       return { ...state, plantList: action.payload };
     // check this working
-    case "SELECTED_PLANT":
-      return {
-        ...state,
-        plantList: state.plantList.includes(action.payload)
-          ? state.plantList
-          : [...state.plantlist, ...action.payload],
-        plantResult: action.payload.error
-          ? { error: action.payload.error }
-          : { success: action.payload },
-        selectedPlant: action.payload,
-      };
+    // case "SELECTED_PLANT":
+    //   return {
+    //     ...state,
+    //     plantList: state.plantList.includes(action.payload)
+    //       ? state.plantList
+    //       : [...state.plantlist, ...action.payload],
+    //     plantResult: action.payload.error
+    //       ? { error: action.payload.error }
+    //       : { success: action.payload },
+    //     selectedPlant: action.payload,
+    //   };
     case "RESET_PLANT_RESULT":
       return { ...state, plantResult: {} };
     case "DELETE_PLANT":
@@ -111,7 +110,11 @@ export default function plantReducer(state = initialState, action) {
       return update("spList");
     case "DELETE_SP":
       return deleteItem("spList");
-
+    case "SELECTED_PLANT":
+      return {
+        ...state,
+        selectedPlant: action.payload,
+      };
     default:
       return state;
   }

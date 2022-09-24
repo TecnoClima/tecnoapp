@@ -2,7 +2,7 @@ const initialState = {
   programList: [],
   devicePlanList: [],
   planResult: {},
-  calendar: undefined,
+  calendar: [],
   selectedTask: {},
   selectedStrategy: {},
   plan: [],

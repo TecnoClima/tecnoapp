@@ -1,20 +1,83 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { planActions } from "../../../actions/StoreActions.js";
-import ProgramFilters from "../../filters/ProgramFilters/index.js";
+import {
+  CalendarFilter,
+  CalendarLocFilter,
+  CalendarPeopleFilter,
+} from "../../filters/CalendarFilter/index.js";
 import NewPaginate from "../../newPaginate/index.js";
-// import Paginate from "../../Paginate/index.js";
 import CalendarPicker from "../../pickers/CalendarPicker/index.js";
 import "./index.css";
 
+export function ProgramFilter(props) {
+  const [program, setProgram] = useState("");
+  const { programList } = useSelector((state) => state.plan);
+  const { selectedPlant } = useSelector((state) => state.plants);
+  const [requested, setRequested] = useState(false);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (requested) return;
+    if (!programList[0]) dispatch(planActions.getStrategies());
+    setRequested(true);
+  }, [requested, programList, dispatch]);
+
+  function handleChange(e) {
+    const { value } = e.target;
+    props.select && props.select({ strategy: value });
+    setProgram(value);
+  }
+
+  return (
+    <div className="input-group">
+      <div className="input-group-prepend">
+        <span className="input-group-text" id="inputGroup-sizing-default">
+          Programa
+        </span>
+      </div>
+      <select
+        name="supervisor"
+        value={program}
+        onChange={handleChange}
+        className="form-control"
+      >
+        <option value="">Todos</option>
+        {programList
+          .filter((p) =>
+            selectedPlant ? p.plant === selectedPlant.name : true
+          )
+          .map((p, i) => (
+            <option key={i} value={p.name}>
+              {p.name}
+            </option>
+          ))}
+      </select>
+    </div>
+  );
+}
+
 export default function PlanCalendar(props) {
-  const { programList, calendar } = useSelector((state) => state.plan);
-  const [plant, setPlant] = useState(props.plant);
-  const [year, setYear] = useState(props.year);
+  const { calendar } = useSelector((state) => state.plan);
+  const plant = useSelector((state) => state.plants.selectedPlant);
+  const { lineList } = useSelector((state) => state.plants);
+  const { year } = useSelector((state) => state.data);
+  const [filtersOn, setFiltersOn] = useState(false);
+  const [filters, setFilters] = useState({
+    from: year + "-01-01",
+    to: year + "-12-31",
+    program: "",
+    supervisor: "",
+    worker: "",
+    area: "",
+    line: "",
+    device: "",
+  });
   // const [page, setPage]=useState({first: 0, size:15})
   const [paginate, setPaginate] = useState({ first: 0, last: 15 });
   const [filteredList, setFilteredList] = useState([]);
   const [dates, setDates] = useState([]);
+  const [order, setOrder] = useState({ alpha: 1, date: 1 });
   const dispatch = useDispatch();
   const months = [
     "Enero",
@@ -31,15 +94,18 @@ export default function PlanCalendar(props) {
     "Diciembre",
   ];
 
+  function select(json) {
+    setFilters({ ...filters, ...json });
+  }
+
   //trabajar directamente con la lista de equipos
-  useEffect(() => setPlant(props.plant), [props.plant]);
-  useEffect(() => setYear(props.year), [props.year]);
   useEffect(
-    () => year && plant && dispatch(planActions.getDates({ year, plant })),
+    () =>
+      year &&
+      plant &&
+      dispatch(planActions.getDates({ year, plant: plant.name })),
     [year, plant, dispatch]
   );
-  // useEffect(()=>setFilteredList('calendar',calendar),[calendar])
-  useEffect(() => calendar && setFilteredList(calendar), [calendar]);
 
   //getAllWeeks
   useEffect(() => {
@@ -65,63 +131,105 @@ export default function PlanCalendar(props) {
       newList.sort((a, b) =>
         new Date(a.dates[0] ? a.dates[0].date : `${year - 1}/12/05`) >
         new Date(b.dates[0] ? b.dates[0].date : `${year - 1}/12/05`)
-          ? 1
-          : -1
+          ? order.date
+          : -order.date
       )
     );
+    setOrder({ ...order, date: order.date * -1 });
   }
   function sortByDevice(e) {
     e.preventDefault();
     const newList = [...filteredList];
-    setFilteredList(newList.sort((a, b) => (a.name > b.name ? 1 : -1)));
-  }
-
-  function applyFilters(filters) {
     setFilteredList(
-      calendar.filter((task) => {
-        let check = true;
-        for (let key of Object.keys(filters)) {
-          switch (key) {
-            case "responsible":
-              if (task[key].id !== filters[key]) check = false;
-              break;
-            case "dates":
-              if (task[key] && task[key].length !== filters[key].length)
-                check = false;
-              break;
-            default:
-              if (task[key] !== filters[key]) check = false;
-          }
-        }
-        return check;
-      })
+      newList.sort((a, b) =>
+        a.device.name > b.device.name ? order.alpha : -order.alpha
+      )
     );
+    setOrder({ ...order, alpha: order.alpha * -1 });
   }
 
   useEffect(() => {
-    dispatch(planActions.getStrategies({ plant, year }));
-    dispatch(planActions.getPlanDevices({ plantName: plant, year }));
-  }, [plant, year, dispatch]);
+    if (!calendar[0]) return;
+    setFilteredList(
+      calendar.filter((task) => {
+        let check = true;
+        const { from, to, area, line, device, supervisor, strategy, worker } =
+          filters;
+        const values = {
+          supervisor,
+          strategy,
+        };
+        if (task.dates && task.dates[0]) {
+          check = false;
+          for (let item of task.dates) {
+            if (
+              new Date(item.date) > new Date(from) &&
+              new Date(item.date) < new Date(to)
+            )
+              check = true;
+          }
+        }
+        if (line && task.device.line !== line) check = false;
+        if (
+          area &&
+          !lineList
+            .filter((l) => l.area === area)
+            .map((l) => l._id)
+            .includes(task.device.line)
+        )
+          check = false;
+        if (worker && task.responsible.name !== worker) check = false;
+        if (device)
+          if (!task.device.name.toLowerCase().includes(device.toLowerCase()))
+            check = false;
+        for (let key of Object.keys(values))
+          if (values[key] && values[key] !== task[key]) check = false;
+        return check;
+      })
+    );
+  }, [filters, calendar, lineList]);
 
   return (
     <>
       <div className="container-fluid bg-light pt-1 d-flex h-full flex-column">
-        <div className="row">
-          <div className="col-auto d-flex align-items-center">
-            <b>Filtros:</b>
+        {plant.name && year ? (
+          <div>
+            <div className="row">
+              <div className="col flex">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setFiltersOn(!filtersOn);
+                  }}
+                  className="btn btn-info py-0"
+                >
+                  Filtros
+                </button>
+                {filtersOn && (
+                  <div
+                    className={filtersOn ? "row" : "hidden h-0"}
+                    style={{ transition: "height .5s" }}
+                  >
+                    <div className="col-lg-3">
+                      <CalendarFilter select={select} />
+                    </div>
+                    <div className="col-lg-auto flex-grow-1">
+                      <ProgramFilter select={select} />
+                      <CalendarPeopleFilter select={select} />
+                    </div>
+                    <div className="col-lg-auto m-0 flex-grow-1">
+                      <CalendarLocFilter select={select} />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-          <div className="col-auto">
-            {!(props.plant && props.year) && (
-              <label className="longLabel">Debe seleccionar Planta y Año</label>
-            )}
-            {props.plant && props.year && (
-              <ProgramFilters
-                programList={programList}
-                select={(json) => applyFilters(json)}
-              />
-            )}
+        ) : (
+          <div className="row">
+            <label className="longLabel">Debe seleccionar Planta y Año</label>
           </div>
-        </div>
+        )}
         <div className="row" style={{ height: "70vh", overflowY: "auto" }}>
           <div className="col">
             <table className="table">
@@ -170,7 +278,7 @@ export default function PlanCalendar(props) {
                   .slice(paginate.first, paginate.last)
                   .map((task, index) => (
                     <CalendarPicker
-                      key={task.code + index}
+                      key={task.device.code + index}
                       plant={plant}
                       year={year}
                       titles={index === 0}

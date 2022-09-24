@@ -103,7 +103,7 @@ export default function CalendarPicker(props) {
       <td className="p-0">
         <div>
           <div style={{ minWidth: "fit-content" }}>
-            <b>{task.name}</b>
+            <b>{task.device.name}</b>
           </div>
           <div>
             {task

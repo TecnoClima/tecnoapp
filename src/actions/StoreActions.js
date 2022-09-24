@@ -143,6 +143,7 @@ export const plantActions = {
   updateSP: (body) => putAction("servicePoints", body, "UPDATE_SP"),
   deleteSP: (item) =>
     deleteAction(`servicePoints?spId=${item._id || item.id}`, "DELETE_SP"),
+  setPlant: (plant) => ({ type: "SELECTED_PLANT", payload: plant }),
 };
 
 export const planActions = {

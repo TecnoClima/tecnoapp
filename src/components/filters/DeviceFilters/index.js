@@ -5,7 +5,15 @@ function applyFilters(device, filters) {
   let check = true;
   if (valueFilters)
     for (let key of Object.keys(valueFilters)) {
-      if (device[key] !== valueFilters[key]) check = false;
+      if (
+        key === "program" &&
+        device[key] &&
+        !device[key].name !== valueFilters[key]
+      ) {
+        check = false;
+      } else {
+        if (device[key] !== valueFilters[key]) check = false;
+      }
     }
   if (rangeFilters)
     for (let key of Object.keys(rangeFilters)) {
@@ -144,13 +152,23 @@ export default function DeviceFilters(props) {
   });
   const [filteredList, setFilteredList] = useState(list);
 
+  useEffect(() => console.log("filters", filters), [filters]);
+
   useEffect(() => {
     if (!filteredList[0]) return;
     let newOptions = {};
     for (let key of Object.keys(filteredList[0])) {
       if (!["power", "age", "reclaims", "name"].includes(key)) {
         newOptions[key] = [
-          ...new Set(filteredList.map((device) => device[key])),
+          ...new Set(
+            filteredList.map((device) =>
+              key === "strategy"
+                ? device[key]
+                  ? device[key].name
+                  : ""
+                : device[key]
+            )
+          ),
         ];
       }
     }
@@ -177,10 +195,11 @@ export default function DeviceFilters(props) {
   function inputValue(item, value) {
     let newValues = { ...filters.valueFilters };
     if (value === "SIN ASIGNAR") value = "unassigned";
+    console.log("item", item, "value", value);
     if (value === "") {
-      delete newValues[item];
+      delete newValues[item === "strategy" ? "program" : item];
     } else {
-      newValues[item] = value;
+      newValues[item === "strategy" ? "program" : item] = value;
     }
     const newFilters = { ...filters, valueFilters: newValues };
     setFilters(newFilters);
@@ -369,7 +388,7 @@ export default function DeviceFilters(props) {
           {plan && (
             <DeviceOptions
               title="Programa"
-              item="program"
+              item="strategy"
               options={options}
               select={inputValue}
               deletion={deleteFilter}

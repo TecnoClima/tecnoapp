@@ -26,11 +26,6 @@ export default function dataReducer(state = initialState, action) {
         ...state,
         servicePointList: action.payload,
       };
-    case "PLANT_NAME":
-      return {
-        ...state,
-        plant: action.payload,
-      };
     case "SET_YEAR":
       return {
         ...state,
