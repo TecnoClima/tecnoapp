@@ -14,6 +14,7 @@ import { cylinderActions, planActions } from "../../../actions/StoreActions";
 
 export default function PlanTask() {
   const { plant, year } = useSelector((state) => state.data);
+  const { selectedPlant } = useSelector((state) => state.plants);
 
   const { devicePlanList, programList } = useSelector((state) => state.plan);
   const [page, setPage] = useState({ first: 0, size: 10 });
@@ -23,11 +24,15 @@ export default function PlanTask() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getDeviceOptions());
-    dispatch(planActions.getStrategies({ plant, year }));
-    dispatch(cylinderActions.getGases());
-    dispatch(planActions.getPlanDevices({ plantName: plant, year }));
-  }, [dispatch, plant, year]);
+    if (!(selectedPlant.name && year)) return;
+    dispatch(planActions.getStrategies({ plant: selectedPlant.name, year }));
+    // dispatch(cylinderActions.getGases());
+    dispatch(
+      planActions.getPlanDevices({ plantName: selectedPlant.name, year })
+    );
+  }, [dispatch, selectedPlant, year]);
+
+  useEffect(() => setFilteredList(devicePlanList), [devicePlanList]);
 
   async function handleSave(json) {
     dispatch(setDeviceStrategy(json));
@@ -58,10 +63,16 @@ export default function PlanTask() {
       <div className="row m-0 px-1">
         <div className="col-sm-6 p-0">
           <DeviceFilters
+            hidenFields={"plant"}
             select={setFilteredList}
             list={devicePlanList}
             plan={true}
           />
+          {/* <DeviceFilters
+            select={setFilteredList}
+            list={devicePlanList}
+            plan={true}
+          /> */}
           <button
             className="btn btn-primary btn-sm mx-1"
             onClick={() => handleSelectAll()}
@@ -96,7 +107,7 @@ export default function PlanTask() {
                   <PlanDevice
                     key={key}
                     year={year}
-                    plant={plant}
+                    plant={selectedPlant.name}
                     device={device}
                     programs={programList}
                     checked={selection.includes(device.code)}
