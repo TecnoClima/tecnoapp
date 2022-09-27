@@ -63,7 +63,7 @@ export default function PlanTask() {
       <div className="row m-0 px-1">
         <div className="col-sm-6 p-0">
           <DeviceFilters
-            hidenFields={"plant"}
+            hiddenFields={["plant", "program"]}
             select={setFilteredList}
             list={devicePlanList}
             plan={true}

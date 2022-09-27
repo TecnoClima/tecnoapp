@@ -114,8 +114,45 @@ export const workOrderActions = {
       }${plant ? "&" : ""}${year ? `year=${year}` : ""}`,
       "ORDER_LIST"
     ),
+  callMostRecent: (filters) =>
+    postAction(`workorder/mostrecent`, filters, "MOST_RECENT"),
+  setDetail: (order) => ({
+    type: "ORDER_DETAIL",
+    payload: order,
+  }),
+  resetOrderResult: () => ({
+    type: "RESET_ORDER_RESULT",
+    payload: {},
+  }),
+  getWOOptions: () => getAction(`workorder/options`, "GET_WO_OPTIONS"),
+  newWorkOrder: (order) => postAction(`workorder`, order, "NEW_ORDER"),
+  updateOrder: (code, update) =>
+    putAction(`workorder/${code}`, update, "NEW_ORDER"),
+  resetNewOrder: () => ({
+    type: "NEW_ORDER",
+    payload: null,
+  }),
+  searchWO: (code) => getAction(`workorder/detail/${code}`, "ORDER_DETAIL"),
+  resetDetail: () => ({
+    type: "ORDER_DETAIL",
+    payload: {},
+  }),
+  getWOList: (conditions) =>
+    postAction(`workorder/list`, conditions, "ORDER_LIST"),
+  deleteOrder: (code) => deleteAction(`workorder/${code}`, "DELETED_ORDER"),
+  newIntervention: (order, data) =>
+    postAction(`intervention`, { order: order, ...data }, "ADD_INTERVENTION"),
+  updateIntervention: (id, update) =>
+    putAction(`intervention`, { id, update }, "UPDATE_INTERVENTION"),
+  addCylinderUsage: (intervention, user, gases) =>
+    postAction(`cylinders/usages`, { intervention, user, gases }, "ADD_USAGE"),
+  deleteCylinderUsage: (intervention, user, usages) =>
+    deleteAction(
+      `cylinders/usages`,
+      { intervention, user, usages },
+      "DEL_USAGE"
+    ),
 };
-
 export const plantActions = {
   getLocations: (plant) =>
     getAction(`servicePoints?plant=${plant}`, "LOCATIONS"),

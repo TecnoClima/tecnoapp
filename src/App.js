@@ -88,7 +88,7 @@ function App() {
           {access.isLogged && (
             <Route
               exact
-              path={"/ots/detail/:otCode"}
+              path={"/ots/detail/:orderCode"}
               element={
                 <Layout>
                   <WorkOrder />

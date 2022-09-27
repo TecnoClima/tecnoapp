@@ -45,6 +45,9 @@
   background-color: silver;
   color: grey
 }
+.input-group .btn{
+  z-index:0;
+}
 *::-webkit-scrollbar{
   -webkit-appearance: none;
 }

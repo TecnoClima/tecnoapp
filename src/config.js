@@ -30,6 +30,7 @@ const appConfig = {
     phone: "Teléfono",
 
     //forms
+    location: "Ubicación",
     date: "Fecha",
     time: "Hora",
     workers: "Personal",

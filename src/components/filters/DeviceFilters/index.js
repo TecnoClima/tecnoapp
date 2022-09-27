@@ -4,7 +4,7 @@ const { headersRef } = appConfig;
 const unassigned = "SIN PROGRAMA ASIGNADO";
 
 export default function DeviceFilters(props) {
-  const { list, hidenFields } = props;
+  const { list, hiddenFields } = props;
   const emptyfilters = {
     plant: "",
     area: "",
@@ -193,7 +193,7 @@ export default function DeviceFilters(props) {
         </div>
         <div className="offcanvas-body">
           {Object.keys(filters)
-            .filter((k) => !hidenFields.includes(k))
+            .filter((k) => !hiddenFields.includes(k))
             .map((k, i) => (
               <div className="input-group mb-1" key={i}>
                 <div className="input-group-prepend">

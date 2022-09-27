@@ -7,7 +7,7 @@ const PeopleCard = (props) => {
 
   function handleSelect(e) {
     e.preventDefault();
-    select(item.id);
+    select(item.id || item.idNumber);
   }
 
   return (
@@ -91,7 +91,10 @@ export default function PeoplePicker(props) {
 
   function handleSelect(id) {
     if (id !== userData.id)
-      updateList({ id, name: optionList.find((e) => e.id === id).name });
+      updateList({
+        id,
+        name: optionList.find((e) => [e.id, e.idNumber].includes(id)).name,
+      });
   }
 
   return (
@@ -142,7 +145,7 @@ export default function PeoplePicker(props) {
                           key={index}
                           isSelected={idList
                             .map((e) => e.id)
-                            .includes(option.id)}
+                            .includes(option.id || option.idNumber)}
                           select={handleSelect}
                           selectedCaption={
                             selectedWorkers

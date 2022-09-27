@@ -53,7 +53,7 @@ export default function deviceReducer(state = initialState, action) {
           ? state.deviceFullList
               .map((d) => d.code)
               .includes(action.payload.code)
-            ? [state.deviceFullList]
+            ? state.deviceFullList
             : [...state.deviceFullList, action.payload]
           : [],
       };
