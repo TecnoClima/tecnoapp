@@ -65,8 +65,8 @@ function TaskItem(props) {
           </button>
           <ul className="dropdown-menu py-0">
             {task.workOrders[0] ? (
-              task.workOrders.map((order) => (
-                <li>
+              task.workOrders.map((order, i) => (
+                <li key={i}>
                   <Link
                     className="dropdown-item"
                     to={`/ots/detail/${order}`}

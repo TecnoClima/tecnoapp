@@ -5,7 +5,7 @@ import { FormSelector } from "../../forms/FormInput";
 import "./index.css";
 
 export function PlantSelector({ disabled }) {
-  const { plant } = useSelector((state) => state.data);
+  // const { plant } = useSelector((state) => state.data);
   const { plantList, selectedPlant } = useSelector((state) => state.plants);
   const { userData } = useSelector((state) => state.people);
   const [requested, setRequested] = useState(false);

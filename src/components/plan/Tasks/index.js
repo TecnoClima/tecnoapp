@@ -8,12 +8,11 @@ import DeviceFilters from "../../filters/DeviceFilters";
 import Paginate from "../../Paginate";
 import PlanDevice from "../../Cards/PlanDevice";
 import "./index.css";
-import { getDeviceOptions } from "../../../actions/deviceActions";
 import ProgramForm from "../../forms/ProgramForm";
-import { cylinderActions, planActions } from "../../../actions/StoreActions";
+import { planActions } from "../../../actions/StoreActions";
 
 export default function PlanTask() {
-  const { plant, year } = useSelector((state) => state.data);
+  const { year } = useSelector((state) => state.data);
   const { selectedPlant } = useSelector((state) => state.plants);
 
   const { devicePlanList, programList } = useSelector((state) => state.plan);
@@ -63,16 +62,10 @@ export default function PlanTask() {
       <div className="row m-0 px-1">
         <div className="col-sm-6 p-0">
           <DeviceFilters
-            hiddenFields={["plant", "program"]}
+            hiddenFields={["plant"]}
             select={setFilteredList}
             list={devicePlanList}
-            plan={true}
           />
-          {/* <DeviceFilters
-            select={setFilteredList}
-            list={devicePlanList}
-            plan={true}
-          /> */}
           <button
             className="btn btn-primary btn-sm mx-1"
             onClick={() => handleSelectAll()}

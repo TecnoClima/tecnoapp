@@ -158,7 +158,7 @@ function NavBar() {
   return (
     <>
       <nav className="navBar bg-nav text-light d-flex align-items-center">
-        <div className="container-fluid p-0">
+        <div className="container p-0">
           <div className="row m-0">
             <div className="col-md-auto d-flex p-0 justify-content-between">
               <Link
@@ -193,7 +193,7 @@ function NavBar() {
                         className={(navData) =>
                           `col btn nav-item navBarLink ${
                             navData.isActive ? "activeNavLink" : ""
-                          }`
+                          } px-1`
                         }
                       >
                         {option.section}

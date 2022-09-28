@@ -278,7 +278,7 @@ export default function PlanCalendar(props) {
                   .slice(paginate.first, paginate.last)
                   .map((task, index) => (
                     <CalendarPicker
-                      key={task.device.code + index}
+                      key={index}
                       plant={plant}
                       year={year}
                       titles={index === 0}

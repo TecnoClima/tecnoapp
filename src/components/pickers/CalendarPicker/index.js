@@ -92,7 +92,7 @@ export default function CalendarPicker(props) {
       planActions.setDates({
         year,
         strategy: task.strategy,
-        device: task.code,
+        device: task.device.code,
         dates: datesInput,
       })
     );

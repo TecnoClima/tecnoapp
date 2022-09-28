@@ -1,11 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  deviceActions,
-  planActions,
-  workOrderActions,
-} from "../../actions/StoreActions";
+import { deviceActions, workOrderActions } from "../../actions/StoreActions";
 import { appConfig } from "../../config";
 import DeviceList from "../../components/lists/DeviceList";
 import AddTextForm from "../../components/forms/AddText";
