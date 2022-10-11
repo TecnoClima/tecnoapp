@@ -82,6 +82,24 @@ const appConfig = {
   values: {
     startingYear: 2015,
   },
+  cylinderStatuses: [
+    {
+      name: "Nueva",
+      class: { unselected: "btn-outline-info", selected: "btn-info" },
+    },
+    {
+      name: "En uso",
+      class: { unselected: "btn-outline-success", selected: "btn-success" },
+    },
+    {
+      name: "Vacía",
+      class: { unselected: "btn-outline-danger", selected: "btn-danger" },
+    },
+    {
+      name: "Descartada",
+      class: { unselected: "btn-outline-secondary", selected: "btn-secondary" },
+    },
+  ],
 };
 
 export { appConfig };

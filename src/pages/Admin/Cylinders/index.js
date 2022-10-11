@@ -4,54 +4,70 @@ import { useDispatch, useSelector } from "react-redux";
 
 import CylindersList from "../../../components/lists/CylindersList";
 
-import { getEmpleados } from "../../../actions/StoreActions";
+import { peopleActions } from "../../../actions/StoreActions";
 
 import NewCylinder from "../../../components/forms/NewCylinder";
 import { FormSelector } from "../../../components/forms/FormInput";
 import { cylinderActions } from "../../../actions/StoreActions";
+import { appConfig } from "../../../config";
+const { cylinderStatuses } = appConfig;
 
 export default function AdminCylinders() {
   const dispatch = useDispatch();
 
-  const { allCylinders, workers, refrigerants } = useSelector(
+  const { allCylinders, refrigerants } = useSelector(
     (state) => state.adminCylinders
   );
+  const { workersList, supervisors } = useSelector((s) => s.people);
   const [addCylinder, setAdd] = useState(false);
   const [filteredList, setFilteredList] = useState([]);
-  const [filterState, setFilterState] = useState({});
-  const statuses = ["Nueva", "En uso", "Vacia", "Descartada"];
-
+  const [filterState, setFilterState] = useState({
+    user: "",
+    status: "",
+    refrigerant: "",
+  });
+  const [requested, setRequested] = useState(false);
+  const statuses = cylinderStatuses.map((s) => s.name);
+  // Nueva: Aún no se encuentra asignada
+  // En uso: Asignada y con carga útil
+  // Vacía: Sin carga
+  // Descartada: Enviada a desecho
   useEffect(() => {
-    dispatch(getEmpleados());
-    dispatch(cylinderActions.getGases());
-    dispatch(cylinderActions.getList());
-  }, [dispatch]);
+    if (requested) return;
+    if (!workersList[0]) dispatch(peopleActions.getWorkers({ active: "all" }));
+    if (!supervisors[0])
+      dispatch(peopleActions.getSupervisors({ active: "all" }));
+    if (!allCylinders[0]) dispatch(cylinderActions.getList());
+    if (!refrigerants[0]) dispatch(cylinderActions.getGases());
+    setRequested(true);
+  }, [
+    requested,
+    workersList,
+    supervisors,
+    allCylinders,
+    refrigerants,
+    dispatch,
+  ]);
 
   useEffect(
     () =>
       setFilteredList(
-        allCylinders.filter((cylinder) => {
-          let check = true;
-          for (let key of Object.keys(filterState)) {
-            const cylinderValue =
-              key === "user" && cylinder.user
-                ? cylinder[key].id
-                : cylinder[key];
-            if (cylinderValue !== filterState[key]) check = false;
-          }
-          return check;
+        allCylinders.filter((c) => {
+          const { user, status, refrigerant } = filterState;
+          if (user && (!c.user || c.user.id !== user)) return false;
+          if (status && c.status !== status) return false;
+          if (refrigerant && c.refrigerant !== refrigerant) return false;
+          return true;
         })
       ),
-    [filterState, allCylinders]
+    [allCylinders, filterState]
   );
 
   function setFilter(event) {
     event.preventDefault();
     const newFilter = { ...filterState };
     const { name, value } = event.target;
-    value
-      ? (newFilter[name] = name === "user" ? Number(value) : value)
-      : delete newFilter[name];
+    newFilter[name] = isNaN(value) ? value : Number(value);
     setFilterState(newFilter);
   }
 
@@ -76,8 +92,8 @@ export default function AdminCylinders() {
             <FormSelector
               label="Responsable"
               name="user"
-              options={workers}
-              valueField="id"
+              options={workersList}
+              valueField="idNumber"
               captionField="name"
               onSelect={setFilter}
             />
@@ -103,7 +119,7 @@ export default function AdminCylinders() {
         <div className="row flex- overflow-scroll">
           <CylindersList
             cylinders={filteredList}
-            workers={workers}
+            workers={workersList}
             refrigerants={refrigerants}
             statuses={statuses}
           />

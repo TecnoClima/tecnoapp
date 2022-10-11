@@ -28,7 +28,7 @@ export default function NewProgram(props) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(peopleActions.getWorkers(plant));
+    dispatch(peopleActions.getWorkers({ plant }));
     dispatch(peopleActions.getSupervisors(plant));
   }, [dispatch, plant]);
 

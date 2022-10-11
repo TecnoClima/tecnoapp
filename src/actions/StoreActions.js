@@ -55,9 +55,9 @@ export const cylinderActions = {
 
 //People Actions
 export const peopleActions = {
-  getWorkers: (plant) =>
+  getWorkers: (cond) =>
     getAction(
-      `users?access=Worker${plant ? `&plant=${plant}` : ""}`,
+      `users${jsonToQuery({ ...cond, access: "Worker" })}`,
       "WORKERS_LIST"
     ),
   getSupervisors: (plant) =>

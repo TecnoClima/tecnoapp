@@ -49,16 +49,6 @@ export default function AddIntervention(props) {
     }
   }, [data, dispatch]);
 
-  // useEffect(() => {
-  //   if (!userData || !workersList[0]) return;
-  //   if (userData.access === "Worker") {
-  //     setUser({
-  //       id: userData.id,
-  //       name: workersList.find((e) => e.id === userData.id).name,
-  //     });
-  //   }
-  // }, [userData, workersList]);
-
   useEffect(() => {
     if (!allCylinders[0] || !workersList[0]) {
       setCylinderList([]);
@@ -66,9 +56,12 @@ export default function AddIntervention(props) {
       const cylinders = [...allCylinders];
 
       for (let cylinder of cylinders) {
-        cylinder.owner = workersList.find((worker) =>
-          [worker.id, worker.idNumber].includes(cylinder.user.id)
-        ).name;
+        let owner = workersList.find(
+          (worker) =>
+            cylinder.user &&
+            [worker.id, worker.idNumber].includes(cylinder.user.id)
+        );
+        cylinder.owner = owner ? owner.name : "";
       }
       setCylinderList(cylinders);
     }
@@ -131,9 +124,9 @@ export default function AddIntervention(props) {
 
   useEffect(() => {
     dispatch(
-      peopleActions.getWorkers(
-        userData.access === "Admin" ? undefined : userData.plant
-      )
+      peopleActions.getWorkers({
+        plant: userData.access === "Admin" ? undefined : userData.plant,
+      })
     );
   }, [userData, dispatch]);
 

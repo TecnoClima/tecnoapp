@@ -28,18 +28,18 @@ const emptyDevice = {
 export default function WorkOrder() {
   const { userData } = useSelector((s) => s.people);
   const { orderCode } = useParams();
+  const { workOrderOptions, orderDetail, orderResult } = useSelector(
+    (state) => state.workOrder
+  );
   const [order, setOrder] = useState({
     supervisor: "",
     clientWO: "",
-    class: "",
+    class: orderDetail.class || "",
     issue: "",
     solicitor: "",
     phone: "",
     servicePoint: "",
   });
-  const { workOrderOptions, orderDetail, orderResult } = useSelector(
-    (state) => state.workOrder
-  );
   const { plan } = useSelector((s) => s.plan);
   const { deviceFullList, selectedDevice } = useSelector((s) => s.devices);
   const [requested, setRequested] = useState(false);

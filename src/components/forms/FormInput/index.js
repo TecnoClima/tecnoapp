@@ -97,20 +97,6 @@ export function FormSelector(props) {
   );
 }
 
-export function ButtonPad({ label, temp, children }) {
-  const template = temp.split("-").join("fr ") + "fr";
-  return (
-    <div className="formField">
-      <div className="buttonPad" style={{ gridTemplateColumns: template }}>
-        <label className="formFieldLabel" style={{ height: "100%" }}>
-          {headersRef[label] || label}
-        </label>
-        {children}
-      </div>
-    </div>
-  );
-}
-
 export function FormTextArea({
   label,
   disabled,

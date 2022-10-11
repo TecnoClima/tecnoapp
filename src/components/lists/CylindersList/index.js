@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { cylinderActions } from "../../../actions/StoreActions";
 import NewCylinder from "../../forms/NewCylinder";
+
 import "./index.css";
 
 export default function CylindersList({ cylinders, workers, statuses }) {
@@ -13,9 +14,9 @@ export default function CylindersList({ cylinders, workers, statuses }) {
   //Función boton editar una garrafa de la lista
   const handleEditCylinder = (id) => {
     const cylinder = { ...cylinders.find((e) => e.id === id) };
-    if (!cylinder.assignedTo && cylinder.user)
-      cylinder.assignedTo = cylinder.user;
-    delete cylinder.user;
+    // if (!cylinder.assignedTo && cylinder.user)
+    //   cylinder.assignedTo = cylinder.user;
+    // delete cylinder.user;
     cylinder.refrigerant = refrigerants.find(
       (r) => r.code === cylinder.refrigerant
     ).id;
@@ -50,20 +51,16 @@ export default function CylindersList({ cylinders, workers, statuses }) {
         <tbody>
           {cylinders[0] &&
             cylinders.map((element, index) => {
-              const user = element.user
-                ? workers.find((e) => e.id === element.user.id)
-                : "STOCK";
+              const { user } = element;
               return (
                 <tr key={index}>
                   <td>
                     <b>{element.code}</b>
                   </td>
                   {/* <td>{element.user? workers.find(e=>e.id===element.user).name : 'STOCK'}</td> */}
-                  <td className={user ? "" : "crossedUp"}>
+                  <td className={user && !user.active ? "crossedUp" : ""}>
                     {element.user ? element.user.name : "STOCK"}
-                    {user ? (
-                      ""
-                    ) : (
+                    {user && user.active === false && (
                       <i
                         className="fas fa-ban"
                         style={{ color: "darkred" }}
