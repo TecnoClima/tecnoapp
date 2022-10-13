@@ -74,6 +74,7 @@ export default function PeoplePicker(props) {
     update(list);
   }
 
+  useEffect(() => setIDList(props.idList), [props.idList]);
   useEffect(() => setOptions(options), [options]);
 
   useEffect(() => {

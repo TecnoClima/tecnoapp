@@ -11,7 +11,7 @@ export default function adminCylindersReducer(state = initialState, action) {
 
   switch (action.type) {
     case "GET_CYLINDERS":
-      console.log("GET_CYLINDERS", action.payload);
+      // console.log("GET_CYLINDERS", action.payload);
       return {
         ...state,
         cylinders: action.payload,

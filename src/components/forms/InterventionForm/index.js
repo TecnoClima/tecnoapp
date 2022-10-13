@@ -22,7 +22,12 @@ export default function AddIntervention(props) {
     date: today,
     workers:
       userData.access === "Worker"
-        ? [workersList.find((e) => e.id === userData.id)]
+        ? [
+            {
+              id: userData.id,
+              name: "",
+            },
+          ]
         : [],
   });
   // const [user, setUser] = useState(undefined);
@@ -32,7 +37,19 @@ export default function AddIntervention(props) {
   const [list, setList] = useState(workersList);
   const dispatch = useDispatch();
 
-  useEffect(() => setList(workersList), [workersList]);
+  useEffect(() => {
+    if (!workersList[0]) return;
+    setList(workersList);
+    if (intervention.workers.find((worker) => !worker.name)) {
+      setIntervention({
+        ...intervention,
+        workers: intervention.workers.map((worker) => ({
+          id: worker.id,
+          name: workersList.find((w) => w.idNumber === worker.id).name,
+        })),
+      });
+    }
+  }, [intervention, workersList]);
 
   useEffect(() => {
     if (data) {
@@ -130,8 +147,6 @@ export default function AddIntervention(props) {
     );
   }, [userData, dispatch]);
 
-  //   useEffect(() => console.log("list", list), [list]);
-
   return (
     <div className="modal">
       <div
@@ -171,10 +186,9 @@ export default function AddIntervention(props) {
               min="00:00"
               value={intervention.time || ""}
               max={intervention.date === today ? time : "23:59"}
-              changeInput={(e) => {
-                console.log(e.target.value);
-                setIntervention({ ...intervention, time: e.target.value });
-              }}
+              changeInput={(e) =>
+                setIntervention({ ...intervention, time: e.target.value })
+              }
             />
           </div>
         </div>
