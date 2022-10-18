@@ -74,7 +74,7 @@ export default function PeoplePicker(props) {
     update(list);
   }
 
-  useEffect(() => setIDList(props.idList), [props.idList]);
+  useEffect(() => props.idList && setIDList(props.idList), [props.idList]);
   useEffect(() => setOptions(options), [options]);
 
   useEffect(() => {
@@ -97,6 +97,8 @@ export default function PeoplePicker(props) {
         name: optionList.find((e) => [e.id, e.idNumber].includes(id)).name,
       });
   }
+
+  useEffect(() => console.log("idList", idList), [idList]);
 
   return (
     <div className="col">

@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 export default function ForPlan(props) {
   const { select, current } = props;
   const { plan } = useSelector((s) => s.plan);
-  const [tasks, setTasks] = useState(undefined);
+  const [tasks, setTasks] = useState([]);
   const [forPlan, setForPlan] = useState(current.forPlan);
   const [device] = useState(props.device);
   const [selectedTask, setSelectedTask] = useState(
