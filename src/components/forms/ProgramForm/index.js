@@ -19,7 +19,6 @@ export default function ProgramForm(props) {
   const dispatch = useDispatch();
 
   useEffect(() => setProgramList(fullProgramList), [fullProgramList]);
-  useEffect(() => console.log("program", program), [program]);
 
   function selectProgram(name) {
     const program = programList.find((program) => program.name === name);

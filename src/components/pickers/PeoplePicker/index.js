@@ -98,8 +98,6 @@ export default function PeoplePicker(props) {
       });
   }
 
-  useEffect(() => console.log("idList", idList), [idList]);
-
   return (
     <div className="col">
       <div className="accordion" id="accordionExample">

@@ -10,8 +10,17 @@ import { ErrorModal, SuccessModal } from "../../warnings";
 const { headersRef } = appConfig;
 
 export default function NewProgram(props) {
+  const emptyProgram = {
+    plant: "",
+    year: "",
+    name: "",
+    supervisor: "",
+    people: [],
+    description: "",
+  };
   const { close, editProgram } = props;
-  const { plant, year } = useSelector((state) => state.data);
+  const { year } = useSelector((state) => state.data);
+  const { selectedPlant } = useSelector((state) => state.plants);
   const { workersList, supervisors } = useSelector((state) => state.people);
   const { programList, planResult } = useSelector((state) => state.plan);
   const [programmedWorkers, selectProgrammed] = useState([]);
@@ -22,15 +31,22 @@ export default function NewProgram(props) {
           year: `${editProgram.year}`,
           supervisor: `${editProgram.supervisor && editProgram.supervisor.id}`,
         }
-      : {}
+      : emptyProgram
   );
   const [errors, setErrors] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(peopleActions.getWorkers({ plant }));
-    dispatch(peopleActions.getSupervisors(plant));
-  }, [dispatch, plant]);
+    dispatch(peopleActions.getWorkers({ selectedPlant }));
+    dispatch(peopleActions.getSupervisors(selectedPlant));
+  }, [dispatch, selectedPlant]);
+
+  useEffect(
+    () =>
+      program.plant !== selectedPlant.name &&
+      setProgram({ ...program, plant: selectedPlant.name }),
+    [selectedPlant, program]
+  );
 
   useEffect(() => {
     let programmed = [];
@@ -44,10 +60,13 @@ export default function NewProgram(props) {
 
   function handleValue(e) {
     e.preventDefault();
+    const { name, value } = e.target;
+    setValue(name, value);
+  }
+  function setValue(item, value) {
     setErrors(false);
     const newProgram = { ...program };
-    const { name, value } = e.target;
-    value ? (newProgram[name] = value) : delete newProgram[value];
+    value ? (newProgram[item] = value) : delete newProgram[value];
     setProgram(newProgram);
   }
 
@@ -56,24 +75,18 @@ export default function NewProgram(props) {
     let errors = [];
     const newProgram = {
       ...program,
-      plant: program.plant || plant,
+      people: program.people.map((w) => w.id),
+      plant: program.plant || selectedPlant,
       year: program.year || year,
     };
-    const keys = [
-      "plant",
-      "year",
-      "name",
-      "supervisor",
-      "people",
-      "description",
-    ];
+    const keys = Object.keys(emptyProgram);
     for (let key of keys)
       if (!newProgram[key]) errors.push(headersRef[key] || key);
     if (errors[0]) {
       setErrors(errors);
     } else {
       if (program.id) {
-        let update = { ...program };
+        let update = { ...newProgram };
         for (let key of Object.keys(update)) {
           switch (key) {
             case "people":
@@ -94,7 +107,7 @@ export default function NewProgram(props) {
         }
         dispatch(planActions.updateStrategy(update));
       } else {
-        dispatch(planActions.createStrategy(program));
+        dispatch(planActions.createStrategy(newProgram));
       }
     }
   }
@@ -115,18 +128,16 @@ export default function NewProgram(props) {
           <div className="row">
             <div className="col-sm-6 mb-2">
               <PlantSelector
-                key={program.plant}
-                defaultValue={program.plant}
-                onSelect={handleValue}
+                value={program.plant}
+                onSelect={(plantName) => setValue("plant", plantName)}
               />
             </div>
             <div className="col-sm-6 mb-2">
               <FormSelector
-                key={program.year}
                 label="Año"
                 name="year"
                 options={[year - 1, year, year + 1]}
-                defaultValue={`${program && program.year}`}
+                value={`${program && program.year}`}
                 onSelect={handleValue}
               />
             </div>
@@ -164,14 +175,18 @@ export default function NewProgram(props) {
               <div className="form-control p-0 d-grid gap-2">
                 <PeoplePicker
                   name="Seleccionar..."
-                  options={workersList.map((w) => {
-                    w.id = w.idNumber;
-                    return w;
-                  })}
+                  options={workersList.map((w) => ({
+                    id: w.idNumber,
+                    name: w.name,
+                  }))}
+                  // options={workersList.map((w) => {
+                  //   w.id = w.idNumber;
+                  //   return w;
+                  // })}
                   update={(idArray) =>
-                    setProgram({ ...program, people: idArray.map((e) => e.id) })
+                    setProgram({ ...program, people: idArray })
                   }
-                  idList={program ? program.people : undefined}
+                  idList={program ? program.people : []}
                   selectedWorkers={{
                     caption: "Programa(s)",
                     array: programmedWorkers,

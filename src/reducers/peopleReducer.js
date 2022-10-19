@@ -29,7 +29,6 @@ export default function workOrderReducer(state = initialState, action) {
         userDetail: action.payload,
       };
     case "UPDATE_USER":
-      console.log(action.payload);
       let newList = [...state.userList];
       if (success) {
         let index = state.userList.findIndex((u) => u._id === success._id);

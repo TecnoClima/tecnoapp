@@ -7,8 +7,6 @@ export default function InterventionList(props) {
   const { onDelete, openAdd, permissions, interventions } = props;
   const [edit, setEdit] = useState(false);
 
-  useEffect(() => console.log("edit", edit), [edit]);
-
   function handleDelete(e, id) {
     e.preventDefault();
     onDelete(id);

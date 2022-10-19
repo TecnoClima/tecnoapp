@@ -19,7 +19,7 @@ const ProgramCard = ({ strategy }) => {
   }
 
   return (
-    <div className="col-sm-3 mb-3 text-center">
+    <div className="col-lg-4 mb-3 text-center">
       <div className="container bg-warning bg-opacity-25 d-flex flex-column justify-content-between rounded-3 h-100 pb-1">
         <div className="row">
           <div className="col" style={{ fontSize: "70%" }}>

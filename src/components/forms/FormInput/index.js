@@ -80,9 +80,7 @@ export function FormSelector(props) {
         onBlur={onBlur}
         onChange={(e) => onSelect && onSelect(e)}
       >
-        <option className="w-auto" value="">
-          Seleccione
-        </option>
+        <option className="w-auto">Seleccione</option>
         {options &&
           options.map((element, index) => (
             <option

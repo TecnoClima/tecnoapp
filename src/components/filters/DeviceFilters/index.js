@@ -160,8 +160,6 @@ export default function DeviceFilters(props) {
     setFilters(newFilters);
   }
 
-  useEffect(() => console.log("filters", filters), [filters]);
-
   return (
     <>
       <button
