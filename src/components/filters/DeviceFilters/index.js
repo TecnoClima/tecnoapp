@@ -4,12 +4,13 @@ const { headersRef } = appConfig;
 const unassigned = "SIN PROGRAMA ASIGNADO";
 
 export default function DeviceFilters(props) {
-  const { list, hiddenFields } = props;
+  const { list, hiddenFields, select } = props;
   const emptyfilters = {
     plant: "",
     area: "",
     line: "",
     device: "",
+    type: "",
     power: { min: "", max: "", unit: "TR" },
     refrigerant: "",
     category: "",
@@ -52,6 +53,7 @@ export default function DeviceFilters(props) {
       ];
     }
     for (let key of [
+      "type",
       "refrigerant",
       "category",
       "environment",
@@ -82,6 +84,7 @@ export default function DeviceFilters(props) {
         area,
         plant,
         device,
+        type,
         power,
         age,
         reclaims,
@@ -109,7 +112,7 @@ export default function DeviceFilters(props) {
       for (let key of Object.keys({ power, age, reclaims })) {
         let min = Number(newFilters[key].min);
         let max = Number(newFilters[key].max);
-        if (filters[key].unit && filters[key].unit === "TR") {
+        if (newFilters[key].unit && newFilters[key].unit === "TR") {
           max *= 3000;
           min *= 3000;
         }
@@ -126,17 +129,18 @@ export default function DeviceFilters(props) {
           check = false;
       }
       for (let key of Object.keys({
+        type,
         refrigerant,
         category,
         environment,
         service,
         status,
       })) {
-        if (filters[key] && d[key] !== filters[key]) check = false;
+        if (newFilters[key] && d[key] !== newFilters[key]) check = false;
       }
       return check;
     });
-    props.select && props.select(filteredList);
+    select && select(filteredList);
   }
 
   function handleDelete(e, key) {
