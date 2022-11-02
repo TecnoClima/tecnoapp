@@ -8,7 +8,7 @@ export const ErrorModal = (props) => {
   }
   return (
     <div className="modal" style={{ zIndex: "none" }}>
-      <div className="alert alert-danger" role="alert">
+      <form className="alert alert-danger" onSubmit={handleClose} role="alert">
         <div className="container">
           <div className="row" style={{ alignItems: "center" }}>
             <div className="col-12">
@@ -20,12 +20,12 @@ export const ErrorModal = (props) => {
             Si no logra resolverlo, dé aviso al administrador.
           </div>
           <div className="row" style={{ alignItems: "center" }}>
-            <button className="btn btn-danger" onClick={handleClose}>
+            <button className="btn btn-danger" type="submit">
               Cerrar
             </button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
@@ -37,7 +37,7 @@ export const SuccessModal = ({ message, link, close }) => {
   }
   return (
     <div className="modal" style={{ zIndex: "none" }}>
-      <div className="alert alert-success" role="alert">
+      <form className="alert alert-success" onSubmit={handleClose} role="alert">
         <div className="container">
           <div className="row" style={{ alignItems: "center" }}>
             <div className="col-12">
@@ -51,12 +51,12 @@ export const SuccessModal = ({ message, link, close }) => {
             </div>
           )}
           <div className="row" style={{ alignItems: "center" }}>
-            <button className="btn btn-success" onClick={handleClose}>
+            <button className="btn btn-success" type="submit">
               Aceptar
             </button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
