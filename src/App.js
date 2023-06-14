@@ -12,6 +12,7 @@ import AdminPanel from "./pages/Admin/AdminPanel";
 import WorkOrder from "./pages/WorkOrder";
 import Device from "./pages/Device";
 import { peopleActions, planActions } from "./actions/StoreActions";
+import NotFound from "./pages/NotFound";
 
 function App() {
   const { userData } = useSelector((state) => state.people);
@@ -96,7 +97,6 @@ function App() {
               }
             />
           )}
-          {/* {access.isLogged && <Route exact path={'/ots/edit/:otCode'} element={<Layout><WorkOrder/></Layout>}/>} */}
           {access.isLogged && (
             <Route
               exact
@@ -108,17 +108,15 @@ function App() {
               }
             />
           )}
-          {access.isLogged && (
-            <Route
-              exact
-              path={"/equipos/:code"}
-              element={
-                <Layout>
-                  <Device />
-                </Layout>
-              }
-            />
-          )}
+          <Route
+            exact
+            path={"/equipos/:code"}
+            element={
+              <Layout>
+                <Device />
+              </Layout>
+            }
+          />
           {access.isLogged && (
             <Route
               exact
@@ -166,12 +164,13 @@ function App() {
           <Route
             exact
             path={"/plan"}
-            component={
+            element={
               <Layout>
                 <Plan />
               </Layout>
             }
           />
+          <Route exact path="*" element={<NotFound />} />
         </Routes>
       </Router>
     );

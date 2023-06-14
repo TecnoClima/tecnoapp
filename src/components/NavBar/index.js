@@ -155,88 +155,92 @@ function NavBar() {
     setVisible(false);
   }
 
+  useEffect(() => console.log(!!userData), [userData]);
+
   return (
     <>
-      <nav className="navBar bg-nav text-light d-flex align-items-center">
-        <div className="container p-0">
-          <div className="row m-0">
-            <div className="col-md-auto d-flex p-0 justify-content-between">
-              <Link
-                className="mx-1 my-0 p-0"
-                to="/panel"
-                onClick={() => setVisible(false)}
+      {userData ? (
+        <nav className="navBar bg-nav text-light d-flex align-items-center">
+          <div className="container p-0">
+            <div className="row m-0">
+              <div className="col-md-auto d-flex p-0 justify-content-between">
+                <Link
+                  className="mx-1 my-0 p-0"
+                  to="/panel"
+                  onClick={() => setVisible(false)}
+                >
+                  <img className="navBarLogo navbar-brand" src={logo} alt="" />
+                </Link>
+                {pass && <PasswordForm close={() => setPass(!pass)} />}
+                <button
+                  className="btn btn-outline-dark toggleMenu my-auto"
+                  onClick={handleToggle}
+                  style={{ height: "fit-content" }}
+                >
+                  <i className="fas fa-bars" />
+                </button>
+              </div>
+              <div
+                className={`col-sm-auto p-0 d-flex flex-grow-1 navBarLinkContainer ${
+                  visible ? "visibleNavBar" : ""
+                }`}
               >
-                <img className="navBarLogo navbar-brand" src={logo} alt="" />
-              </Link>
-              {pass && <PasswordForm close={() => setPass(!pass)} />}
-              <button
-                className="btn btn-outline-dark toggleMenu my-auto"
-                onClick={handleToggle}
-                style={{ height: "fit-content" }}
-              >
-                <i className="fas fa-bars" />
-              </button>
-            </div>
-            <div
-              className={`col-sm-auto p-0 d-flex flex-grow-1 navBarLinkContainer ${
-                visible ? "visibleNavBar" : ""
-              }`}
-            >
-              <div className="container-fluid p-0 my-2">
-                <div className="row m-0">
-                  {navOptions.map((option, index) => (
-                    <div key={index} className="col-sm-auto p-0 d-grid gap-2">
-                      <NavLink
-                        to={option.url}
-                        key={index}
-                        onClick={() => setVisible(false)}
-                        className={(navData) =>
-                          `col btn nav-item navBarLink ${
-                            navData.isActive ? "activeNavLink" : ""
-                          } px-1`
-                        }
-                      >
-                        {option.section}
-                      </NavLink>
+                <div className="container-fluid p-0 my-2">
+                  <div className="row m-0">
+                    {navOptions.map((option, index) => (
+                      <div key={index} className="col-sm-auto p-0 d-grid gap-2">
+                        <NavLink
+                          to={option.url}
+                          key={index}
+                          onClick={() => setVisible(false)}
+                          className={(navData) =>
+                            `col btn nav-item navBarLink ${
+                              navData.isActive ? "activeNavLink" : ""
+                            } px-1`
+                          }
+                        >
+                          {option.section}
+                        </NavLink>
+                      </div>
+                    ))}
+                    <div className="col-sm-auto p-0 d-grid gap-2">
+                      {isAdmin && (
+                        <NavLink
+                          to={"/admin"}
+                          onClick={() => setVisible(false)}
+                          className={(navData) =>
+                            `btn nav-item navAdminLink ${
+                              navData.isActive ? "activeAdminLink" : ""
+                            }`
+                          }
+                        >
+                          Menú Admin
+                        </NavLink>
+                      )}
                     </div>
-                  ))}
-                  <div className="col-sm-auto p-0 d-grid gap-2">
-                    {isAdmin && (
-                      <NavLink
-                        to={"/admin"}
-                        onClick={() => setVisible(false)}
-                        className={(navData) =>
-                          `btn nav-item navAdminLink ${
-                            navData.isActive ? "activeAdminLink" : ""
-                          }`
-                        }
-                      >
-                        Menú Admin
-                      </NavLink>
-                    )}
-                  </div>
-                  <div className="col-sm-auto p-0 flex flex-grow-1">
-                    <div className="container p-0">
-                      <div className="row m-0 pe-2 d-flex justify-content-end">
-                        <button
-                          className="col-sm-3 px-1 btn btn-outline-warning"
-                          style={{ minWidth: "fit-content" }}
-                          title="Cambiar contraseña"
-                          onClick={handlePassForm}
-                        >
-                          <i className="fas fa-exchange-alt" />
-                          <i className="fas fa-key" />
-                        </button>
-                        <button
-                          className="col-sm-3 px-1 btn btn-outline-secondary"
-                          onClick={handleLogOut}
-                          style={{
-                            height: "fit-content",
-                            minWidth: "fit-content",
-                          }}
-                        >
-                          Salir <i className="fas fa-sign-out-alt" />
-                        </button>
+                    <div className="col-sm-auto p-0 flex flex-grow-1">
+                      <div className="container p-0">
+                        <div className="row m-0 pe-2 d-flex justify-content-end">
+                          <button
+                            className="col-sm-3 px-1 btn btn-outline-warning"
+                            style={{ minWidth: "fit-content" }}
+                            title="Cambiar contraseña"
+                            onClick={handlePassForm}
+                          >
+                            <i className="fas fa-exchange-alt" />
+                            <i className="fas fa-key" />
+                          </button>
+                          <button
+                            className="col-sm-3 px-1 btn btn-outline-secondary"
+                            onClick={handleLogOut}
+                            style={{
+                              height: "fit-content",
+                              minWidth: "fit-content",
+                            }}
+                          >
+                            Salir <i className="fas fa-sign-out-alt" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -244,8 +248,20 @@ function NavBar() {
               </div>
             </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+      ) : (
+        <nav className="navBar bg-nav text-light d-flex align-items-center">
+          <div className="container p-0">
+            <div className="row m-0">
+              <div className="col-md-auto d-flex p-0 justify-content-between">
+                <Link className="mx-1 my-0 p-0" to="/">
+                  <img className="navBarLogo navbar-brand" src={logo} alt="" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </nav>
+      )}
     </>
   );
 }

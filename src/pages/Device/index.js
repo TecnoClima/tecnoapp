@@ -15,6 +15,7 @@ export default function Device() {
   const { year } = useSelector((state) => state.data);
   const { code } = useParams();
   const [device, setDevice] = useState({});
+  const [enableLinks, setEnableLinks] = useState(false);
   const dispatch = useDispatch();
 
   const labels = [
@@ -118,6 +119,13 @@ export default function Device() {
   //table data
   const [interventions, setInterventions] = useState([]);
 
+  useEffect(() => {
+    const token = localStorage.getItem("tecnoToken");
+    setEnableLinks(!!token);
+  }, []);
+
+  useEffect(() => console.log(code), [code]);
+
   return (
     <div className="pageBackground">
       {!code ? (
@@ -128,7 +136,7 @@ export default function Device() {
             <h4>{`[${device.code}] ${device.name}`}</h4>
           </div>
           <div className="row mb-3">
-            <div className="col">
+            <div className="col-md-6">
               {device.code && (
                 <div className="container">
                   <div className="row">
@@ -191,7 +199,7 @@ export default function Device() {
                 </div>
               )}
             </div>
-            <div className="col col-md-6">
+            <div className="col-md-6">
               <div className="container">
                 <h5>HISTORIAL DE RECLAMOS</h5>
                 <div className="flex">
@@ -259,13 +267,19 @@ export default function Device() {
                           )}
                         </td>
                         <td>
-                          <Link
-                            title="ver OT"
-                            className="btn btn-outline-primary"
-                            to={`/ots/detail/${intervention.order}`}
-                          >
-                            {intervention.order}
-                          </Link>
+                          <div className="d-flex w-100 justify-content-center align-items-center">
+                            {enableLinks ? (
+                              <Link
+                                title="ver OT"
+                                className="btn btn-outline-primary"
+                                to={`/ots/detail/${intervention.order}`}
+                              >
+                                {intervention.order}
+                              </Link>
+                            ) : (
+                              <b>{intervention.order}</b>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );
