@@ -11,11 +11,30 @@ import waiting from "../../../assets/searching.gif";
 const { postExcel, allOptions } = deviceActions;
 const { headersRef } = appConfig;
 
+const valueTypes = {
+  list: "(texto, de lista)",
+  unique: "texto, (único)",
+  text: "texto",
+  power: "Número en kCal",
+  date: "dd/mm/yyy",
+  none: "",
+};
+
 function buildXLSX(data) {
   const worksheet = xlsx.utils.aoa_to_sheet([data]);
   const workbook = xlsx.utils.book_new();
   xlsx.utils.book_append_sheet(workbook, worksheet, "Equipos_a_cargar");
   xlsx.writeFile(workbook, "plantilla_equipos.xlsx");
+}
+
+function copyToClipboard(e) {
+  e.preventDefault();
+  const { value } = e.currentTarget;
+  try {
+    navigator.clipboard.writeText(value);
+  } catch (e) {
+    console.error(e.message);
+  }
 }
 
 export function LoadExcel() {
@@ -38,46 +57,42 @@ export function LoadExcel() {
 
   useEffect(() => {
     if (!options.locations) return;
+    // console.log("options", options);
     let items = {
-      plant: { subtitle: "(texto, de lista)", examples: [] },
-      area: { subtitle: "(texto, de lista)", examples: [] },
-      line: { subtitle: "(texto, de lista)", examples: [] },
-      spCode: { subtitle: "texto, (único)", examples: [] },
+      plant: { subtitle: valueTypes.list, examples: [] },
+      area: { subtitle: valueTypes.list, examples: [] },
+      line: { subtitle: valueTypes.list, examples: [] },
+      spCode: { subtitle: valueTypes.unique, examples: [] },
       servicePoints: {
-        subtitle: "texto",
+        subtitle: valueTypes.unique,
         examples: [],
       },
-      code: { subtitle: "texto, (único)", examples: ["AAA-001"] },
-      name: { subtitle: "texto, (único)", examples: [] },
-      type: { subtitle: "(texto, de lista)", examples: [] },
-      power: { subtitle: "Número en kCal", examples: [] },
-      refrigerant: { subtitle: "(texto, de lista)", examples: [] },
-      extraDetails: { subtitle: "texto", examples: [] },
-      service: { subtitle: "(texto, de lista)", examples: [] },
-      status: { subtitle: "(texto, de lista)", examples: [] },
-      category: { subtitle: "(texto, de lista)", examples: [] },
-      regDate: { subtitle: "dd/mm/yyy", examples: ["26/11/2013"] },
-      environment: { subtitle: "(texto, de lista)", examples: [] },
-      active: { subtitle: "", examples: ["Si", "No"] },
+      code: { subtitle: valueTypes.unique, examples: ["AAA-001"] },
+      name: { subtitle: valueTypes.unique, examples: [] },
+      type: { subtitle: valueTypes.list, examples: [] },
+      power: { subtitle: valueTypes.power, examples: [] },
+      refrigerant: { subtitle: valueTypes.list, examples: [] },
+      extraDetails: { subtitle: valueTypes.text, examples: [] },
+      service: { subtitle: valueTypes.list, examples: [] },
+      status: { subtitle: valueTypes.list, examples: [] },
+      category: { subtitle: valueTypes.list, examples: [] },
+      regDate: { subtitle: valueTypes.date, examples: ["26/11/2013"] },
+      environment: { subtitle: valueTypes.list, examples: [] },
+      active: { subtitle: valueTypes.none, examples: ["Si", "No"] },
     };
-    let keys = Object.keys(items);
-    keys
-      .filter(
-        (key) =>
-          !["power", "code", "name", "extraDetails", "regDate"].includes(key)
-      )
-      .map(
-        (key) =>
-          (items[key].examples = [
-            ...new Set(
-              options[key] ||
-                options.locations.map(
-                  (loc) => loc[key === "spCode" ? "code" : key]
-                )
-            ),
-          ])
-      );
-    items.servicePoints.examples = options.locations.map((loc) => loc.name);
+
+    Object.keys(items).forEach((key) => {
+      if (Object.keys(options).includes(key)) {
+        items[key].examples = options[key].map((item) => item.name || item);
+      } else if (key === "spCode") {
+        items[key].examples = options.spList.map((item) => item.code);
+      } else if (key === "servicePoints") {
+        items[key].examples = options.spList.map((item) => item.name);
+      } else {
+        items[key].examples = options[key];
+      }
+    });
+
     setData(items);
   }, [options]);
 
@@ -111,14 +126,25 @@ export function LoadExcel() {
           const servicePoints = device.servicePoints.split(";");
           let ls = [];
           for (let sp of servicePoints) {
-            const location = deviceOptions.locations.find(
-              (loc) =>
-                loc.name === sp &&
-                loc.area === area &&
-                loc.line === line &&
-                loc.plant === plant
+            console.log("options", options);
+            const servicePoint = options.spList.find(
+              (item) => item.name === sp
             );
-            if (!location)
+            const loc = {
+              name: servicePoint?.name,
+              line: options.line.find((line) => line._id === servicePoint.line)
+                ?.name,
+              area: options.area.find((area) => area._id === line.area)?.name,
+              plant: options.plant.find((plant) => plant._id === area.plant)
+                ?.name,
+            };
+
+            if (
+              loc.name === sp &&
+              loc.area === area &&
+              loc.line === line &&
+              loc.plant === plant
+            )
               ls.push({ plant, area, line, code: spCode, servicePoint: sp });
           }
           if (ls[0]) {
@@ -170,25 +196,59 @@ export function LoadExcel() {
   }, [file, data, deviceOptions]);
 
   function filterLocation(field, value) {
-    if (!["plant", "area", "line"].includes(field)) return;
+    const locationFields = ["plant", "area", "line", "spList"];
+    if (!locationFields.includes(field)) return;
     let newFilters = { ...filters };
     if (!newFilters[field]) {
       newFilters[field] = value;
     } else {
       if (newFilters[field] === value) {
         delete newFilters[field];
+        value = null;
       } else {
         newFilters[field] = value;
       }
     }
     setFilters(newFilters);
+
     const newOptions = { ...deviceOptions };
-    newOptions.locations = deviceOptions.locations.filter((e) => {
-      let check = true;
-      for (let field of Object.keys(newFilters))
-        if (newFilters[field] !== e[field]) check = false;
-      return check;
+    const item = deviceOptions[field].find((p) => p.name === value);
+
+    const parents = {},
+      children = {};
+    locationFields.forEach((loc, i) => {
+      if (!locationFields[i + 1]) return;
+      parents[locationFields[i + 1]] = loc;
+      children[loc] = locationFields[i + 1];
     });
+
+    let child = children[field];
+
+    function initialCriteria(field) {
+      child = children[field];
+      const parent = parents[field];
+      return deviceOptions[field].filter((i) =>
+        value ? i[parent] === item._id : true
+      );
+    }
+
+    function getItemByParent(field) {
+      child = children[field];
+      const parent = parents[field];
+      return deviceOptions[field].filter((element) =>
+        value
+          ? newOptions[parent].map((item) => item._id).includes(element[parent])
+          : true
+      );
+    }
+
+    newOptions[field] = value ? [item] : deviceOptions[field];
+
+    locationFields.forEach((location) => {
+      if (field === location) newOptions[child] = initialCriteria(child);
+      if (field === child) newOptions[child] = getItemByParent(child);
+    });
+
     setOptions(newOptions);
   }
 
@@ -198,12 +258,12 @@ export function LoadExcel() {
       schema: "Device",
       items: deviceList,
     };
-    // console.log("data", data);
     dispatch(postExcel(data));
     setUploading(true);
   }
 
   useEffect(() => setUploading(false), [deviceResult]);
+
   useEffect(() => {
     if (uploading && deviceResult.success) {
       setFile(null);
@@ -279,9 +339,8 @@ export function LoadExcel() {
                               <button
                                 title="Copiar al portapapeles"
                                 className="border-0 bg-transparent"
-                                onClick={() =>
-                                  navigator.clipboard.writeText(value)
-                                }
+                                value={value}
+                                onClick={copyToClipboard}
                               >
                                 <i
                                   className={`far fa-copy " ${
