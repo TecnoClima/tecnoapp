@@ -57,7 +57,6 @@ export function LoadExcel() {
 
   useEffect(() => {
     if (!options.locations) return;
-    // console.log("options", options);
     let items = {
       plant: { subtitle: valueTypes.list, examples: [] },
       area: { subtitle: valueTypes.list, examples: [] },
@@ -122,30 +121,30 @@ export function LoadExcel() {
         const errors = [];
         for (let device of rows) {
           const { plant, area, line, spCode } = device;
+
           let error = {};
           const servicePoints = device.servicePoints.split(";");
           let ls = [];
           for (let sp of servicePoints) {
-            console.log("options", options);
             const servicePoint = options.spList.find(
               (item) => item.name === sp
             );
             const loc = {
-              name: servicePoint?.name,
-              line: options.line.find((line) => line._id === servicePoint.line)
-                ?.name,
-              area: options.area.find((area) => area._id === line.area)?.name,
-              plant: options.plant.find((plant) => plant._id === area.plant)
-                ?.name,
+              name: sp,
+              line: options.line.find((item) => item.name === line)?.name,
+              area: options.area.find((item) => item.name === area)?.name,
+              plant: options.plant.find((item) => item.name === plant)?.name,
             };
-
             if (
-              loc.name === sp &&
-              loc.area === area &&
-              loc.line === line &&
-              loc.plant === plant
-            )
+              !(
+                loc.name.toUpperCase() === sp.toUpperCase() &&
+                loc.area.toUpperCase() === area.toUpperCase() &&
+                loc.line.toUpperCase() === line.toUpperCase() &&
+                loc.plant.toUpperCase() === plant.toUpperCase()
+              )
+            ) {
               ls.push({ plant, area, line, code: spCode, servicePoint: sp });
+            }
           }
           if (ls[0]) {
             error.ls = ls;
@@ -155,7 +154,7 @@ export function LoadExcel() {
           for (let key of keys) {
             if (!["code", "spCode"].includes(key)) {
               const { examples } = data[key];
-              if (examples[0]) {
+              if (examples && examples[0]) {
                 if (typeof examples[0] === "string") {
                   if (!device[key] && key !== "extraDetails") {
                     error[key] = `dato no completado`;
