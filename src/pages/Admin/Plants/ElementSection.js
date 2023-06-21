@@ -32,8 +32,8 @@ export default function ElementSection(props) {
   function handleSetData(e) {
     e.preventDefault();
     if (item === "servicePoint") return;
-    const { value } = e.target;
-    const prop = e.target.name;
+    const { value } = e.currentTarget;
+    const prop = e.currentTarget.name;
     let propValue = undefined;
     if (prop === item) propValue = array.find((p) => p.name === value);
     setData(prop, propValue);

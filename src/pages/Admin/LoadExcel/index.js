@@ -127,23 +127,36 @@ export function LoadExcel() {
           let ls = [];
           for (let sp of servicePoints) {
             const servicePoint = options.spList.find(
-              (item) => item.name === sp
+              (item) => item.name.toUpperCase() === sp.toUpperCase()
             );
-            const loc = {
-              name: sp,
-              line: options.line.find((item) => item.name === line)?.name,
-              area: options.area.find((item) => item.name === area)?.name,
-              plant: options.plant.find((item) => item.name === plant)?.name,
-            };
-            if (
-              !(
-                loc.name.toUpperCase() === sp.toUpperCase() &&
-                loc.area.toUpperCase() === area.toUpperCase() &&
-                loc.line.toUpperCase() === line.toUpperCase() &&
-                loc.plant.toUpperCase() === plant.toUpperCase()
-              )
-            ) {
+            if (!servicePoint) {
               ls.push({ plant, area, line, code: spCode, servicePoint: sp });
+            } else {
+              const spLine = options.line.find(
+                (item) => item._id === servicePoint.line
+              );
+              const spArea = options.area.find(
+                (item) => item._id === spLine.area
+              );
+              const spPlant = options.plant.find(
+                (item) => item._id === spArea.plant
+              );
+              const loc = {
+                name: sp,
+                line: options.line.find((item) => item.name === line)?.name,
+                area: options.area.find((item) => item.name === area)?.name,
+                plant: options.plant.find((item) => item.name === plant)?.name,
+              };
+              if (
+                !(
+                  loc.name.toUpperCase() === sp.toUpperCase() &&
+                  loc.area.toUpperCase() === area.toUpperCase() &&
+                  loc.line.toUpperCase() === line.toUpperCase() &&
+                  loc.plant.toUpperCase() === plant.toUpperCase()
+                )
+              ) {
+                ls.push({ plant, area, line, code: spCode, servicePoint: sp });
+              }
             }
           }
           if (ls[0]) {
@@ -162,17 +175,30 @@ export function LoadExcel() {
                     if (excelDateToJSDate(device[key]) > new Date()) {
                       error[key] = "La fecha debe ser menor a la fecha actual";
                     }
-                  } else if (
-                    !(
-                      examples.includes(device[key]) ||
-                      examples.includes(...device[key])
-                    )
-                  ) {
-                    error[key] = `${
-                      device[key]
-                    } no es una opción valida para ${headersRef[
-                      key
-                    ].toUpperCase()}`;
+                  } else {
+                    let check = false;
+                    if (Array.isArray(device[key])) {
+                      device[key].forEach((item) => {
+                        if (
+                          examples
+                            .map((item) => item.toUpperCase())
+                            .includes(item.toUpperCase())
+                        ) {
+                          check = true;
+                        }
+                      });
+                    } else {
+                      check = examples
+                        .map((item) => item.toUpperCase())
+                        .includes(device[key].toUpperCase());
+                    }
+                    if (!check) {
+                      error[key] = `${
+                        device[key]
+                      } no es una opción válida para ${headersRef[
+                        key
+                      ].toUpperCase()}`;
+                    }
                   }
                 }
               }
@@ -188,11 +214,14 @@ export function LoadExcel() {
           setDeviceList(rows);
         }
       } catch (e) {
-        alert("No se pudo procesar archivo: " + e.message);
+        console.log(e);
+        // alert("No se pudo procesar archivo: " + e.message);
       }
     }
     checkAndUpload(file);
-  }, [file, data, deviceOptions]);
+  }, [file, data, deviceOptions, options]);
+
+  useEffect(() => console.log("addLocations", addLocations), [addLocations]);
 
   function filterLocation(field, value) {
     const locationFields = ["plant", "area", "line", "spList"];
