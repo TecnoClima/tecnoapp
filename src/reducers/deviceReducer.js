@@ -11,10 +11,9 @@ const initialState = {
 };
 
 export default function deviceReducer(state = initialState, action) {
-  const {
-    // error,
-    success,
-  } = action.payload || {};
+  const success = action?.payload?.success || null;
+  const error = action?.payload?.error || null;
+  if (error) return { ...state, deviceResult: { error } };
   switch (action.type) {
     case "UPDATE_DEVICE":
       // console.log("action.payload", action.payload);

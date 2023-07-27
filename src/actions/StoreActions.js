@@ -87,8 +87,7 @@ export const deviceActions = {
   resetDevice: () => ({ type: "RESET_DEVICE" }),
   updateDevice: (device) => putAction("devices", device, "UPDATE_DEVICE"),
 
-  getFullList: (plant) =>
-    getAction(`devices/all?plant=${plant}`, "FULL_DEVICE_LIST"),
+  getFullList: () => getAction(`devices/all`, "FULL_DEVICE_LIST"),
 
   postExcel: (data) => postAction("excel", data, "LOAD_DEVICE_EXCEL"),
 
@@ -107,13 +106,8 @@ export const deviceActions = {
 };
 
 export const workOrderActions = {
-  getList: (plant, year) =>
-    getAction(
-      `workorder/list${plant || year ? "?" : ""}${
-        plant ? `plant=${plant}` : ""
-      }${plant ? "&" : ""}${year ? `year=${year}` : ""}`,
-      "ORDER_LIST"
-    ),
+  getList: (year) =>
+    getAction(`workorder/list${year ? `?year=${year}` : ""}`, "ORDER_LIST"),
   callMostRecent: (filters) =>
     postAction(`workorder/mostrecent`, filters, "MOST_RECENT"),
   setDetail: (order) => ({

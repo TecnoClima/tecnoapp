@@ -121,15 +121,15 @@ export default function CreateElement(props) {
     ) && setError(undefined);
   }, [codeName, manuallyAdded, error]);
 
-  useEffect(
-    () =>
-      console.log(
-        fromExcel,
-        !addedByExcel[0],
-        addedByExcel.find((row) => !!row.error)
-      ),
-    [fromExcel, addedByExcel]
-  );
+  // useEffect(
+  //   () =>
+  //     console.log(
+  //       fromExcel,
+  //       !addedByExcel[0],
+  //       addedByExcel.find((row) => !!row.error)
+  //     ),
+  //   [fromExcel, addedByExcel]
+  // );
 
   return (
     <div className="modal p-5">

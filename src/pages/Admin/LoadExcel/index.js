@@ -221,8 +221,6 @@ export function LoadExcel() {
     checkAndUpload(file);
   }, [file, data, deviceOptions, options]);
 
-  useEffect(() => console.log("addLocations", addLocations), [addLocations]);
-
   function filterLocation(field, value) {
     const locationFields = ["plant", "area", "line", "spList"];
     if (!locationFields.includes(field)) return;

@@ -4,9 +4,12 @@ import { deviceActions } from "../../../actions/StoreActions";
 import { useNavigate } from "react-router-dom";
 import DeviceFilters from "../../filters/DeviceFilters";
 import Paginate from "../../Paginate";
+import { ErrorModal } from "../../warnings";
 
 export default function DeviceList({ close, select }) {
-  const { deviceFullList } = useSelector((state) => state.devices);
+  const { deviceFullList, deviceResult } = useSelector(
+    (state) => state.devices
+  );
   const { userData } = useSelector((state) => state.people);
   const [filteredList, setFilteredList] = useState(deviceFullList);
   const [page, setPage] = useState({ first: 0, size: 20 });
@@ -15,10 +18,7 @@ export default function DeviceList({ close, select }) {
   const navigate = useNavigate();
 
   useEffect(() => setFilteredList(deviceFullList), [deviceFullList]);
-  useEffect(
-    () => dispatch(deviceActions.getFullList(userData.plant)),
-    [dispatch, userData]
-  );
+  useEffect(() => dispatch(deviceActions.getFullList()), [dispatch, userData]);
 
   function handleSelect(e, code) {
     e.preventDefault();
@@ -119,6 +119,12 @@ export default function DeviceList({ close, select }) {
           size={(value) => setPage({ ...page, size: Number(value) })}
         />
       </div>
+      {deviceResult.error && (
+        <ErrorModal
+          message={deviceResult.error}
+          close={() => dispatch(deviceActions.resetResult())}
+        ></ErrorModal>
+      )}
     </div>
   );
 }

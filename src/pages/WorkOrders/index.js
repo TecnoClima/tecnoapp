@@ -14,6 +14,7 @@ import {
   workOrderActions,
 } from "../../actions/StoreActions";
 import "./index.css";
+import { ErrorModal } from "../../components/warnings";
 
 //Método para editar intervención
 //Asignar garrafas a personal
@@ -149,7 +150,9 @@ export const FormSelector = ({
 
 export default function WorkOrders() {
   const { year } = useSelector((state) => state.data);
-  const { workOrderList } = useSelector((state) => state.workOrder);
+  const { workOrderList, orderResult } = useSelector(
+    (state) => state.workOrder
+  );
   const { userData } = useSelector((state) => state.people);
   const today = new Date();
 
@@ -242,9 +245,7 @@ export default function WorkOrders() {
         (order) => new Date(order.date).getFullYear === lastDate.getFullYear()
       )[0]
     )
-      dispatch(
-        workOrderActions.getList(userData.plant, lastDate.getFullYear())
-      );
+      dispatch(workOrderActions.getList(lastDate.getFullYear()));
     setFilters({ ...filters, dateMin, dateMax });
   }
   function filterList(e) {
@@ -268,10 +269,7 @@ export default function WorkOrders() {
 
   useEffect(
     () =>
-      userData &&
-      dispatch &&
-      year &&
-      dispatch(workOrderActions.getList(userData.plant, year)),
+      userData && dispatch && year && dispatch(workOrderActions.getList(year)),
     [dispatch, userData, year]
   );
 
@@ -642,6 +640,12 @@ export default function WorkOrders() {
         </div>
       ) : (
         <div className="waiting" />
+      )}
+      {orderResult.error && (
+        <ErrorModal
+          message={orderResult.error}
+          close={() => dispatch(workOrderActions.resetOrderResult())}
+        ></ErrorModal>
       )}
     </div>
   );

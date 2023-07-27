@@ -10,10 +10,9 @@ const initialState = {
 
 export default function planReducer(state = initialState, action) {
   let list = [];
-  const {
-    // error,
-    success,
-  } = action.payload || {};
+  const success = action?.payload?.success || null;
+  const error = action?.payload?.error || null;
+  if (error) return { ...state, planResult: { error } };
   switch (action.type) {
     case "SELECT_STRATEGY":
       return {

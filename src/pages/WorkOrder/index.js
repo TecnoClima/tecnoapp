@@ -261,7 +261,6 @@ export default function WorkOrder() {
   }
   useEffect(() => orderResult && setSaving(false), [orderResult]);
 
-  useEffect(() => console.log("permissions", permissions), [permissions]);
   // useEffect(() => console.log("saving", saving), [saving]);
   // useEffect(() => console.log("device", device), [device]);
   // useEffect(() => console.log("forPlan", forPlan), [forPlan]);

@@ -124,16 +124,23 @@ export default function Device() {
     setEnableLinks(!!token);
   }, []);
 
-  useEffect(() => console.log(code), [code]);
-
   return (
     <div className="pageBackground">
       {!code ? (
         <DeviceList plant={userData.plant} />
       ) : (
         <div className="container">
-          <div className="row text-center py-3">
-            <h4>{`[${device.code}] ${device.name}`}</h4>
+          <div className="row justify-content-end mt-3">
+            <Link
+              to="/ots/new"
+              onClick={(e) => dispatch(deviceActions.getDetail(code))}
+              className="btn btn-success col-auto"
+            >
+              <i className="fas fa-toolbox" /> Nueva Orden
+            </Link>
+          </div>
+          <div className="row py-3">
+            <h4 className="col-auto">{`[${device.code}] ${device.name}`}</h4>
           </div>
           <div className="row mb-3">
             <div className="col-md-6">

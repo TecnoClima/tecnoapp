@@ -5,9 +5,10 @@ import Paginate from "../../components/Paginate";
 import "./index.css";
 import { planActions } from "../../actions/StoreActions";
 import ProgramFilters from "../../components/filters/ProgramFilters";
+import { ErrorModal } from "../../components/warnings";
 
 export default function Plan() {
-  const { plan } = useSelector((state) => state.plan);
+  const { plan, planResult } = useSelector((state) => state.plan);
   const { userData } = useSelector((state) => state.people);
   const [loading, setLoading] = useState(false);
   const [year] = useState(new Date().getFullYear());
@@ -117,7 +118,7 @@ export default function Plan() {
       <div className="row">
         <div className="col">
           <div className="title">{`PLAN DE MANTENIMIENTO ${year}`}</div>
-          <div className="planContainer">
+          <div className="planContainer my-2">
             {filteredList[0]
               ? filteredList
                   .slice(page.first, page.first + page.size)
@@ -178,6 +179,12 @@ export default function Plan() {
           />{" "}
         </div>
       </div>
+      {planResult.error && (
+        <ErrorModal
+          message={planResult.error}
+          close={() => dispatch(planActions.resetPlanResult())}
+        />
+      )}
     </div>
   );
 }

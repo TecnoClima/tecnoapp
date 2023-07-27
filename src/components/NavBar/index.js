@@ -155,8 +155,6 @@ function NavBar() {
     setVisible(false);
   }
 
-  useEffect(() => console.log(!!userData), [userData]);
-
   return (
     <>
       {userData ? (

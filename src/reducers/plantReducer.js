@@ -49,19 +49,12 @@ export default function plantReducer(state = initialState, action) {
 
   switch (action.type) {
     case "PLANT_LIST":
-      return { ...state, plantList: action.payload };
-    // check this working
-    // case "SELECTED_PLANT":
-    //   return {
-    //     ...state,
-    //     plantList: state.plantList.includes(action.payload)
-    //       ? state.plantList
-    //       : [...state.plantlist, ...action.payload],
-    //     plantResult: action.payload.error
-    //       ? { error: action.payload.error }
-    //       : { success: action.payload },
-    //     selectedPlant: action.payload,
-    //   };
+      return {
+        ...state,
+        plantList: Array.isArray(action.payload)
+          ? action.payload
+          : [action.payload],
+      };
     case "RESET_PLANT_RESULT":
       return { ...state, plantResult: {} };
     case "DELETE_PLANT":
