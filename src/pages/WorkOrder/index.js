@@ -11,7 +11,7 @@ import WOProgress from "../../components/progress/WOProgresBar";
 import { ErrorModal, SuccessModal } from "../../components/warnings";
 import WarningErrors from "../../components/warnings/WarningErrors";
 import ForPlan from "./ForPlan";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const { headersRef } = appConfig;
 
@@ -62,6 +62,7 @@ export default function WorkOrder() {
   const [deviceTable, setDeviceTable] = useState(false);
   const [editDesc, setEditDesc] = useState(false);
   const [interventionForm, setInterventionForm] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!orderCode && plan.find((p) => p.code === device.code))
@@ -245,6 +246,7 @@ export default function WorkOrder() {
       dispatch(deviceActions.setDevice({}));
     }
     dispatch(workOrderActions.resetOrderResult());
+    navigate("/ots");
   }
 
   function handleCloseOrder(e) {
@@ -304,7 +306,7 @@ export default function WorkOrder() {
       {orderResult.success && (
         <SuccessModal
           message={`La orden de trabajo N° ${orderResult.success} fue guardada exitosamente.`}
-          link={orderCode ? undefined : `/ots/detail/${orderResult.success}`}
+          link={orderCode ? null : `/ots/detail/${orderResult.success}`}
           close={handleSuccess}
         />
       )}
