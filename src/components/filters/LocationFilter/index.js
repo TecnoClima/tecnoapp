@@ -3,13 +3,32 @@ import { useSelector, useDispatch } from "react-redux";
 import { plantActions } from "../../../actions/StoreActions";
 
 export default function LocationFilter(props) {
+  const { userData } = useSelector((state) => state.people);
   const { plantList, areaList, lineList, spList } = useSelector(
     (state) => state.plants
   );
   const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState({});
-  // const [filteredSP, setFilteredSP] = useState([]);
+  const [filters, setFilters] = useState(
+    userData.plant
+      ? { plant: plantList.find((p) => p.name === userData.plant) }
+      : {}
+  );
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const newFilters = {};
+    if (plantList.length === 1) {
+      newFilters.plant = plantList[0].name;
+      if (areaList.length === 1) {
+        newFilters.area = areaList[0].name;
+        if (lineList.length === 1) newFilters.line = lineList[0].name;
+      }
+    }
+    setFilters(newFilters);
+  }, [plantList, areaList, lineList]);
+
+  useEffect(() => console.log({ filters }), [filters]);
 
   /**
    *    This function gets missing data if any list is not there.
@@ -44,9 +63,9 @@ export default function LocationFilter(props) {
       f[name] = value;
     } else {
       delete f[name];
-      if (["plant", "area", "line"].includes(name)) delete f.servicePoint;
-      if (["plant", "area"].includes(name)) delete f.line;
-      if (name === "plant") delete f.area;
+      if (["plant", "area", "line"].includes(name)) f.servicePoint = "";
+      if (["plant", "area"].includes(name)) f.line = "";
+      if (name === "plant") f.area = "";
     }
     setFilters(f);
     props.select && props.select(f);
@@ -65,6 +84,7 @@ export default function LocationFilter(props) {
               className="form-control p-0 pe-3 w-auto"
               value={filters.plant}
               onChange={setFilter}
+              disabled={userData.plant}
             >
               <option value="">PLANTA</option>
               {plantList.map((item, i) => (
@@ -75,29 +95,29 @@ export default function LocationFilter(props) {
             </select>
             <select
               name="area"
-              disabled={!filters.plant}
+              disabled={!filters.plant || areaList.length === 1}
               className="form-control p-0 pe-3 w-auto"
               value={filters.area}
               onChange={setFilter}
             >
               <option value="">Area</option>
               {areaList
-                .filter((a) =>
-                  filters.plant
+                ?.filter((a) => {
+                  return filters.plant
                     ? a.plant ===
-                      plantList.find((p) => p.name === filters.plant)._id
-                    : a
-                )
+                        plantList.find((p) => p.name === filters.plant)._id
+                    : a;
+                })
                 .map((item, i) => (
                   <option key={i} value={item.name}>
                     {item.name}
                   </option>
-                ))}
+                )) || []}
             </select>
             <select
               name="line"
               className="form-control p-0 pe-3 w-auto"
-              disabled={!filters.area}
+              disabled={!filters.area || lineList.length === 1}
               value={filters.line}
               onChange={setFilter}
             >
@@ -105,7 +125,7 @@ export default function LocationFilter(props) {
               {lineList
                 .filter((item) =>
                   filters.area
-                    ? item.area ===
+                    ? item.area._id ===
                       areaList.find((a) => a.name === filters.area)._id
                     : item
                 )

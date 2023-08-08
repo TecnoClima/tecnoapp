@@ -155,9 +155,11 @@ export default function LocationSelector(props) {
       {limit !== "plant" && (
         <div className={extraClass}>
           <FormSelector
-            options={areaList.filter((e) =>
-              selected.plant ? e.plant === selected.plant : e
-            )}
+            options={
+              areaList?.filter((e) =>
+                selected.plant ? e.plant === selected.plant : e
+              ) || []
+            }
             label={"area"}
             name={"area"}
             valueField={"_id"}

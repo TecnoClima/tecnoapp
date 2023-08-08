@@ -69,7 +69,7 @@ export default function AdminUsers() {
         </div>
         {userOptions && plantList && (
           <div className="row">
-            <div className="col-md-3">
+            <div className="col-lg-3">
               <FormSelector
                 label="Planta"
                 options={plantList.map((p) => p.name)}
@@ -77,7 +77,7 @@ export default function AdminUsers() {
                 onSelect={setUserFilters}
               />
             </div>
-            <div className="col-md-3">
+            <div className="col-lg-3">
               <FormSelector
                 label="Cargo"
                 options={userOptions.charge}
@@ -85,7 +85,7 @@ export default function AdminUsers() {
                 onSelect={setUserFilters}
               />
             </div>
-            <div className="col-md-3">
+            <div className="col-lg-3">
               <FormSelector
                 label="Acceso"
                 options={userOptions.access}
@@ -93,7 +93,7 @@ export default function AdminUsers() {
                 onSelect={setUserFilters}
               />
             </div>
-            <div className="col-md-3">
+            <div className="col-lg-3">
               <div className="d-flex gap-4 align-items-center">
                 <label>
                   <input
