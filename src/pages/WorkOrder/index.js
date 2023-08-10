@@ -264,8 +264,12 @@ export default function WorkOrder() {
   useEffect(() => orderResult && setSaving(false), [orderResult]);
 
   // useEffect(() => console.log("saving", saving), [saving]);
-  // useEffect(() => console.log("device", device), [device]);
+  useEffect(() => console.log("device", device), [device]);
   // useEffect(() => console.log("forPlan", forPlan), [forPlan]);
+  useEffect(
+    () => console.log("workOrderOptions", workOrderOptions),
+    [workOrderOptions]
+  );
 
   return (
     <div className="w-100">
@@ -513,11 +517,17 @@ export default function WorkOrder() {
                       disabled={!device.name}
                     >
                       <option value="">Sin Especificar</option>
-                      {options.map((s, i) => (
-                        <option key={i} value={s.id || s}>
-                          {s.name || s}
-                        </option>
-                      ))}
+                      {options
+                        .filter((item) =>
+                          item.plant
+                            ? device.location.startsWith(item.plant)
+                            : true
+                        )
+                        .map((s, i) => (
+                          <option key={i} value={s.id || s}>
+                            {s.name || s}
+                          </option>
+                        ))}
                     </select>
                   ) : (
                     <input
