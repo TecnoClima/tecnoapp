@@ -174,7 +174,7 @@ export default function LocationSelector(props) {
         <div className={extraClass}>
           <FormSelector
             options={lineList.filter((e) =>
-              selected.area ? e.area === selected.area : e
+              selected.area ? e.area._id === selected.area : e
             )}
             label={"line"}
             name={"line"}

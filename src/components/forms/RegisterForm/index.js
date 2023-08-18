@@ -141,7 +141,7 @@ export default function RegisterForm() {
               captionField="name"
               name="line"
               options={lineList.filter((l) =>
-                newUser.area ? l.area === newUser.area : l
+                newUser.area ? l.area._id === newUser.area : l
               )}
               onSelect={setPlant}
             />

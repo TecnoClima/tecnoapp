@@ -173,7 +173,7 @@ export default function PlanCalendar(props) {
         if (
           area &&
           !lineList
-            .filter((l) => l.area === area)
+            .filter((l) => l.area._id === area)
             .map((l) => l._id)
             .includes(task.device.line)
         )

@@ -80,7 +80,7 @@ export function CalendarLocFilter(props) {
     if (selectedPlant) {
       let newAreas = areaList.filter((a) => a.plant === selectedPlant._id);
       let newLines = lineList.filter((l) =>
-        newAreas.map((a) => a._id).includes(l.area)
+        newAreas.map((a) => a._id).includes(l.area._id)
       );
       setAreas(newAreas);
       setLines(newLines);
@@ -146,7 +146,9 @@ export function CalendarLocFilter(props) {
             >
               <option value="">Todas</option>
               {lines
-                .filter((l) => (filters.area ? l.area === filters.area : true))
+                .filter((l) =>
+                  filters.area ? l.area?._id === filters.area : true
+                )
                 .map((l, i) => (
                   <option key={i} value={l._id}>
                     {l.name}
