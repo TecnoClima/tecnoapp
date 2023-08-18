@@ -57,7 +57,7 @@ export default function AdminPlants() {
         <ElementSection
           item="line"
           array={lineList.filter((a) =>
-            data.area ? a.area === data.area._id : a
+            data.area ? a.area._id === data.area._id : a
           )}
           data={data}
           setData={handleSetData}
