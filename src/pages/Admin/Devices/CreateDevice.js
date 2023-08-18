@@ -72,7 +72,9 @@ export default function CreateDevice({ edit, close }) {
     e.preventDefault();
     const { name, value } = e.target;
     const newJson = { ...device };
-    value ? (newJson[name] = value) : delete newJson[name];
+    value
+      ? (newJson[name] = name === "power" ? Number(value) : value)
+      : delete newJson[name];
     if (name === "plant") delete newJson.area;
     if (["plant", "area"].includes(name)) delete newJson.line;
     setDevice(newJson);
@@ -85,8 +87,9 @@ export default function CreateDevice({ edit, close }) {
       dispatch(plantActions.getLine({ plant, area, line }));
     }
   }, [edit, dispatch]);
+
   useEffect(() => {
-    setLineId(lineDetail._id);
+    setLineId(lineDetail[0]?._id);
   }, [lineDetail]);
 
   function pickSP(e) {
@@ -108,7 +111,7 @@ export default function CreateDevice({ edit, close }) {
     e.preventDefault();
     const warnings = ["¿Confirma que desea guardar el equipo?"];
     const errors = Object.keys(device).filter(
-      (key) => !device[key] && device[key] !== 0
+      (key) => key !== "extraDetails" && !device[key] && device[key] !== 0
     );
     if (!location.line) errors.unshift("line");
     if (!servicePoints[0])
