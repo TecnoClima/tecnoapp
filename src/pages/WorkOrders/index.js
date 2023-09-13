@@ -16,6 +16,7 @@ import {
 } from "../../actions/StoreActions";
 import "./index.css";
 import { ErrorModal } from "../../components/warnings";
+import { getHour, getShortDate } from "../../utils/utils";
 
 //Método para editar intervención
 //Asignar garrafas a personal
@@ -290,8 +291,32 @@ export default function WorkOrders() {
     const { data } = reportData;
     const dateMin = filters.dateMin ? new Date(filters.dateMin) : null;
     const dateMax = filters.dateMax ? new Date(filters.dateMax) : null;
+    const months = [
+      "Ene",
+      "Feb",
+      "Mar",
+      "Abr",
+      "May",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dic",
+    ];
 
     data.forEach((row) => {
+      let date = row["Fecha Emisión"];
+      let jsDate = new Date(date);
+      row["Fecha Emisión"] = date
+        ? getShortDate(date) + " " + getHour(jsDate)
+        : "";
+      row["MMM'YY"] = jsDate
+        ? `${months[jsDate.getMonth()].toUpperCase()}'${
+            jsDate.getFullYear() - 2000
+          }`
+        : "";
       const interventions = JSON.parse(row?.Interviniente || "false");
       if (!interventions) return row.Interviniente;
       const selectedInterventions = interventions.filter((int) => {

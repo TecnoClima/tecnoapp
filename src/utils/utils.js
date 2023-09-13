@@ -7,7 +7,12 @@ export function getShortDate(stringSystemDate) {
   return day + "/" + month + "/" + year;
 }
 export function getHour(date) {
-  return date.getHours() + ":" + date.getMinutes();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  return `${hours < 10 ? "0" : ""}${hours}:${
+    minutes < 10 ? "0" : ""
+  }${minutes}`;
 }
 export function setDate(stringDate) {
   let sections = stringDate.split("/");
