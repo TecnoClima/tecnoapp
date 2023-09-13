@@ -140,6 +140,8 @@ export const workOrderActions = {
     putAction(`intervention`, { id, update }, "UPDATE_INTERVENTION"),
   addCylinderUsage: (intervention, user, gases) =>
     postAction(`cylinders/usages`, { intervention, user, gases }, "ADD_USAGE"),
+  getReport: (orderIds) =>
+    postAction(`workorder/report`, { orderIds }, "ORDER_REPORT"),
   deleteCylinderUsage: (intervention, user, usages) =>
     deleteAction(
       `cylinders/usages`,

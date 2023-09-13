@@ -5,6 +5,7 @@ const initialState = {
   orderDetail: {},
   updateResult: "",
   orderResult: {},
+  reportData: null,
 };
 
 export default function workOrderReducer(state = initialState, action) {
@@ -42,6 +43,11 @@ export default function workOrderReducer(state = initialState, action) {
       return {
         ...state,
         workOrderOptions: action.payload,
+      };
+    case "ORDER_REPORT":
+      return {
+        ...state,
+        reportData: action.payload,
       };
     case "ORDER_LIST":
       if (error) return { ...state, orderResult: { error } };

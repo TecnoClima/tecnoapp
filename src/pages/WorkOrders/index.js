@@ -1,3 +1,4 @@
+import * as xlsx from "xlsx/xlsx.mjs";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -75,8 +76,8 @@ function applyFilters(element, filters) {
       if (new Date(element.date) < new Date(filters[key])) check = false;
     } else if (key === "dateMax") {
       if (new Date(element.date) > new Date(filters[key])) check = false;
-    } else if (key === "class" && filters.key === "No-Reclamo") {
-      if (element.key === "Reclamo") check = false;
+    } else if (key === "class" && filters[key] === "No-reclamo") {
+      if (element[key] === "Reclamo") check = false;
     } else if (["servicePoint", "supervisor", "solicitor"].includes(key)) {
       if (
         !element[key] ||
@@ -150,7 +151,7 @@ export const FormSelector = ({
 
 export default function WorkOrders() {
   const { year } = useSelector((state) => state.data);
-  const { workOrderList, orderResult } = useSelector(
+  const { workOrderList, orderResult, reportData } = useSelector(
     (state) => state.workOrder
   );
   const { userData } = useSelector((state) => state.people);
@@ -279,8 +280,44 @@ export default function WorkOrders() {
     [workOrderList]
   );
 
+  function handleReport(e) {
+    e.preventDefault();
+    const orderIds = filteredList.map((ot) => ot.code);
+    dispatch(workOrderActions.getReport(orderIds));
+  }
+  useEffect(() => {
+    if (!reportData) return;
+    const { data } = reportData;
+    const dateMin = filters.dateMin ? new Date(filters.dateMin) : null;
+    const dateMax = filters.dateMax ? new Date(filters.dateMax) : null;
+
+    data.forEach((row) => {
+      const interventions = JSON.parse(row?.Interviniente || "false");
+      if (!interventions) return row.Interviniente;
+      const selectedInterventions = interventions.filter((int) => {
+        const date = new Date(int.fecha);
+        if (dateMin && dateMax) return date >= dateMin && date <= dateMax;
+        if (dateMin) return date >= dateMin;
+        if (dateMax) return date <= dateMax;
+        return true;
+      });
+      row.Interviniente = selectedInterventions
+        .map(
+          (i) =>
+            `${new Date(i.fecha).toLocaleDateString()} - (${i.personal}) - ${
+              i.tarea
+            }`
+        )
+        .join("\n");
+    });
+    const worksheet = xlsx.utils.json_to_sheet(data);
+    const workbook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(workbook, worksheet, "CONS_COMPLETA");
+    xlsx.writeFile(workbook, "Reporte.xlsx");
+  }, [reportData, filters]);
+
   return (
-    <div className="container">
+    <div className="container d-flex flex-column px-0">
       <div className="row d-flex justify-content-end mt-2 mb-2">
         <div className="col-md-3 d-grid gap-2">
           <Link
@@ -300,6 +337,13 @@ export default function WorkOrders() {
             <i className="fas fa-bell" /> Nuevo Reclamo
           </Link>
         </div>
+        {userData.access === "Admin" && (
+          <div className="col-md-3 d-grid gap-2">
+            <button onClick={handleReport} className="btn btn-info ps-0 pe-0">
+              <i className="fas fa-table" /> Generar Reporte
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="row">
@@ -559,8 +603,8 @@ export default function WorkOrders() {
         <div className="wOList">
           <div className="title">Listado de OT</div>
           <Paginate
-            length={Math.min(7, workOrderList.length)}
-            pages={workOrderList.length / page.size}
+            length={Math.min(7, filteredList.length)}
+            pages={filteredList.length / page.size}
             select={(pg) => {
               setPage({ ...page, first: page.size * pg });
             }}
