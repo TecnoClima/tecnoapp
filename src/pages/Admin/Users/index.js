@@ -28,7 +28,7 @@ export default function AdminUsers() {
     let checkBox = Object.keys(e.target).includes("checked");
 
     const newOption = { ...options };
-    if (!value || checked) {
+    if (!value || checked || value === "Seleccione") {
       delete newOption[item];
     } else {
       newOption[item] = checkBox ? !checked : value;
@@ -40,16 +40,24 @@ export default function AdminUsers() {
     () => dispatch(peopleActions.getAllUsers({ active: "all" })),
     [dispatch]
   );
+
   useEffect(() => {
+    const keys = Object.keys(options);
     setFilteredList(
       userList.filter((u) => {
-        const keys = Object.keys(options);
         let check = true;
-        for (let key of keys) if (u[key] !== options[key]) check = false;
+        for (let key of keys) {
+          if (key === "plant" && options[key] === "SIN ASIGNAR") {
+            if (u[key]) check = false;
+          } else {
+            const value = options[key];
+            if (u[key] !== value) check = false;
+          }
+        }
         return check;
       })
     );
-  }, [dispatch, userList, options]);
+  }, [userList, options]);
 
   return (
     <div className="adminOptionSelected">
@@ -72,7 +80,7 @@ export default function AdminUsers() {
             <div className="col-lg-3">
               <FormSelector
                 label="Planta"
-                options={plantList.map((p) => p.name)}
+                options={[...plantList.map((p) => p.name), "SIN ASIGNAR"]}
                 name="plant"
                 onSelect={setUserFilters}
               />
