@@ -1,9 +1,10 @@
 import { appConfig } from "../apiConfig";
 const token = "Bearer " + localStorage.getItem("tecnoToken");
+const fetchURL = appConfig.url;
 
 export function authentication(data) {
   return async function (dispatch) {
-    return fetch(`${appConfig.url}/users/auth`, {
+    return fetch(`${fetchURL}/users/auth`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -30,7 +31,7 @@ export function getUserFromToken() {
   const token = localStorage.getItem("tecnoToken");
   if (token)
     return async function (dispatch) {
-      return fetch(`${appConfig.url}/users/userByToken`, {
+      return fetch(`${fetchURL}/users/userByToken`, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -50,7 +51,7 @@ export function getUserFromToken() {
 
 export function getPlantList() {
   return async function (dispatch) {
-    return fetch(`${appConfig.url}/plants/list`)
+    return fetch(`${fetchURL}/plants/list`)
       .then((response) => response.json())
       .then((json) => {
         dispatch({
@@ -77,7 +78,7 @@ export function setYear(year) {
 
 export function getPlantLocationTree(plantName) {
   return async function (dispatch) {
-    return fetch(`${appConfig.url}/plants/locations/${plantName}`)
+    return fetch(`${fetchURL}/plants/locations/${plantName}`)
       .then((response) => response.json())
       .then((json) => {
         dispatch({
@@ -90,7 +91,7 @@ export function getPlantLocationTree(plantName) {
 
 export function getLineServicePoints(line) {
   return async function (dispatch) {
-    return fetch(`${appConfig.url}/servicePoints/byLine/${line}`)
+    return fetch(`${fetchURL}/servicePoints/byLine/${line}`)
       .then((response) => response.json())
       .then((json) => {
         dispatch({

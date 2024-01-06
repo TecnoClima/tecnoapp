@@ -1,10 +1,11 @@
 import { appConfig } from "../apiConfig";
 const plantCode = appConfig.plantConfig.code;
 const token = "Bearer " + localStorage.getItem("tecnoToken");
+const fetchURL = appConfig.url;
 
 export function getDeviceList(plantCode) {
   return async function (dispatch) {
-    return fetch(`${appConfig.url}/devices/filters`, {
+    return fetch(`${fetchURL}/devices/filters`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -26,7 +27,7 @@ export function getDeviceList(plantCode) {
 export function getPartialDeviceList(filters) {
   filters.plant = plantCode;
   return async function (dispatch) {
-    return fetch(`${appConfig.url}/devices/filters`, {
+    return fetch(`${fetchURL}/devices/filters`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -47,7 +48,7 @@ export function getPartialDeviceList(filters) {
 
 export function getDeviceFilters() {
   return async function (dispatch) {
-    return fetch(`${appConfig.url}/devices/filters?plant=${plantCode}`)
+    return fetch(`${fetchURL}/devices/filters?plant=${plantCode}`)
       .then((response) => response.json())
       .then((json) =>
         dispatch({
@@ -72,7 +73,7 @@ export function getDeviceFromList(device) {
 }
 export function searchWODevice(devCode) {
   return async function (dispatch) {
-    return fetch(`${appConfig.url}/devices/filters`, {
+    return fetch(`${fetchURL}/devices/filters`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -92,7 +93,7 @@ export function searchWODevice(devCode) {
 }
 export function deviceListByLine(lineName) {
   return async function (dispatch) {
-    return fetch(`${appConfig.url}/devices/byLine/${lineName}`)
+    return fetch(`${fetchURL}/devices/byLine/${lineName}`)
       .then((response) => response.json())
       .then((json) =>
         dispatch({
@@ -105,7 +106,7 @@ export function deviceListByLine(lineName) {
 }
 export function deviceByName(string) {
   return async function (dispatch) {
-    return fetch(`${appConfig.url}/devices/byName/${string}`)
+    return fetch(`${fetchURL}/devices/byName/${string}`)
       .then((response) => response.json())
       .then((json) =>
         dispatch({
@@ -119,7 +120,7 @@ export function deviceByName(string) {
 
 export function getDeviceOptions() {
   return async function (dispatch) {
-    return fetch(`${appConfig.url}/devices/options`, {
+    return fetch(`${fetchURL}/devices/options`, {
       method: "GET",
       headers: {
         Accept: "application/json",
