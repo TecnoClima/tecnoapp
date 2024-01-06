@@ -1,10 +1,10 @@
 import { appConfig } from "../apiConfig";
 const token = "Bearer " + localStorage.getItem("tecnoToken");
-const fetchURL = appConfig.url;
+const baseURL = appConfig.url;
 
 export function setDeviceStrategy(planDevices) {
   return async function (dispatch) {
-    return fetch(`${fetchURL}/tasks`, {
+    return fetch(`${baseURL}/tasks`, {
       method: "POST",
       headers: {
         Accept: "application/json",

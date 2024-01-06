@@ -1,6 +1,6 @@
 import { appConfig } from "../apiConfig";
 const token = localStorage.getItem("tecnoToken");
-const fetchURL = appConfig.url;
+const baseURL = appConfig.url;
 
 function jsonToQuery(json) {
   if (!json) return "";
@@ -16,7 +16,7 @@ function jsonToQuery(json) {
 
 export function serverAction(data) {
   return async function (dispatch) {
-    return fetch(`${fetchURL}/${data.endpoint}`, {
+    return fetch(`${baseURL}/${data.endpoint}`, {
       method: data.method,
       headers: {
         Accept: "application/json",
@@ -218,7 +218,7 @@ export function getDevicesList(selectedData) {
   return async function (dispatch) {
     if (selectedData.linesName !== "") {
       return fetch(
-        `${fetchURL}/abmdevices/devicelist?line=${selectedData.linesName}&sp=${selectedData.spName}`
+        `${baseURL}/abmdevices/devicelist?line=${selectedData.linesName}&sp=${selectedData.spName}`
       )
         .then((response) => response.json())
         .then((json) => {
@@ -234,7 +234,7 @@ export function getDevicesList(selectedData) {
 
 // export function getOptionsList() {
 //   return async function (dispatch) {
-//     return fetch(`${fetchURL}/abmdevices/options`)
+//     return fetch(`${baseURL}/abmdevices/options`)
 //       .then((response) => response.json())
 //       .then((json) => {
 //         dispatch({
@@ -247,7 +247,7 @@ export function getDevicesList(selectedData) {
 
 // export function addDevice(device) {
 //   return async function (dispatch) {
-//     return fetch(`${fetchURL}/abmdevices/`, {
+//     return fetch(`${baseURL}/abmdevices/`, {
 //       method: "POST",
 //       headers: {
 //         Accept: "application/json",
@@ -264,7 +264,7 @@ export function getDevicesList(selectedData) {
 
 // export function deleteDevice(device) {
 //   return async function (dispatch) {
-//     return fetch(`${fetchURL}/abmdevices/delete`, {
+//     return fetch(`${baseURL}/abmdevices/delete`, {
 //       method: "DELETE",
 //       headers: {
 //         Accept: "application/json",
@@ -295,7 +295,7 @@ export const resetDeviceData = (payload) => {
 
 // export function updateDevice(device) {
 //   return async function (dispatch) {
-//     return fetch(`${fetchURL}/abmdevices/update`, {
+//     return fetch(`${baseURL}/abmdevices/update`, {
 //       method: "PUT",
 //       headers: {
 //         Accept: "application/json",
@@ -316,7 +316,7 @@ export const getEmpleados = () => getAction("users", "GET_WORKERS");
 //replace this
 export function searchWODevice(devCode) {
   return async function (dispatch) {
-    return fetch(`${fetchURL}/devices/filters`, {
+    return fetch(`${baseURL}/devices/filters`, {
       method: "POST",
       headers: {
         Accept: "application/json",
