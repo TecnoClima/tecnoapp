@@ -8,7 +8,7 @@ const serverUrl = {
 };
 
 const appConfig = {
-  url: serverUrl[process.env.REACT_APP_ENV],
+  url: serverUrl[process.env.REACT_APP_ENV || "prod"],
   plantConfig: {
     code: "SSN",
   },
