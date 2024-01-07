@@ -8,8 +8,18 @@ import Carrousell from "../../components/Carrousell/index";
 export default function Landing() {
   const [register, setRegister] = useState(false);
 
+  const mode = {
+    dev: "desarrollo",
+    test: "prueba",
+  }[process.env.REACT_APP_ENV];
+
   return (
     <div className="landingBackground">
+      {mode && (
+        <div className="alert alert-danger fw-bold my-0 py-1">
+          Aplicación en modo {mode}
+        </div>
+      )}
       <div className="landingWelcome">
         <div className="landingCorp ">
           <img className="landingLogo" src={Logo} alt="" />

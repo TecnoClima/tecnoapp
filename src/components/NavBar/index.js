@@ -138,6 +138,11 @@ function NavBar() {
     { section: "Plan", url: "/plan" },
   ];
 
+  const mode = {
+    dev: "desarrollo",
+    test: "prueba",
+  }[process.env.REACT_APP_ENV];
+
   function handleToggle(e) {
     e.preventDefault();
     setVisible(!visible);
@@ -158,16 +163,28 @@ function NavBar() {
   return (
     <>
       {userData ? (
-        <nav className="navBar bg-nav text-light d-flex align-items-center">
+        <nav
+          className={`navBar ${
+            mode ? "bg-dark" : "bg-nav"
+          } text-light d-flex align-items-center`}
+        >
           <div className="container p-0">
             <div className="row m-0">
               <div className="col-md-auto d-flex p-0 justify-content-between">
                 <Link
-                  className="mx-1 my-0 p-0"
+                  className="position-relative mx-1 my-0 p-0 d-flex justify-content-center"
                   to="/panel"
                   onClick={() => setVisible(false)}
                 >
                   <img className="navBarLogo navbar-brand" src={logo} alt="" />
+                  {mode && (
+                    <div
+                      className="position-absolute badge badge-pill badge-danger bottom-0"
+                      style={{ backgroundColor: "darkred" }}
+                    >
+                      modo {mode}
+                    </div>
+                  )}
                 </Link>
                 {pass && <PasswordForm close={() => setPass(!pass)} />}
                 <button
