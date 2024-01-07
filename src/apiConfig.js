@@ -1,3 +1,5 @@
+console.log("mode", process.env.REACT_APP_ENV);
+
 const serverUrl = {
   dev: "http://localhost:3004/v1",
   // test: "http://localhost:3002/v1",
