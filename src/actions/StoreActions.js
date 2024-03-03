@@ -1,5 +1,4 @@
 import { appConfig } from "../apiConfig";
-const token = localStorage.getItem("tecnoToken");
 const baseURL = appConfig.url;
 
 function jsonToQuery(json) {
@@ -16,6 +15,7 @@ function jsonToQuery(json) {
 
 export function serverAction(data) {
   return async function (dispatch) {
+    const token = localStorage.getItem("tecnoToken");
     return fetch(`${baseURL}/${data.endpoint}`, {
       method: data.method,
       headers: {
