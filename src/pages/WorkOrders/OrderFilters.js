@@ -62,7 +62,7 @@ export default function OrdersFilters({
       } else if (["solicitor", "code"].includes(key)) {
         if (
           !order[key] ||
-          !order[key].toLowerCase().includes(filters[key].toLowerCase())
+          !`${order[key]}`.toLowerCase().includes(filters[key].toLowerCase())
         ) {
           check = false;
         }
@@ -99,11 +99,11 @@ export default function OrdersFilters({
     workOrderList && applyFilters(filters);
   }, [workOrderList, applyFilters, filters]);
 
-  // useEffect(() => console.log(filters), [filters]);
-  // useEffect(
-  //   () => console.log("filteredList.length", filteredList.length),
-  //   [filteredList]
-  // );
+  useEffect(() => console.log(filters), [filters]);
+  useEffect(
+    () => console.log("filteredList[0]", filteredList[0]),
+    [filteredList]
+  );
 
   return (
     <div>
