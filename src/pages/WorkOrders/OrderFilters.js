@@ -100,7 +100,6 @@ export default function OrdersFilters({
   }, [workOrderList, applyFilters, filters]);
 
   // useEffect(() => console.log(filters), [filters]);
-  useEffect(() => console.log(userData), [userData]);
   // useEffect(() => console.log(filteredList[0]), [filteredList]);
 
   return (

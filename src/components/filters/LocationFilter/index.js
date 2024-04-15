@@ -28,8 +28,6 @@ export default function LocationFilter(props) {
     setFilters(newFilters);
   }, [plantList, areaList, lineList]);
 
-  useEffect(() => console.log({ filters }), [filters]);
-
   /**
    *    This function gets missing data if any list is not there.
    */
