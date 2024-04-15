@@ -56,7 +56,7 @@ export default function OrdersFilters({
           check = false;
         }
       } else if (key === "class" && filters[key] === "no-reclamo") {
-        if (filters[key].toLowerCase() === "reclamo") {
+        if (order[key].toLowerCase() === "reclamo") {
           check = false;
         }
       } else if (["solicitor", "code"].includes(key)) {
@@ -100,7 +100,10 @@ export default function OrdersFilters({
   }, [workOrderList, applyFilters, filters]);
 
   // useEffect(() => console.log(filters), [filters]);
-  // useEffect(() => console.log(filteredList[0]), [filteredList]);
+  // useEffect(
+  //   () => console.log("filteredList.length", filteredList.length),
+  //   [filteredList]
+  // );
 
   return (
     <div>
