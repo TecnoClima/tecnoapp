@@ -11,13 +11,14 @@ export default function OrdersFilters({
   setFilters,
 }) {
   const { workOrderList } = useSelector((state) => state.workOrder);
+  const { userData } = useSelector((state) => state.people);
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
   const yyyyMm = `${currentYear}-${currentMonth < 9 ? "0" : ""}${
     currentMonth + 1
   }`;
 
-  const initialFilters = {};
+  const initialFilters = userData.plant ? { plant: userData.plant } : {};
   const dates = datesByYear(currentYear);
 
   function clickYear(e) {
@@ -99,6 +100,7 @@ export default function OrdersFilters({
   }, [workOrderList, applyFilters, filters]);
 
   // useEffect(() => console.log(filters), [filters]);
+  useEffect(() => console.log(userData), [userData]);
   // useEffect(() => console.log(filteredList[0]), [filteredList]);
 
   return (
@@ -291,39 +293,45 @@ export default function OrdersFilters({
                   </div>
                 </div>
                 <div className="col-md-4">
-                  {["plant", "area", "line"].map((key) => (
-                    <div key={key} className="input-group input-group-md mb-2">
-                      <div className="input-group-prepend">
-                        <label className="input-group-text ">
-                          {headersRef[key]}
-                        </label>
-                      </div>
-                      <select
-                        onChange={handleSelect}
-                        value={filters[key] || ""}
-                        className="form-select"
-                        name={key}
+                  {["plant", "area", "line"]
+                    .filter((key) => !userData[key])
+                    .map((key) => (
+                      <div
+                        key={key}
+                        className="input-group input-group-md mb-2"
                       >
-                        <option value="">Todas</option>
-                        {[...new Set(filteredList.map((order) => order[key]))]
-                          .sort((a, b) => (a > b ? 1 : -1))
-                          .map((p) => (
-                            <option key={p} value={p}>
-                              {p}
-                            </option>
-                          ))}
-                      </select>
-                      {filters[key] && (
-                        <button
-                          onClick={removeKey}
-                          value={key}
-                          className="btn btn-sm btn-outline-danger d-flex align-items-center py-0"
+                        <div className="input-group-prepend">
+                          <label className="input-group-text ">
+                            {headersRef[key]}
+                          </label>
+                        </div>
+                        <select
+                          onChange={handleSelect}
+                          value={filters[key] || ""}
+                          className="form-select"
+                          disabled={userData[key]}
+                          name={key}
                         >
-                          <i className="fas fa-trash-alt" />
-                        </button>
-                      )}
-                    </div>
-                  ))}
+                          <option value="">Todas</option>
+                          {[...new Set(filteredList.map((order) => order[key]))]
+                            .sort((a, b) => (a > b ? 1 : -1))
+                            .map((p) => (
+                              <option key={p} value={p}>
+                                {p}
+                              </option>
+                            ))}
+                        </select>
+                        {filters[key] && (
+                          <button
+                            onClick={removeKey}
+                            value={key}
+                            className="btn btn-sm btn-outline-danger d-flex align-items-center py-0"
+                          >
+                            <i className="fas fa-trash-alt" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
                 </div>
                 <div className="col-md-4">
                   <div className="input-group input-group-md mb-2">
