@@ -43,7 +43,7 @@ export default function AdminPanel() {
         {selected === "carga_excel" && <LoadExcel />}
         {!selected && (
           <div className="container-fluid p-0">
-            <div className="col-sm-6">
+            <div className="col-12">
               <WOList mostRecent={mostRecent} />
             </div>
           </div>
