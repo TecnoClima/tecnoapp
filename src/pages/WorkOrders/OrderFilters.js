@@ -99,11 +99,11 @@ export default function OrdersFilters({
     workOrderList && applyFilters(filters);
   }, [workOrderList, applyFilters, filters]);
 
-  useEffect(() => console.log(filters), [filters]);
-  useEffect(
-    () => console.log("filteredList[0]", filteredList[0]),
-    [filteredList]
-  );
+  // useEffect(() => console.log(filters), [filters]);
+  // useEffect(
+  //   () => console.log("filteredList[0]", filteredList[0]),
+  //   [filteredList]
+  // );
 
   return (
     <div>
