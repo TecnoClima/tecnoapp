@@ -130,3 +130,25 @@ export function excelDateToJSDate(serial) {
     seconds
   );
 }
+
+export function datesByYear(value) {
+  const [year, month] = `${value}`.split("-").map(Number);
+  // Creamos un objeto de fecha para el primer día del año
+  const dateMin = new Date(year, month ? month - 1 : 0, 1)
+    .toISOString()
+    .slice(0, 10);
+  // Creamos un objeto de fecha para el último día del año
+  const lastDay = month ? new Date(year, month, 0) : null;
+  const dateMax = new Date(
+    year,
+    month ? month - 1 : 11,
+    month ? lastDay.getDate() : 31
+  )
+    .toISOString()
+    .slice(0, 10);
+
+  return {
+    dateMin,
+    dateMax,
+  };
+}
