@@ -108,16 +108,20 @@ export function LoadExcel() {
     if (!file && data && deviceOptions) return;
     function checkAndUpload(fileData) {
       try {
+        // limpiar el estado de errores
         setErrors(null);
+        // leer el archivo
         const workbook = xlsx.read(fileData);
         const worksheet = workbook.Sheets["Equipos_a_cargar"];
         const rows = xlsx.utils.sheet_to_json(worksheet);
         const keys = Object.keys(data);
+        // para cada línea, crear un objeto con los campos correspondientes
         for (let row of rows)
           for (let key of keys) {
             row[key] = row[headersRef[key]];
             delete row[headersRef[key]];
           }
+        // crear una lista de errores vacía
         const errors = [];
         for (let device of rows) {
           const { plant, area, line, spCode } = device;
@@ -132,15 +136,15 @@ export function LoadExcel() {
             if (!servicePoint) {
               ls.push({ plant, area, line, code: spCode, servicePoint: sp });
             } else {
-              const spLine = options.line.find(
-                (item) => item._id === servicePoint.line
-              );
-              const spArea = options.area.find(
-                (item) => item._id === spLine.area
-              );
-              const spPlant = options.plant.find(
-                (item) => item._id === spArea.plant
-              );
+              // const spLine = options.line.find(
+              //   (item) => item._id === servicePoint.line
+              // );
+              // const spArea = options.area.find(
+              //   (item) => item._id === spLine.area
+              // );
+              // const spPlant = options.plant.find(
+              //   (item) => item._id === spArea.plant
+              // );
               const loc = {
                 name: sp,
                 line: options.line.find((item) => item.name === line)?.name,
@@ -149,10 +153,10 @@ export function LoadExcel() {
               };
               if (
                 !(
-                  loc.name.toUpperCase() === sp.toUpperCase() &&
-                  loc.area.toUpperCase() === area.toUpperCase() &&
-                  loc.line.toUpperCase() === line.toUpperCase() &&
-                  loc.plant.toUpperCase() === plant.toUpperCase()
+                  loc?.name?.toUpperCase() === sp.toUpperCase() &&
+                  loc?.area?.toUpperCase() === area.toUpperCase() &&
+                  loc?.line?.toUpperCase() === line.toUpperCase() &&
+                  loc?.plant?.toUpperCase() === plant.toUpperCase()
                 )
               ) {
                 ls.push({ plant, area, line, code: spCode, servicePoint: sp });

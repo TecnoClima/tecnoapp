@@ -13,6 +13,8 @@ const appConfig = {
     //Work Orders
     code: "Código",
     class: "Clase",
+    causes: "Causas",
+    classes: "Clases",
     status: "Estado",
     device: "Equipo",
     description: "Descripción",
@@ -28,6 +30,7 @@ const appConfig = {
     supervisor: "Supervisor",
     idNumber: "DNI",
     phone: "Teléfono",
+    issueType: "Tipo de Problema",
 
     //forms
     location: "Ubicación",

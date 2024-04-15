@@ -11,12 +11,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { callMostRecent } from "../../../actions/workOrderActions";
 import { LoadExcel } from "../LoadExcel";
+import AdminOptions from "../Options";
 
 export default function AdminPanel() {
   const { selected } = useParams();
   const options = [
     { caption: "Usuarios", url: "/admin/usuarios" },
     { caption: "Equipos", url: "/admin/equipos" },
+    { caption: "Opciones", url: "/admin/opciones" },
     { caption: "Plantas", url: "/admin/plantas" },
     { caption: "Plan", url: "/admin/plan" },
     { caption: "Garrafas", url: "/admin/garrafas" },
@@ -37,6 +39,7 @@ export default function AdminPanel() {
       <div className="d-flex flex-grow-1 overflow-auto">
         {selected === "usuarios" && <AdminUsers />}
         {selected === "equipos" && <DeviceAdmin />}
+        {selected === "opciones" && <AdminOptions />}
         {selected === "plantas" && <AdminPlants />}
         {selected === "plan" && <AdminPlan />}
         {selected === "garrafas" && <AdminCylinders />}

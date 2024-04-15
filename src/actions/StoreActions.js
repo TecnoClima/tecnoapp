@@ -213,6 +213,15 @@ export const planActions = {
     deleteAction(`strategies?id=${id}`, "DELETE_STRATEGIES"),
 };
 
+export const optionActions = {
+  getOptions: () => getAction("options", "GET_OPTIONS"),
+  deleteOption: ({ model, option, value }) =>
+    deleteAction(
+      `options?model=${model}&option=${option}&value=${value}`,
+      "UPDATE_OPTIONS"
+    ),
+};
+
 //review all these device actions...
 export function getDevicesList(selectedData) {
   return async function (dispatch) {

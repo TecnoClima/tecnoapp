@@ -161,6 +161,18 @@ function App() {
               }
             />
           )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/:selected/:submenu"}
+              element={
+                <Layout>
+                  <AdminPanel />
+                </Layout>
+              }
+            />
+          )}
+
           <Route
             exact
             path={"/plan"}
