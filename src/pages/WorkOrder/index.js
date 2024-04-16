@@ -264,7 +264,7 @@ export default function WorkOrder() {
   useEffect(() => orderResult && setSaving(false), [orderResult]);
 
   // useEffect(() => console.log("saving", saving), [saving]);
-  useEffect(() => console.log("forPlan", forPlan), [forPlan]);
+  // useEffect(() => console.log("forPlan", forPlan), [forPlan]);
 
   return (
     <div className="w-100">
