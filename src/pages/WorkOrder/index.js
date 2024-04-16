@@ -40,7 +40,6 @@ export default function WorkOrder() {
     phone: "",
     servicePoint: "",
   });
-  const { plan } = useSelector((s) => s.plan);
   const { deviceFullList, selectedDevice } = useSelector((s) => s.devices);
   const [requested, setRequested] = useState(false);
   const [device, setDevice] = useState(emptyDevice);
@@ -65,9 +64,10 @@ export default function WorkOrder() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!orderCode && plan.find((p) => p.code === device.code))
+    if (!orderDetail?.taskDates?.[0]) {
       setForPlan(undefined);
-  }, [plan, device, orderCode]);
+    }
+  }, [orderDetail]);
 
   useEffect(
     () =>
@@ -233,7 +233,7 @@ export default function WorkOrder() {
   function handleForPlan(json) {
     const { value, taskDate } = json;
     setForPlan(value);
-    setOrder({ ...order, taskDate: taskDate && taskDate.id });
+    setOrder({ ...order, taskDate: taskDate?.id });
   }
 
   function handleSuccess() {
@@ -264,7 +264,7 @@ export default function WorkOrder() {
   useEffect(() => orderResult && setSaving(false), [orderResult]);
 
   // useEffect(() => console.log("saving", saving), [saving]);
-  // useEffect(() => console.log("forPlan", forPlan), [forPlan]);
+  useEffect(() => console.log("forPlan", forPlan), [forPlan]);
 
   return (
     <div className="w-100">
@@ -368,13 +368,7 @@ export default function WorkOrder() {
           </div>
         </div>
         <div className="row py-2">
-          {device.name && (
-            <ForPlan
-              device={device}
-              select={handleForPlan}
-              current={{ forPlan, task: order.taskDate }}
-            />
-          )}
+          {device.name && <ForPlan select={handleForPlan} />}
         </div>
         <div className="row py-2">
           {/* device data */}

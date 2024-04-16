@@ -31,15 +31,6 @@ function App() {
         isLogged: !!userData.user,
         isAdmin: userData.access === "Admin",
       });
-    if (userData && userData.user) {
-      const { plant, user, access } = userData;
-      const year = new Date().getFullYear();
-      dispatch(
-        planActions.getPlan(
-          plant && access !== "admin" ? { year, plant, user } : { year }
-        )
-      );
-    }
   }, [dispatch, userData]);
 
   useEffect(
