@@ -264,7 +264,7 @@ export default function WorkOrder() {
   useEffect(() => orderResult && setSaving(false), [orderResult]);
 
   // useEffect(() => console.log("saving", saving), [saving]);
-  useEffect(() => console.log("forPlan", forPlan), [forPlan]);
+  // useEffect(() => console.log("forPlan", forPlan), [forPlan]);
 
   return (
     <div className="w-100">
@@ -460,7 +460,7 @@ export default function WorkOrder() {
                             }`}
                             id={"device-" + k}
                             type="text"
-                            value={device[k]}
+                            value={device[k] || ""}
                             aria-describedby="basic-addon3"
                             readOnly
                           />
@@ -522,7 +522,7 @@ export default function WorkOrder() {
                     <input
                       type="text"
                       name={k}
-                      value={order[k]}
+                      value={order[k] || ""}
                       className="form-control"
                       id={"order-" + k}
                       aria-describedby="basic-addon3"
