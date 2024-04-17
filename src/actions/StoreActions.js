@@ -91,6 +91,7 @@ export const deviceActions = {
   resetResult: () => ({ type: "RESET_DEVICE_RESULT" }),
   resetDevice: () => ({ type: "RESET_DEVICE" }),
   updateDevice: (device) => putAction("devices", device, "UPDATE_DEVICE"),
+  getPage: (body) => postAction(`devices/page`, body, "DEVICE_PAGE"),
 
   getFullList: () => getAction(`devices/all`, "FULL_DEVICE_LIST"),
 
