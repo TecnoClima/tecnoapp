@@ -90,11 +90,9 @@ export default function WorkOrder() {
   }, [orderCode, dispatch]);
 
   useEffect(() => {
-    if (!(orderDetail.code && deviceFullList[0])) return;
+    if (!orderDetail.code) return;
     const editOrder = { ...orderDetail };
-    const device = deviceFullList.find(
-      (d) => d.code === orderDetail.device.code
-    );
+    const device = orderDetail.device;
     dispatch(deviceActions.setDevice(device));
     delete editOrder.device;
     setInterventions(orderDetail.interventions);
@@ -102,7 +100,7 @@ export default function WorkOrder() {
     setForPlan(!!editOrder.taskDate);
     setMinProgress(orderDetail.completed);
     setOrder(editOrder);
-  }, [orderDetail, dispatch, deviceFullList]);
+  }, [orderDetail, dispatch]);
 
   useEffect(() => {
     let check = true;
@@ -116,11 +114,10 @@ export default function WorkOrder() {
 
   useEffect(() => {
     if (requested) return;
-    if (!deviceFullList[0]) dispatch(deviceActions.getFullList(userData.plant));
     if (Object.keys(workOrderOptions).length === 0)
       dispatch(workOrderActions.getWOOptions(userData.plant));
     setRequested(true);
-  }, [requested, workOrderOptions, deviceFullList, dispatch, userData]);
+  }, [requested, workOrderOptions, dispatch, userData]);
 
   const selectDevice = useCallback(
     (d) => {
@@ -161,9 +158,10 @@ export default function WorkOrder() {
 
   function handleSearch(e) {
     e.preventDefault();
-    const newDevice = deviceFullList.find((d) => d.code === device.code);
-    dispatch(deviceActions.setDevice(newDevice || device));
+    // const newDevice = deviceFullList.find((d) => d.code === device.code);
+    dispatch(deviceActions.getDetail(device.code));
   }
+
   function handleDeleteCode(e) {
     e.preventDefault();
     dispatch(deviceActions.setDevice(emptyDevice));

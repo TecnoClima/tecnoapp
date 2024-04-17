@@ -2,30 +2,43 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deviceActions } from "../../../actions/StoreActions";
 import { useNavigate } from "react-router-dom";
-import DeviceFilters from "../../filters/DeviceFilters";
+import DeviceFilters from "../../filters/DeviceFilters/newFilters";
 import Paginate from "../../Paginate";
 import { ErrorModal } from "../../warnings";
 
 export default function DeviceList({ close, select }) {
-  const { deviceFullList, deviceResult } = useSelector(
-    (state) => state.devices
-  );
+  const { deviceResult, devicePage } = useSelector((state) => state.devices);
   const { userData } = useSelector((state) => state.people);
-  const [filteredList, setFilteredList] = useState(deviceFullList);
   const [page, setPage] = useState({ first: 0, size: 20 });
+  const [filters, setFilters] = useState({});
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => setFilteredList(deviceFullList), [deviceFullList]);
-  useEffect(() => dispatch(deviceActions.getFullList()), [dispatch, userData]);
-
   function handleSelect(e, code) {
     e.preventDefault();
-    const device = deviceFullList.find((device) => device.code === code);
-    dispatch(deviceActions.setDevice(device));
+    dispatch(deviceActions.getDetail(code));
     close ? close() : navigate(`./${code}`, { replace: true });
   }
+
+  function handlePagination({ name, value }) {
+    const newPage = { ...page, [name]: Number(value) };
+
+    setPage(newPage);
+    handleRequest({ ...filters, page: newPage });
+  }
+  function handleSubmit(filters) {
+    handleRequest({ ...filters, page });
+  }
+  function handleRequest(body) {
+    dispatch(deviceActions.getPage(body));
+  }
+
+  useEffect(() => console.log("page", page), [page]);
+  useEffect(
+    () => !devicePage.devices?.[0] && dispatch(deviceActions.getPage({})),
+    [dispatch, devicePage]
+  );
 
   return (
     <div className="container-fluid h-100 d-flex flex-column">
@@ -33,9 +46,9 @@ export default function DeviceList({ close, select }) {
         <div className="col d-flex">
           <b className="me-2">Filtros: </b>
           <DeviceFilters
-            hiddenFields={["plant", "program"]}
-            list={deviceFullList}
-            select={setFilteredList}
+            onSubmit={handleSubmit}
+            filters={filters}
+            setFilters={setFilters}
           />
         </div>
       </div>
@@ -76,47 +89,47 @@ export default function DeviceList({ close, select }) {
               </tr>
             </thead>
             <tbody>
-              {filteredList[0] &&
-                filteredList
-                  .slice(page.first, page.first + page.size)
-                  .map((device, index) => {
-                    return (
-                      <tr
-                        key={index}
-                        style={{ cursor: "pointer" }}
-                        onClick={(e) => handleSelect(e, device.code)}
-                      >
-                        <th style={{ minWidth: "5rem" }}>{device.code}</th>
-                        <td>{device.name}</td>
-                        <td className="text-center">{device.type}</td>
-                        <td className="text-center">{device.power}</td>
-                        <td className="text-center">
-                          {Math.floor(device.power / 3000)}
-                        </td>
-                        <td className="text-center">{device.refrigerant}</td>
-                        <td className="text-center">{device.category}</td>
-                        <td className="text-center">{device.environment}</td>
-                        <td className="text-center">{device.service}</td>
-                        <td className="text-center">{device.age} años</td>
-                        <td className="text-center">{device.status}</td>
-                      </tr>
-                    );
-                  })}
+              {devicePage?.devices?.map((device, index) => {
+                const age =
+                  new Date().getFullYear() -
+                  new Date(device.regDate).getFullYear();
+                return (
+                  <tr
+                    key={index}
+                    style={{ cursor: "pointer" }}
+                    onClick={(e) => handleSelect(e, device.code)}
+                  >
+                    <th style={{ minWidth: "5rem" }}>{device.code}</th>
+                    <td>{device.name}</td>
+                    <td className="text-center">{device.type}</td>
+                    <td className="text-center">{device.powerKcal}</td>
+                    <td className="text-center">
+                      {Math.floor(device.powerKcal / 3000)}
+                    </td>
+                    <td className="text-center">
+                      {device.refrigerant?.refrigerante || ""}
+                    </td>
+                    <td className="text-center">{device.category}</td>
+                    <td className="text-center">{device.environment}</td>
+                    <td className="text-center">{device.service}</td>
+                    <td className="text-center">{age} años</td>
+                    <td className="text-center">{device.status}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       </div>
       <div className="row m-auto">
         <Paginate
-          pages={Math.ceil(filteredList.length / page.size)}
-          length="10"
+          pages={devicePage.pages || 1}
+          length={page.size || 10}
           min="5"
           step="5"
           defaultValue={page.size}
-          select={(value) =>
-            setPage({ ...page, first: (Number(value) - 1) * page.size })
-          }
-          size={(value) => setPage({ ...page, size: Number(value) })}
+          select={(value) => handlePagination({ name: "page", value })}
+          size={(value) => handlePagination({ name: "size", value })}
         />
       </div>
       {deviceResult.error && (
