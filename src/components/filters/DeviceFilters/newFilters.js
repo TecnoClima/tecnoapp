@@ -96,11 +96,11 @@ export default function DeviceFilters({ onSubmit, filters, setFilters }) {
       const plant = deviceOptions?.plant?.find(
         (p) => p.name === userData.plant
       )?._id;
-      if (plant) setFilters({ plant: userData.plant });
+      if (plant) setFilters({ plant });
     }
   }, [userData, deviceOptions, filters, setFilters]);
 
-  // useEffect(() => console.log(filters), [filters]);
+  // useEffect(() => console.log("filters", filters), [filters]);
   // useEffect(() => console.log(errors), [errors]);
 
   return (
