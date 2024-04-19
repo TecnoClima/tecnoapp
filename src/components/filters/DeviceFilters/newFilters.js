@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { appConfig } from "../../../config";
-import { useDispatch, useSelector } from "react-redux";
-import { deviceActions } from "../../../actions/StoreActions";
+import { useSelector } from "react-redux";
 const { headersRef } = appConfig;
 // const unassigned = "SIN PROGRAMA ASIGNADO";
 
@@ -30,17 +29,15 @@ function FilterSelect({ id, value, options, onSelect }) {
   );
 }
 
-export default function DeviceFilters({ onSubmit, filters, setFilters }) {
+export default function DeviceFilters({
+  onSubmit,
+  filters,
+  setFilters,
+  initialFilter,
+}) {
   const { deviceOptions } = useSelector((state) => state.devices);
   const { userData } = useSelector((state) => state.people);
   const [errors, setErrors] = useState({});
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (JSON.stringify(deviceOptions) === "{}" || !deviceOptions)
-      dispatch(deviceActions.allOptions());
-  }, [dispatch, deviceOptions]);
 
   function handleSetRequestFilters(e) {
     e.preventDefault();
@@ -84,21 +81,9 @@ export default function DeviceFilters({ onSubmit, filters, setFilters }) {
 
   function handleReset(e) {
     e.preventDefault();
-    const plant =
-      userData.plant &&
-      deviceOptions?.plant?.find((p) => p.name === userData.plant)?._id;
-    setFilters(plant ? { plant } : {});
+    setFilters(initialFilter);
+    onSubmit && onSubmit(initialFilter);
   }
-
-  useEffect(() => {
-    if (!userData || userData.access === "Admin") return;
-    if (userData.plant && !filters.plant) {
-      const plant = deviceOptions?.plant?.find(
-        (p) => p.name === userData.plant
-      )?._id;
-      if (plant) setFilters({ plant });
-    }
-  }, [userData, deviceOptions, filters, setFilters]);
 
   // useEffect(() => console.log("filters", filters), [filters]);
   // useEffect(() => console.log(errors), [errors]);
@@ -112,7 +97,8 @@ export default function DeviceFilters({ onSubmit, filters, setFilters }) {
         data-bs-target="#offcanvasExample"
         aria-controls="offcanvasExample"
       >
-        Filtrar Equipos
+        <i className="fas fa-filter me-2"></i>
+        Filtros
       </button>
 
       <div
@@ -361,10 +347,7 @@ export default function DeviceFilters({ onSubmit, filters, setFilters }) {
               <button
                 className="btn btn-info w-100"
                 onClick={handleSubmit}
-                disabled={
-                  JSON.stringify(filters) === "{}" ||
-                  JSON.stringify(errors) !== "{}"
-                }
+                disabled={JSON.stringify(errors) !== "{}"}
               >
                 <i className="fa fa-search me-1"></i>
                 Buscar
