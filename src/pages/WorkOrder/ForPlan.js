@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-export default function ForPlan({ select }) {
-  const { orderDetail } = useSelector((s) => s.workOrder);
+export default function ForPlan({ select, order }) {
+  const { selectedDevice } = useSelector((s) => s.devices);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [taskDates, setTaskDates] = useState(null);
   const [isForPlan, setIsForPlan] = useState(undefined);
 
   function clickButton(e) {
@@ -13,11 +14,15 @@ export default function ForPlan({ select }) {
     setIsForPlan(forPlan);
     select && select({ value: forPlan, taskDate: selectedTask });
   }
-  useEffect(() => setSelectedTask(orderDetail.taskDate), [orderDetail]);
+  useEffect(() => setSelectedTask(order.taskDate), [order]);
+  useEffect(
+    () => setTaskDates(order.taskDates || selectedDevice.taskDates),
+    [order, selectedDevice]
+  );
 
   function selectDate(e) {
     e.preventDefault();
-    const task = orderDetail.taskDates?.find(
+    const task = (order.taskDates || selectedDevice.taskDates)?.find(
       (o) => o.id === e.currentTarget.value
     );
     setSelectedTask(task);
@@ -94,7 +99,7 @@ export default function ForPlan({ select }) {
           <div className="alert-warning p-1 fw-bold">
             Seleccione fecha
             <div className="d-flex flex-wrap gap-1">
-              {orderDetail.taskDates?.map((t, i) => {
+              {taskDates?.map((t, i) => {
                 const selectable = new Date(t.date) <= new Date();
                 const selected = selectedTask && selectedTask.id === t.id;
                 return (

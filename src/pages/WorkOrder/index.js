@@ -40,7 +40,7 @@ export default function WorkOrder() {
     phone: "",
     servicePoint: "",
   });
-  const { deviceFullList, selectedDevice } = useSelector((s) => s.devices);
+  const { selectedDevice } = useSelector((s) => s.devices);
   const [requested, setRequested] = useState(false);
   const [device, setDevice] = useState(emptyDevice);
   const [interventions, setInterventions] = useState([]);
@@ -97,7 +97,6 @@ export default function WorkOrder() {
     delete editOrder.device;
     setInterventions(orderDetail.interventions);
     delete editOrder.interventions;
-    setForPlan(!!editOrder.taskDate);
     setMinProgress(orderDetail.completed);
     setOrder(editOrder);
   }, [orderDetail, dispatch]);
@@ -159,7 +158,7 @@ export default function WorkOrder() {
   function handleSearch(e) {
     e.preventDefault();
     // const newDevice = deviceFullList.find((d) => d.code === device.code);
-    dispatch(deviceActions.getDetail(device.code));
+    dispatch(deviceActions.getDetail(device.code, true));
   }
 
   function handleDeleteCode(e) {
@@ -366,7 +365,10 @@ export default function WorkOrder() {
           </div>
         </div>
         <div className="row py-2">
-          {device.name && <ForPlan select={handleForPlan} />}
+          {(selectedDevice?.taskDates?.length ||
+            orderDetail?.taskDates?.length) && (
+            <ForPlan select={handleForPlan} order={orderDetail || order} />
+          )}
         </div>
         <div className="row py-2">
           {/* device data */}

@@ -84,7 +84,11 @@ export const peopleActions = {
 export const deviceActions = {
   getList: (plant) =>
     postAction("devices/filters", { plant }, "FULL_DEVICE_LIST"), //getDeviceList //this should be getAction
-  getDetail: (id) => getAction(`devices/id?id=${id}`, "DEVICE_DETAIL"),
+  getDetail: (id, dates) =>
+    getAction(
+      `devices/id?id=${id}${dates ? "&dates=true" : ""}`,
+      "DEVICE_DETAIL"
+    ),
   getHistory: (id) => getAction(`devices/history?code=${id}`, "DEVICE_HISTORY"),
   allOptions: () => getAction(`devices/fullOptions`, "DEVICE_OPTIONS"),
   createNew: (device) => postAction(`devices`, device, "NEW_DEVICE"),
