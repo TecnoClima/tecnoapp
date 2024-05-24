@@ -71,26 +71,6 @@ export function getDeviceFromList(device) {
     payload: device,
   };
 }
-export function searchWODevice(devCode) {
-  return async function (dispatch) {
-    return fetch(`${baseURL}/devices/filters`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-      body: JSON.stringify({ filters: { code: devCode } }),
-    })
-      .then((response) => response.json())
-      .then((json) =>
-        dispatch({
-          type: "DEVICE_DETAIL",
-          payload: json.list[0],
-        })
-      );
-  };
-}
 export function deviceListByLine(lineName) {
   return async function (dispatch) {
     return fetch(`${baseURL}/devices/byLine/${lineName}`)

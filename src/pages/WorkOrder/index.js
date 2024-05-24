@@ -85,6 +85,12 @@ export default function WorkOrder() {
   );
 
   useEffect(() => {
+    return () => {
+      dispatch(workOrderActions.resetDetail());
+    };
+  }, []);
+
+  useEffect(() => {
     if (!orderCode) return;
     dispatch(workOrderActions.searchWO(orderCode));
   }, [orderCode, dispatch]);
@@ -233,6 +239,8 @@ export default function WorkOrder() {
     setOrder({ ...order, taskDate: taskDate?.id });
   }
 
+  // useEffect(() => console.log("order", order), [order]);
+
   function handleSuccess() {
     if (!orderCode) {
       let emptyOrder = { ...order };
@@ -365,8 +373,8 @@ export default function WorkOrder() {
           </div>
         </div>
         <div className="row py-2">
-          {(selectedDevice?.taskDates?.length ||
-            orderDetail?.taskDates?.length) && (
+          {(!!selectedDevice?.taskDates?.length ||
+            !!orderDetail?.taskDates?.length) && (
             <ForPlan select={handleForPlan} order={orderDetail || order} />
           )}
         </div>

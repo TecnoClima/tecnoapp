@@ -317,24 +317,3 @@ export const resetDeviceData = (payload) => {
 
 //check if this equals to peopleActions.getAllUsers()
 export const getEmpleados = () => getAction("users", "GET_WORKERS");
-
-//replace this
-export function searchWODevice(devCode) {
-  return async function (dispatch) {
-    return fetch(`${baseURL}/devices/filters`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ filters: { code: devCode } }),
-    })
-      .then((response) => response.json())
-      .then((json) =>
-        dispatch({
-          type: "DEVICE_DETAIL",
-          payload: json.list[0],
-        })
-      );
-  };
-}

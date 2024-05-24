@@ -6,6 +6,7 @@ export default function ForPlan({ select, order }) {
   const [selectedTask, setSelectedTask] = useState(null);
   const [taskDates, setTaskDates] = useState(null);
   const [isForPlan, setIsForPlan] = useState(undefined);
+  const [isLoading, setIsLoading] = useState(true);
 
   function clickButton(e) {
     e.preventDefault();
@@ -14,11 +15,21 @@ export default function ForPlan({ select, order }) {
     setIsForPlan(forPlan);
     select && select({ value: forPlan, taskDate: selectedTask });
   }
-  useEffect(() => setSelectedTask(order.taskDate), [order]);
-  useEffect(
-    () => setTaskDates(order.taskDates || selectedDevice.taskDates),
-    [order, selectedDevice]
-  );
+  useEffect(() => {
+    const dateList = order.taskDates || selectedDevice.taskDates;
+    setTaskDates(dateList);
+    if (isLoading) {
+      if (order.taskDate) {
+        const task = dateList?.find(
+          (o) => o.id === order.taskDate || o.id === order.taskDate?.id
+        );
+        if (task) setSelectedTask(task);
+      } else if (order.code) {
+        setIsForPlan(false);
+      }
+      setIsLoading(false);
+    }
+  }, [order, selectedDevice, isLoading]);
 
   function selectDate(e) {
     e.preventDefault();

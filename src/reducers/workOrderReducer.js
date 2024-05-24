@@ -17,16 +17,12 @@ export default function workOrderReducer(state = initialState, action) {
   switch (action.type) {
     case "NEW_ORDER":
       if (error) return { ...state, orderResult: { error } };
-      array = state.workOrderList.filter(
-        (order) => order.code !== action.payload.code
-      );
-      array.push(action.payload);
-      for (let key of Object.keys(action.payload))
-        detail[key] = action.payload[key];
       return {
         ...state,
-        orderDetail: {},
-        workOrderList: array.sort((a, b) => (a.code > b.code ? 1 : -1)),
+        workOrderList: [
+          action.payload,
+          ...state.workOrderList.filter((o) => o.code !== action.payload.code),
+        ],
         orderResult: { success: action.payload.code },
       };
     case "RESET_ORDER_RESULT":

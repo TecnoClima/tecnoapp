@@ -1,7 +1,6 @@
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { searchWODevice } from "../../../actions/deviceActions";
-import { planActions } from "../../../actions/StoreActions";
+import { deviceActions, planActions } from "../../../actions/StoreActions";
 import "./index.css";
 
 function TaskItem(props) {
@@ -24,7 +23,7 @@ function TaskItem(props) {
   if (className === "next") bgColor = "navy";
 
   function handleNewOrder() {
-    dispatch(searchWODevice(task.code));
+    dispatch(deviceActions.getDetail(task.code, true));
     dispatch(planActions.selectTask(task));
   }
 
