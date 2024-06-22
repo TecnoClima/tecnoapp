@@ -12,6 +12,7 @@ import { ErrorModal, SuccessModal } from "../../components/warnings";
 import WarningErrors from "../../components/warnings/WarningErrors";
 import ForPlan from "./ForPlan";
 import { useNavigate, useParams } from "react-router-dom";
+import WorkerSelector from "./WorkerSelector";
 
 const { headersRef } = appConfig;
 
@@ -104,6 +105,7 @@ export default function WorkOrder() {
     setInterventions(orderDetail.interventions);
     delete editOrder.interventions;
     setMinProgress(orderDetail.completed);
+    setForPlan(!!order.taskDate);
     setOrder(editOrder);
   }, [orderDetail, dispatch]);
 
@@ -268,7 +270,7 @@ export default function WorkOrder() {
   }
   useEffect(() => orderResult && setSaving(false), [orderResult]);
 
-  // useEffect(() => console.log("saving", saving), [saving]);
+  // useEffect(() => console.log("order", order), [order]);
   // useEffect(() => console.log("forPlan", forPlan), [forPlan]);
 
   return (
@@ -370,6 +372,17 @@ export default function WorkOrder() {
                 <h5>"Nueva Orden de Trabajo"</h5>
               </div>
             )}
+            <div className="col-md-6">
+              <WorkerSelector
+                key={order.code}
+                label={"Responsable"}
+                defaultValue={order.responsible}
+                permissions={permissions}
+                action={(value) =>
+                  handleInputOrderData({ name: "responsible", value })
+                }
+              />
+            </div>
           </div>
         </div>
         <div className="row py-2">
