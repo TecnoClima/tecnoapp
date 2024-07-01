@@ -42,6 +42,7 @@ export default function WorkerSelector({
               onChange={handleChange}
               disabled={!workersList.length}
             >
+              <option value="">Sin Seleccionar</option>
               {workersList.map(({ idNumber, name }, i) => (
                 <option key={i} value={idNumber}>
                   ({idNumber}) - {name}
