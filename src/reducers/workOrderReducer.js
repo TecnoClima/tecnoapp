@@ -6,6 +6,7 @@ const initialState = {
   updateResult: "",
   orderResult: {},
   reportData: null,
+  assignedOrders: [],
 };
 
 export default function workOrderReducer(state = initialState, action) {
@@ -85,6 +86,11 @@ export default function workOrderReducer(state = initialState, action) {
       return {
         ...state,
         orderDetail: detail,
+      };
+    case "ASSIGNED_ORDERS":
+      return {
+        ...state,
+        assignedOrders: action.payload.list,
       };
     case "DEL_USAGE":
       index = detail.interventions.findIndex(

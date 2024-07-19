@@ -158,6 +158,7 @@ export const workOrderActions = {
       { intervention, user, usages },
       "DEL_USAGE"
     ),
+  getAssignedOrders: () => getAction(`workorder/assigned`, "ASSIGNED_ORDERS"),
 };
 export const plantActions = {
   getLocations: (plant) =>

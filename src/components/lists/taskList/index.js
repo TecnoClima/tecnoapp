@@ -113,118 +113,120 @@ export default function TaskList(props) {
   const { pendant, current, next } = props;
 
   return (
-    <div className="container-fluid p-0 h-100">
+    <div className="container-fluid p-0 h-100 d-flex flex-column">
       <div className="row m-0">
-        <h5 className="text-center fw-bold">
+        <h5 className="text-center fw-bold my-3">
           <u>Pendientes del plan</u>
         </h5>
       </div>
 
-      <div className="accordion">
-        <div className="accordion-item m-0">
-          <button
-            className={`${
-              pendant[0] ? "bg-danger" : "bg-success"
-            } text-light px-0 py-2 w-100`}
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#collapseOne"
-            aria-expanded="true"
-            aria-controls="collapseOne"
-            disabled={!pendant[0]}
-          >
-            {`${
-              pendant[0] ? pendant.length + " P" : "No hay p"
-            }endientes hasta la semana pasada`}
-          </button>
-          <div
-            id="collapseOne"
-            className={`accordion-collapse collapse ${
-              !current[0] && pendant[0] ? "show" : ""
-            }`}
-            aria-labelledby="headingOne"
-            data-bs-parent="#accordionExample"
-          >
-            <div className="accordion-body p-0">
-              <div
-                className="container-fluid p-0 overflow-auto"
-                style={{ height: "65vh" }}
-              >
-                {pendant.map((task, index) => (
-                  <TaskItem key={index} task={task} className="pendant" />
-                ))}
+      <div className="flex-grow-1" style={{ overflowY: "auto", minHeight: 0 }}>
+        <div className="accordion">
+          <div className="accordion-item m-0 border-0 pb-2">
+            <button
+              className={`${
+                pendant[0] ? "bg-danger" : "bg-success"
+              } text-darkpx-0 py-2 fw-bold w-100 rounded-3 border-0`}
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseOne"
+              aria-expanded="true"
+              aria-controls="collapseOne"
+              disabled={!pendant[0]}
+            >
+              {`${
+                pendant[0] ? pendant.length + " P" : "No hay p"
+              }endientes hasta la semana pasada`}
+            </button>
+            <div
+              id="collapseOne"
+              className={`accordion-collapse collapse ${
+                !current[0] && pendant[0] ? "show" : ""
+              }`}
+              aria-labelledby="headingOne"
+              data-bs-parent="#accordionExample"
+            >
+              <div className="accordion-body p-0">
+                <div
+                  className="container-fluid p-0 overflow-auto"
+                  style={{ height: "65vh" }}
+                >
+                  {pendant.map((task, index) => (
+                    <TaskItem key={index} task={task} className="pendant" />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="accordion-item m-0">
-          <button
-            className={`${
-              current[0] ? "bg-warning " : "bg-success "
-            } text-light px-0 py-2 w-100`}
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#collapseTwo"
-            aria-expanded="true"
-            aria-controls="collapseTwo"
-          >
-            {`${
-              current[0] ? current.length + " P" : "No hay p"
-            }endientes de esta semana`}
-          </button>
-          <div
-            id="collapseTwo"
-            className={`accordion-collapse collapse ${
-              current[0] ? "show" : ""
-            }`}
-            aria-labelledby="headingTwo"
-            data-bs-parent="#accordionExample"
-          >
-            <div className="accordion-body p-0">
-              <div className="container-fluid p-0 h-75 overflow-auto">
-                {current.map((task, index) => (
-                  <TaskItem
-                    key={index}
-                    task={task}
-                    className={
-                      task.completed < 75
-                        ? "pendant"
-                        : task.completed === 100
-                        ? "completed"
-                        : "incourse"
-                    }
-                  />
-                ))}
+          <div className="accordion-item m-0 border-0 pb-2">
+            <button
+              className={`${
+                current[0] ? "bg-warning " : "bg-success "
+              } text-darkpx-0 py-2 fw-bold w-100 rounded-3 border-0`}
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseTwo"
+              aria-expanded="true"
+              aria-controls="collapseTwo"
+            >
+              {`${
+                current[0] ? current.length + " P" : "No hay p"
+              }endientes de esta semana`}
+            </button>
+            <div
+              id="collapseTwo"
+              className={`accordion-collapse collapse ${
+                current[0] ? "show" : ""
+              }`}
+              aria-labelledby="headingTwo"
+              data-bs-parent="#accordionExample"
+            >
+              <div className="accordion-body p-0">
+                <div className="container-fluid p-0 h-75 overflow-auto">
+                  {current.map((task, index) => (
+                    <TaskItem
+                      key={index}
+                      task={task}
+                      className={
+                        task.completed < 75
+                          ? "pendant"
+                          : task.completed === 100
+                          ? "completed"
+                          : "incourse"
+                      }
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="accordion-item m-0">
-          <button
-            className="bg-primary text-light px-0 py-2 w-100"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#collapseThree"
-            aria-expanded="false"
-            aria-controls="collapseThree"
-          >
-            Tareas para la próxima semana
-          </button>
-          <div
-            id="collapseThree"
-            className={`accordion-collapse collapse ${
-              !current[0] && !pendant[0] && next[0] ? "show" : ""
-            }`}
-            aria-labelledby="headingThree"
-            data-bs-parent="#accordionExample"
-          >
-            <div className="accordion-body p-0">
-              <div className="container-fluid p-0 h-100 overflow-auto">
-                {next.map((task, index) => (
-                  <TaskItem key={index} task={task} className="next" />
-                ))}
+          <div className="accordion-item m-0 border-0 pb-2">
+            <button
+              className="bg-primary text-darkpx-0 py-2 fw-bold w-100  rounded-3 border-0"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseThree"
+              aria-expanded="false"
+              aria-controls="collapseThree"
+            >
+              Tareas para la próxima semana
+            </button>
+            <div
+              id="collapseThree"
+              className={`accordion-collapse collapse ${
+                !current[0] && !pendant[0] && next[0] ? "show" : ""
+              }`}
+              aria-labelledby="headingThree"
+              data-bs-parent="#accordionExample"
+            >
+              <div className="accordion-body p-0">
+                <div className="container-fluid p-0 h-100 overflow-auto">
+                  {next.map((task, index) => (
+                    <TaskItem key={index} task={task} className="next" />
+                  ))}
+                </div>
               </div>
             </div>
           </div>

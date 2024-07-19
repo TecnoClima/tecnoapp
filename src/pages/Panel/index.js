@@ -4,8 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import TaskList from "../../components/lists/taskList";
 import { getDeviceFromList } from "../../actions/deviceActions";
 import { planActions } from "../../actions/StoreActions";
+import AssignedWO from "../../components/lists/AssignedWO";
+import { workOrderActions } from "../../actions/StoreActions";
 
 export default function Panel() {
+  const { assignedOrders } = useSelector((state) => state.workOrder);
   const dispatch = useDispatch();
   const { userData } = useSelector((state) => state.people);
   const { plan } = useSelector((state) => state.plan);
@@ -13,6 +16,10 @@ export default function Panel() {
   const [pendant, setPendant] = useState([]);
   const [current, setCurrent] = useState([]);
   const [next, setNext] = useState([]);
+
+  useEffect(() => {
+    dispatch(workOrderActions.getAssignedOrders());
+  }, []);
 
   useEffect(() => {
     if (userData && userData.user) {
@@ -68,14 +75,18 @@ export default function Panel() {
   return (
     <div className="container-fluid h-100 p-0">
       <div className="row h-100 m-0">
-        <div className="col-sm-6 h-100 p-0" style={{ overflowY: "auto" }}>
-          <TaskList
-            pendant={pendant}
-            current={current}
-            next={next}
-            access={userData.access}
-          />
-        </div>
+        {assignedOrders.length > 0 ? (
+          <AssignedWO />
+        ) : (
+          <div className="h-100 p-0" style={{ overflowY: "auto" }}>
+            <TaskList
+              pendant={pendant}
+              current={current}
+              next={next}
+              access={userData.access}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
