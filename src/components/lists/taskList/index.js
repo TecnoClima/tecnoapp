@@ -109,9 +109,7 @@ function TaskItem(props) {
   );
 }
 
-export default function TaskList(props) {
-  const { pendant, current, next } = props;
-
+export default function TaskList({ pendant, current, next }) {
   return (
     <div className="container-fluid p-0 h-100 d-flex flex-column">
       <div className="row m-0">
@@ -125,7 +123,7 @@ export default function TaskList(props) {
           <div className="accordion-item m-0 border-0 pb-2">
             <button
               className={`${
-                pendant[0] ? "bg-danger" : "bg-success"
+                pendant[0] ? "alert-danger" : "alert-success"
               } text-darkpx-0 py-2 fw-bold w-100 rounded-3 border-0`}
               type="button"
               data-bs-toggle="collapse"
@@ -162,7 +160,7 @@ export default function TaskList(props) {
           <div className="accordion-item m-0 border-0 pb-2">
             <button
               className={`${
-                current[0] ? "bg-warning " : "bg-success "
+                current[0] ? "alert-warning " : "alert-success"
               } text-darkpx-0 py-2 fw-bold w-100 rounded-3 border-0`}
               type="button"
               data-bs-toggle="collapse"
@@ -204,7 +202,7 @@ export default function TaskList(props) {
 
           <div className="accordion-item m-0 border-0 pb-2">
             <button
-              className="bg-primary text-darkpx-0 py-2 fw-bold w-100  rounded-3 border-0"
+              className="alert-primary text-darkpx-0 py-2 fw-bold w-100  rounded-3 border-0"
               type="button"
               data-bs-toggle="collapse"
               data-bs-target="#collapseThree"
