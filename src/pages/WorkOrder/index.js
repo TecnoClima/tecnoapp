@@ -64,12 +64,14 @@ export default function WorkOrder() {
   const [interventionForm, setInterventionForm] = useState(false);
   const navigate = useNavigate();
 
+  // if workorder does not have taskdates, setForPlan undefined
   useEffect(() => {
     if (!orderDetail?.taskDates?.[0]) {
       setForPlan(undefined);
     }
   }, [orderDetail]);
 
+  // set Permissions
   useEffect(
     () =>
       setPermissions({
@@ -77,25 +79,28 @@ export default function WorkOrder() {
           order.completed < 99 && (!order.code || order.userId === userData.id),
         admin: userData.access === "Admin",
         supervisor:
-          order.completed <= 99 &&
           userData.access === "Supervisor" &&
-          userData.id === order.supervisor,
+          (!order.code ||
+            (order.completed <= 99 && userData.id === order.supervisor)),
         worker: order.completed < 99 && userData.access === "Worker",
       }),
     [userData, order]
   );
 
+  // reset detail on unmount
   useEffect(() => {
     return () => {
       dispatch(workOrderActions.resetDetail());
     };
   }, []);
 
+  // if orderCode, get order detail
   useEffect(() => {
     if (!orderCode) return;
     dispatch(workOrderActions.searchWO(orderCode));
   }, [orderCode, dispatch]);
 
+  // if orderDetail, fill order with detail
   useEffect(() => {
     if (!orderDetail.code) return;
     const editOrder = { ...orderDetail };
@@ -109,6 +114,7 @@ export default function WorkOrder() {
     setOrder(editOrder);
   }, [orderDetail, dispatch]);
 
+  // Allow Saving
   useEffect(() => {
     let check = true;
     if (!device.name) check = false;
@@ -119,6 +125,7 @@ export default function WorkOrder() {
     setAllowSaving(check);
   }, [interventions, device, order]);
 
+  // getWOOptions
   useEffect(() => {
     if (requested) return;
     if (Object.keys(workOrderOptions).length === 0)
@@ -156,6 +163,12 @@ export default function WorkOrder() {
   useEffect(() => {
     if (!selectedDevice.name || selectedDevice.name === device.name) return;
     selectedDevice.name && selectDevice(selectedDevice);
+    // sets plan false if there is no taskDates
+    if (!selectedDevice?.taskDates?.length) {
+      handleForPlan({ value: false, taskDate: undefined });
+    } else {
+      handleForPlan({});
+    }
   }, [selectDevice, selectedDevice, device]);
 
   function handleInputCode(e) {
