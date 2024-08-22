@@ -177,6 +177,12 @@ export default function WorkOrders() {
   }, [reportData, filters]);
 
   useEffect(() => {
+    return () => {
+      dispatch(workOrderActions.resetReport());
+    };
+  }, []);
+
+  useEffect(() => {
     if (!yearList || !userData) return;
     const orderOfTheYear = workOrderList.find(
       (ot) => new Date(ot.date).getFullYear() === yearList

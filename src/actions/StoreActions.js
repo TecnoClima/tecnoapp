@@ -159,6 +159,7 @@ export const workOrderActions = {
       "DEL_USAGE"
     ),
   getAssignedOrders: () => getAction(`workorder/assigned`, "ASSIGNED_ORDERS"),
+  resetReport: () => ({ type: "RESET_REPORT", payload: {} }),
 };
 export const plantActions = {
   getLocations: (plant) =>

@@ -31,6 +31,11 @@ export default function workOrderReducer(state = initialState, action) {
         ...state,
         orderResult: {},
       };
+    case "RESET_REPORT":
+      return {
+        ...state,
+        reportData: null,
+      };
     case "MOST_RECENT":
       return {
         ...state,
