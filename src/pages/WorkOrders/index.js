@@ -141,6 +141,9 @@ export default function WorkOrders() {
       "Dic",
     ];
 
+    // if (!data[0].Problema) data[0].Problema = "SIN ESPECIFICAR";
+    console.log("data[0]", data[0]);
+
     data.forEach((row) => {
       let date = row["Fecha Emisión"];
       let jsDate = new Date(date);
