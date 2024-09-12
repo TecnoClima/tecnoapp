@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { deviceActions } from "../../../actions/StoreActions";
 import CreateDevice from "./CreateDevice";
 import "./index.css";
+import DeviceReport from "./DeviceReport";
 
 // servicePoints,active
 export default function DeviceAdmin() {
@@ -102,14 +103,16 @@ export default function DeviceAdmin() {
             <h3>Administración de Equipos</h3>
           </div>
           <div className="col col-4">
-            <div className="d-grid gap-2">
+            <div className="d-flex justify-content-end gap-2">
               <button
                 type="button"
-                className="btn btn-success"
+                className="btn btn-success w-auto "
                 onClick={addNewForm}
               >
+                <i className="fas fa-plus me-1" />
                 Agregar Equipo
               </button>
+              <DeviceReport filters={filters} />
             </div>
           </div>
         </div>

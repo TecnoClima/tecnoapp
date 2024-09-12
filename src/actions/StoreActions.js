@@ -113,6 +113,7 @@ export const deviceActions = {
     getAction(`devices/byLine/${lineName}`, "PARTIAL_LIST"), //deviceListByLine
   getByName: (name) => getAction(`devices/byName/${name}`, "PARTIAL_LIST"), //deviceByName
   getOptions: () => getAction("devices/options", "DEVICE_OPTIONS"), //getDeviceOptions
+  getReportData: (body) => postAction(`devices/report`, body, "DEVICE_REPORT"),
 };
 
 export const workOrderActions = {
