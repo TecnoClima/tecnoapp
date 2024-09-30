@@ -29,6 +29,7 @@ export default function deviceReducer(state = initialState, action) {
         ...state,
         deviceResult: action.payload,
         deviceFullList: newList,
+        selectedDevice: success || state.selectedDevice,
       };
     case "DEVICE_PAGE":
       return {

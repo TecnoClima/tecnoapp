@@ -6,6 +6,7 @@ import { FormInput } from "../../components/forms/FormInput";
 import DeviceList from "../../components/lists/DeviceList";
 import { Chart } from "../../components/Chart";
 import "./index.css";
+import FollowDevice from "./FollowDevice";
 
 export default function Device() {
   const { userData } = useSelector((state) => state.people);
@@ -140,7 +141,14 @@ export default function Device() {
             </Link>
           </div>
           <div className="row py-3">
-            <h4 className="col-auto">{`[${device.code}] ${device.name}`}</h4>
+            <div className="col-auto">
+              <h4>{`[${device.code}] ${device.name}`}</h4>
+            </div>
+            {device && (
+              <div className="col-auto ms-auto">
+                <FollowDevice device={device} />
+              </div>
+            )}
           </div>
           <div className="row mb-3">
             <div className="col-md-6">

@@ -13,6 +13,7 @@ import WarningErrors from "../../components/warnings/WarningErrors";
 import ForPlan from "./ForPlan";
 import { useNavigate, useParams } from "react-router-dom";
 import WorkerSelector from "./WorkerSelector";
+import FollowDevice from "../Device/FollowDevice";
 
 const { headersRef } = appConfig;
 
@@ -417,7 +418,7 @@ export default function WorkOrder() {
                   aria-expanded="true"
                   aria-controls="collapseOne"
                 >
-                  Información del Equipo
+                  Equipo
                 </button>
                 <div
                   id="collapseOne"
@@ -507,9 +508,7 @@ export default function WorkOrder() {
           </div>
           {/* order data */}
           <div className="col-lg-4">
-            <div className="btn btn-secondary w-100">
-              Detalle de la orden de trabajo
-            </div>
+            <div className="btn btn-secondary w-100">Orden de trabajo</div>
             {[
               "supervisor",
               "clientWO",
@@ -640,7 +639,7 @@ export default function WorkOrder() {
               />
             </div>
           </div>
-          <div className="col-sm-6 flex align-items-start flex-wrap gap-1">
+          <div className="col-sm-6 d-flex align-items-start flex-wrap gap-1">
             {Object.values(permissions).includes(true) && (
               <button
                 className="btn btn-info flex-grow-1"
@@ -652,7 +651,7 @@ export default function WorkOrder() {
             )}
             {(permissions.author || permissions.worker) && (
               <button
-                className="btn btn-success  flex-grow-1"
+                className="btn btn-success flex-grow-1"
                 disabled={!allowSaving || saving}
                 onClick={handleAskToClose}
               >
@@ -660,13 +659,16 @@ export default function WorkOrder() {
               </button>
             )}
             {(permissions.admin || permissions.supervisor) && (
-              <button
-                className="btn btn-success  flex-grow-1"
-                disabled={!allowSaving || saving}
-                onClick={handleCloseOrder}
-              >
-                <i className="fas fa-lock" /> CERRAR OT
-              </button>
+              <>
+                <button
+                  className="btn btn-success  flex-grow-1"
+                  disabled={!allowSaving || saving}
+                  onClick={handleCloseOrder}
+                >
+                  <i className="fas fa-lock" /> CERRAR OT
+                </button>
+                {device.name && <FollowDevice />}
+              </>
             )}
           </div>
         </div>

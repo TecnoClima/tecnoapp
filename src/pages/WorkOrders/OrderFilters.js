@@ -55,6 +55,17 @@ export default function OrdersFilters({
         if (new Date(order.date) > new Date(filters[key])) {
           check = false;
         }
+      } else if (key === "device") {
+        if (
+          !order.devCode.toLowerCase().includes(filters[key]?.toLowerCase()) &&
+          !order.devName.toLowerCase().includes(filters[key]?.toLowerCase())
+        ) {
+          check = false;
+        }
+      } else if (key === "following") {
+        if (order.devFollowing !== (filters[key] === "si")) {
+          check = false;
+        }
       } else if (key === "class" && filters[key] === "no-reclamo") {
         if (order[key].toLowerCase() === "reclamo") {
           check = false;
@@ -99,23 +110,19 @@ export default function OrdersFilters({
     workOrderList && applyFilters(filters);
   }, [workOrderList, applyFilters, filters]);
 
-  // useEffect(() => console.log(filters), [filters]);
-  // useEffect(
-  //   () => console.log("filteredList[0]", filteredList[0]),
-  //   [filteredList]
-  // );
-
   return (
     <div>
       <div className="container px-0">
-        <div className="row">
-          <div className="col-12 col-md-6 col-xl-3">
-            <div className="input-group input-group-md mb-2 mx-0">
-              <div className="input-group-prepend">
-                <span className="input-group-text" id="inputGroup-sizing-sm">
-                  N° OT
-                </span>
-              </div>
+        <div className="row justify-content-between">
+          <div className="col-md-auto">
+            <div className="mb-2 mx-0 d-flex flex-md-column flex-row align-items-center align-items-md-start gap-2 gap-md-0">
+              <span
+                className="fw-bold"
+                id="inputGroup-sizing-sm"
+                style={{ whiteSpace: "nowrap" }}
+              >
+                N° OT
+              </span>
               <input
                 name="code"
                 value={filters.code || ""}
@@ -123,18 +130,16 @@ export default function OrdersFilters({
                 type="text"
                 className="form-control"
                 aria-label="Small"
-                placeholder="Coincidencia parcial"
+                placeholder="Coincidencia"
                 aria-describedby="inputGroup-sizing-sm"
               />
             </div>
           </div>
-          <div className="col-12 col-md-6 col-xl-3">
-            <div className="input-group input-group-md mb-2 mx-0">
-              <div className="input-group-prepend">
-                <span className="input-group-text" id="inputGroup-sizing-sm">
-                  Equipo
-                </span>
-              </div>
+          <div className="col-md-auto">
+            <div className="mb-2 mx-0 d-flex flex-md-column flex-row align-items-center align-items-md-start gap-2 gap-md-0">
+              <span className="fw-bold" id="inputGroup-sizing-sm">
+                Equipo
+              </span>
               <input
                 name="device"
                 value={filters.device || ""}
@@ -147,75 +152,119 @@ export default function OrdersFilters({
               />
             </div>
           </div>
-          <div className="col-12 col-md-6 col-xl-3">
-            <div className="input-group input-group-md mb-2 mx-0 w-100">
-              <div className="input-group-prepend">
-                <span className="input-group-text" id="inputGroup-sizing-sm">
-                  Estado
-                </span>
+          <div className="col-md-auto">
+            <div className="mb-2 mx-0 d-flex flex-md-column flex-row align-items-center align-items-md-start gap-2 gap-md-0">
+              <span className="fw-bold" id="inputGroup-sizing-sm">
+                Estado
+              </span>
+              <div className="input-group input-group-md mb-2 mx-0">
+                {["Pendiente", "Cerrada"].map((status) => (
+                  <button
+                    value={status}
+                    key={status}
+                    name="status"
+                    onClick={handleSelect}
+                    className={`btn flex-grow-1  ${
+                      filters.status === status
+                        ? "btn-info"
+                        : "btn-outline-info"
+                    }`}
+                  >
+                    {status}
+                  </button>
+                ))}
+                {filters.status && (
+                  <button
+                    value="status"
+                    onClick={removeKey}
+                    className="btn btn-outline-danger"
+                  >
+                    <i className="fas fa-trash-alt" />
+                  </button>
+                )}
               </div>
-              {["Pendiente", "Cerrada"].map((status) => (
-                <button
-                  value={status}
-                  key={status}
-                  name="status"
-                  onClick={handleSelect}
-                  className={`btn btn-sm flex-grow-1  ${
-                    filters.status === status ? "btn-info" : "btn-outline-info"
-                  }`}
-                >
-                  {status}
-                </button>
-              ))}
-              {filters.status && (
-                <button
-                  value="status"
-                  onClick={removeKey}
-                  className="btn btn-sm btn-outline-danger"
-                >
-                  <i className="fas fa-trash-alt" />
-                </button>
-              )}
             </div>
           </div>
-          <div className="col-12 col-md-6 col-xl-3">
-            <div className="input-group input-group-md mb-2 mx-0 w-100">
-              <div className="input-group-prepend">
-                <span className="input-group-text" id="inputGroup-sizing-sm">
-                  Clase
-                </span>
-              </div>
-              <button
-                value="Reclamo"
-                name="class"
-                onClick={handleSelect}
-                className={`btn btn-sm flex-grow-1 ${
-                  filters.class === "Reclamo" ? "btn-info" : "btn-outline-info"
-                }`}
-              >
-                Reclamo
-              </button>
-              <button
-                value="no-reclamo"
-                name="class"
-                onClick={handleSelect}
-                className={`btn btn-sm flex-grow-1 ${
-                  filters.class === "no-reclamo"
-                    ? "btn-info"
-                    : "btn-outline-info"
-                }`}
-              >
-                No Reclamo
-              </button>
-              {filters.class && (
+          <div className="col-md-auto">
+            <div className="mb-2 mx-0 d-flex flex-md-column flex-row align-items-center align-items-md-start gap-2 gap-md-0">
+              <span className="fw-bold" id="inputGroup-sizing-sm">
+                Clase
+              </span>
+              <div className="input-group input-group-md mb-2 mx-0">
                 <button
-                  value="class"
-                  onClick={removeKey}
-                  className="btn btn-sm btn-outline-danger"
+                  value="Reclamo"
+                  name="class"
+                  onClick={handleSelect}
+                  className={`btn flex-grow-1 ${
+                    filters.class === "Reclamo"
+                      ? "btn-info"
+                      : "btn-outline-info"
+                  }`}
                 >
-                  <i className="fas fa-trash-alt" />
+                  Reclamo
                 </button>
-              )}
+                <button
+                  value="no-reclamo"
+                  name="class"
+                  onClick={handleSelect}
+                  className={`btn flex-grow-1 ${
+                    filters.class === "no-reclamo"
+                      ? "btn-info"
+                      : "btn-outline-info"
+                  }`}
+                >
+                  No Reclamo
+                </button>
+                {filters.class && (
+                  <button
+                    value="class"
+                    onClick={removeKey}
+                    className="btn btn-outline-danger"
+                  >
+                    <i className="fas fa-trash-alt" />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="col-md-auto">
+            <div className="mb-2 mx-0 d-flex flex-md-column flex-row align-items-center align-items-md-start gap-2 gap-md-0">
+              <span className="fw-bold" id="inputGroup-sizing-sm">
+                Equipos en seguimiento
+              </span>
+              <div className="input-group input-group-md mb-2 mx-0">
+                <button
+                  value="si"
+                  name="following"
+                  onClick={handleSelect}
+                  className={`btn flex-grow-1 ${
+                    filters.class === "Si" ? "btn-info" : "btn-outline-info"
+                  }`}
+                >
+                  Si
+                </button>
+                <button
+                  value="no"
+                  name="following"
+                  onClick={handleSelect}
+                  className={`btn flex-grow-1 ${
+                    filters.class === "no-reclamo"
+                      ? "btn-info"
+                      : "btn-outline-info"
+                  }`}
+                >
+                  No
+                </button>
+                {filters.following && (
+                  <button
+                    value="following"
+                    onClick={removeKey}
+                    className="btn btn-outline-danger"
+                  >
+                    <i className="fas fa-trash-alt" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
