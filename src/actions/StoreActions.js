@@ -240,53 +240,6 @@ export function getDevicesList(selectedData) {
   };
 }
 
-// export function getOptionsList() {
-//   return async function (dispatch) {
-//     return fetch(`${baseURL}/abmdevices/options`)
-//       .then((response) => response.json())
-//       .then((json) => {
-//         dispatch({
-//           type: "GET_ALLOPTIONS",
-//           payload: json,
-//         });
-//       });
-//   };
-// }
-
-// export function addDevice(device) {
-//   return async function (dispatch) {
-//     return fetch(`${baseURL}/abmdevices/`, {
-//       method: "POST",
-//       headers: {
-//         Accept: "application/json",
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(device),
-//     })
-//       .then((response) => response.json())
-//       .then((json) => {
-//         return json;
-//       });
-//   };
-// }
-
-// export function deleteDevice(device) {
-//   return async function (dispatch) {
-//     return fetch(`${baseURL}/abmdevices/delete`, {
-//       method: "DELETE",
-//       headers: {
-//         Accept: "application/json",
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(device),
-//     })
-//       .then((response) => response.json())
-//       .then((json) => {
-//         return json;
-//       });
-//   };
-// }
-
 export const getDeviceData = (payload) => {
   return {
     type: "DEVICE_DATA",
@@ -300,23 +253,6 @@ export const resetDeviceData = (payload) => {
     payload: payload,
   };
 };
-
-// export function updateDevice(device) {
-//   return async function (dispatch) {
-//     return fetch(`${baseURL}/abmdevices/update`, {
-//       method: "PUT",
-//       headers: {
-//         Accept: "application/json",
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(device),
-//     })
-//       .then((response) => response.json())
-//       .then((json) => {
-//         return json;
-//       });
-//   };
-// }
 
 //check if this equals to peopleActions.getAllUsers()
 export const getEmpleados = () => getAction("users", "GET_WORKERS");
