@@ -7,6 +7,7 @@ import DeviceList from "../../components/lists/DeviceList";
 import { Chart } from "../../components/Chart";
 import "./index.css";
 import FollowDevice from "./FollowDevice";
+import SetFrequency from "./Frequency";
 
 export default function Device() {
   const { userData } = useSelector((state) => state.people);
@@ -131,11 +132,14 @@ export default function Device() {
         <DeviceList plant={userData.plant} />
       ) : (
         <div className="container">
-          <div className="row justify-content-end mt-3">
+          <div className="row justify-content-between flex-wrap-reverse gap-2 mt-3">
+            <div className="col col-sm-auto px-0">
+              <SetFrequency />
+            </div>
             <Link
               to="/ots/new"
               onClick={(e) => dispatch(deviceActions.getDetail(code))}
-              className="btn btn-success col-auto"
+              className="btn btn-success col-sm-auto"
             >
               <i className="fas fa-toolbox" /> Nueva Orden
             </Link>
@@ -153,7 +157,7 @@ export default function Device() {
           <div className="row mb-3">
             <div className="col-md-6">
               {device.code && (
-                <div className="container">
+                <div className="container px-0">
                   <div className="row">
                     <h5>DATOS DEL EQUIPO</h5>
                   </div>
@@ -215,9 +219,9 @@ export default function Device() {
               )}
             </div>
             <div className="col-md-6">
-              <div className="container">
+              <div className="container px-0">
                 <h5>HISTORIAL DE RECLAMOS</h5>
-                <div className="flex">
+                <div className="d-flex">
                   {years.map((year, index) => (
                     <button
                       key={chartValues + index}
@@ -241,7 +245,7 @@ export default function Device() {
               </div>
             </div>
           </div>
-          <div className="row">
+          <div className="row overflow-x-auto">
             <h5>HISTORIAL DE INTERVENCIONES</h5>
             <table className="table table-hover" style={{ fontSize: "80%" }}>
               <thead>

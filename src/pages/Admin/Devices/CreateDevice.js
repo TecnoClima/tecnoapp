@@ -192,7 +192,7 @@ export default function CreateDevice({ edit, close }) {
                   : undefined
               }
               limit="line"
-              extraClass="col-md-4"
+              extraclassName="col-md-4"
               getNames={setLocation}
               getId={selectLine}
             />

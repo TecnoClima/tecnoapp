@@ -18,6 +18,8 @@ export default function FollowDevice() {
       deviceActions.updateDevice({
         ...selectedDevice,
         following: !selectedDevice.following,
+        follower: userData.user,
+        followDate: new Date(),
       })
     );
   }
@@ -29,10 +31,10 @@ export default function FollowDevice() {
         selectedDevice.following ? "bg-dark text-light" : ""
       } btn px-2 rounded-2`}
     >
-      <div class="d-flex align-items-center gap-2">
+      <div className="d-flex align-items-center gap-2">
         {fetching ? (
-          <div class="spinner-border spinner-border-sm" role="status">
-            <span class="visually-hidden">Loading...</span>
+          <div className="spinner-border spinner-border-sm" role="status">
+            <span className="visually-hidden">Loading...</span>
           </div>
         ) : (
           <input
@@ -46,7 +48,7 @@ export default function FollowDevice() {
           />
         )}
 
-        <label class="form-check-label" for="flexCheckDefault">
+        <label className="form-check-label" for="flexCheckDefault">
           Seguimiento
           {selectedDevice?.following ? (
             <i className="fas fa-chart-line ms-1" />
