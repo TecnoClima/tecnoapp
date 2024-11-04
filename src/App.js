@@ -119,17 +119,15 @@ function App() {
               }
             />
           )}
-          {access.isLogged && (
-            <Route
-              exact
-              path={"/plan"}
-              element={
-                <Layout>
-                  <Plan />
-                </Layout>
-              }
-            />
-          )}
+          <Route
+            exact
+            path={"/plan"}
+            element={
+              <Layout>
+                <Plan />
+              </Layout>
+            }
+          />
           {access.isAdmin && (
             <Route
               exact

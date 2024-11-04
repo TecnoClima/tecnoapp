@@ -4,9 +4,12 @@ import { plantActions } from "../../../actions/StoreActions";
 
 export default function LocationFilter(props) {
   const { userData } = useSelector((state) => state.people);
-  const { plantList, areaList, lineList, spList } = useSelector(
-    (state) => state.plants
-  );
+  const {
+    plantList = [],
+    areaList = [],
+    lineList = [],
+    spList = [],
+  } = useSelector((state) => state.plants);
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState(
     userData.plant
@@ -133,14 +136,14 @@ export default function LocationFilter(props) {
                   </option>
                 ))}
             </select>
-            {/* <input
+            <input
               className="form-control p-0 pe-3 w-auto"
               placeholder="Lugar de Servicio"
               name="servicePoint"
               value={filters.servicePoint || ""}
               disabled={!filters.plant}
               onChange={setFilter}
-            /> */}
+            />
             <input
               className="form-control p-0 pe-3 w-auto"
               placeholder="Equipo"

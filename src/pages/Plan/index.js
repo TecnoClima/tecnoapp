@@ -30,7 +30,7 @@ export default function Plan() {
   useEffect(() => {
     if (loading) return;
     if (plan[0]) setLoading(false);
-    if (year && (plant || userData.access === "Admin")) {
+    if (year && (plant || !userData || userData.access === "Admin")) {
       dispatch(planActions.getPlan({ year, plant, user: userData.user }));
       setLoading(true);
     }
