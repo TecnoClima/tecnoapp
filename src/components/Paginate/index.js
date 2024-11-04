@@ -52,7 +52,7 @@ export default function Paginate(props) {
   return (
     <div className="container-fluid p-0 d-flex align-content-center justify-content-center">
       <div className="row m-auto justify-content-center">
-        {EdgeButton(1, "<<", 1)}
+        {EdgeButton(1, "<<", 0)}
         {indexes.map((index, key) => (
           <button
             key={key}

@@ -158,19 +158,20 @@ export default function OrdersFilters({
                 Estado
               </span>
               <div className="input-group input-group-md mb-2 mx-0">
-                {["Pendiente", "Cerrada"].map((status) => (
+                {[
+                  { value: "Abierta", label: "Pendiente" },
+                  { value: "Cerrada", label: "Cerrada" },
+                ].map(({ value, label }) => (
                   <button
-                    value={status}
-                    key={status}
+                    value={value}
+                    key={value}
                     name="status"
                     onClick={handleSelect}
                     className={`btn flex-grow-1  ${
-                      filters.status === status
-                        ? "btn-info"
-                        : "btn-outline-info"
+                      filters.status === value ? "btn-info" : "btn-outline-info"
                     }`}
                   >
-                    {status}
+                    {label}
                   </button>
                 ))}
                 {filters.status && (

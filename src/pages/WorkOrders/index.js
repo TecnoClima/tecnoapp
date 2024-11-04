@@ -180,7 +180,7 @@ export default function WorkOrders() {
     return () => {
       dispatch(workOrderActions.resetReport());
     };
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (!yearList || !userData) return;
