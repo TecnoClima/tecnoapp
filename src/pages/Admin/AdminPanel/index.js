@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { callMostRecent } from "../../../actions/workOrderActions";
 import { LoadExcel } from "../LoadExcel";
+import { LoadFrequencies } from "../LoadFrequencies";
 
 export default function AdminPanel() {
   const { selected } = useParams();
@@ -20,7 +21,8 @@ export default function AdminPanel() {
     { caption: "Plantas", url: "/admin/plantas" },
     { caption: "Plan", url: "/admin/plan" },
     { caption: "Garrafas", url: "/admin/garrafas" },
-    { caption: "Cargar Excel", url: "/admin/carga_excel" },
+    { caption: "Cargar Equipos", url: "/admin/carga_excel" },
+    { caption: "Cargar Frecuencias", url: "/admin/carga_frecuencias" },
   ];
   const { mostRecent } = useSelector((state) => state.workOrder);
   const dispatch = useDispatch();
@@ -41,6 +43,7 @@ export default function AdminPanel() {
         {selected === "plan" && <AdminPlan />}
         {selected === "garrafas" && <AdminCylinders />}
         {selected === "carga_excel" && <LoadExcel />}
+        {selected === "carga_frecuencias" && <LoadFrequencies />}
         {!selected && (
           <div className="container-fluid p-0">
             <div className="col-12">

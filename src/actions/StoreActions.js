@@ -100,6 +100,7 @@ export const deviceActions = {
   getFullList: () => getAction(`devices/all`, "FULL_DEVICE_LIST"),
 
   postExcel: (data) => postAction("excel", data, "LOAD_DEVICE_EXCEL"),
+  putExcel: (data) => putAction("excel", data, "LOAD_DEVICE_EXCEL"),
 
   getPartialList: (filters) => {
     filters.plant = "SSN"; // <-- review this. Should be userData.plant or selected plant.
