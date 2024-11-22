@@ -21,6 +21,7 @@ const appConfig = {
     clientWO: "OT Cliente",
     closed: "Cierre",
     cause: "Causa",
+    frequency: "Frecuencia",
     issue: "Problema",
     line: "Línea",
     area: "Área",

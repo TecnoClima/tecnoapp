@@ -31,7 +31,9 @@ export default function PlanTask() {
     );
   }, [dispatch, selectedPlant, year]);
 
-  useEffect(() => setFilteredList(devicePlanList), [devicePlanList]);
+  useEffect(() => {
+    setFilteredList(devicePlanList);
+  }, [devicePlanList]);
 
   async function handleSave(json) {
     dispatch(setDeviceStrategy(json));

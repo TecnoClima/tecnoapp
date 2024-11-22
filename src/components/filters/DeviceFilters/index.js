@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { appConfig } from "../../../config";
-const { headersRef } = appConfig;
+const { headersRef, frequencies } = appConfig;
 const unassigned = "SIN PROGRAMA ASIGNADO";
 
 export default function DeviceFilters(props) {
@@ -19,6 +19,7 @@ export default function DeviceFilters(props) {
     age: { min: "", max: "" },
     status: "",
     reclaims: { min: "", max: "" },
+    frequency: "",
     program: "",
   };
   // const [filters, setFilters] = useState(
@@ -58,22 +59,25 @@ export default function DeviceFilters(props) {
       "category",
       "environment",
       "service",
+      "frequency",
       "status",
     ]) {
       newOptions[key] = Object.keys(filters).includes(key) && [
         ...new Set(list.filter((d) => !!d[key]).map((d) => d[key])),
       ];
     }
-    setOptions(newOptions);
+    setOptions({ newOptions, frequency: frequencies.map((f) => f.frequency) });
   }, [list, filters]);
 
   function handleFilter(e, key) {
     e.preventDefault();
     const { name, value } = e.target;
+
     const newFilters = key
       ? { ...filters, [key]: { ...filters[key], [name]: value } }
       : { ...filters, [name]: value };
     setFilters(newFilters);
+
     applyFilters(list, newFilters);
   }
 
@@ -94,6 +98,7 @@ export default function DeviceFilters(props) {
         service,
         status,
         program,
+        frequency,
       } = newFilters;
       let check = true;
       if (line && d.line !== line) {
@@ -119,6 +124,13 @@ export default function DeviceFilters(props) {
         if (min && d[key] < Number(min)) check = false;
         if (max && d[key] > Number(max)) check = false;
       }
+      if (frequency) {
+        const weeks = frequencies.find((f) => f.frequency === frequency)?.weeks;
+        if (weeks !== d.frequency) {
+          check = false;
+        }
+      }
+
       if (program) {
         if (program === unassigned && d.strategy && d.strategy.name)
           check = false;
@@ -128,6 +140,7 @@ export default function DeviceFilters(props) {
         )
           check = false;
       }
+
       for (let key of Object.keys({
         type,
         refrigerant,
@@ -138,6 +151,7 @@ export default function DeviceFilters(props) {
       })) {
         if (newFilters[key] && d[key] !== newFilters[key]) check = false;
       }
+
       return check;
     });
     select && select(filteredList);
@@ -231,6 +245,7 @@ export default function DeviceFilters(props) {
                       min="0"
                       name={name}
                       className="form-control"
+                      placeholder={name}
                       aria-label="Default"
                       value={filters[k][name]}
                       aria-describedby="inputGroup-sizing-default"
