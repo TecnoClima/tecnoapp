@@ -19,7 +19,7 @@ export default function Panel() {
 
   useEffect(() => {
     dispatch(workOrderActions.getAssignedOrders());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (userData && userData.user) {
