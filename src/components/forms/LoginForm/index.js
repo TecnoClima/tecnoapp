@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { peopleActions } from "../../../actions/StoreActions";
 import { ErrorModal } from "../../warnings";
-import { FormInput } from "../FormInput";
-import "./index.css";
 
 export default function LoginForm() {
   const dispatch = useDispatch();
@@ -17,8 +15,9 @@ export default function LoginForm() {
 
   function setValue(e) {
     e.preventDefault();
+    dispatch(peopleActions.resetResult());
     const data = { ...loginData };
-    const { name, value } = e.target;
+    const { name, value } = e.currentTarget;
     data[name] = value;
     setLoginData(data);
   }
@@ -35,35 +34,41 @@ export default function LoginForm() {
   }, [peopleResult]);
 
   return (
-    <form className="container" onSubmit={(e) => login(e)}>
-      <h2>Inicie sesión para comenzar</h2>
-      <div className="row">
-        <div className="col">
-          <FormInput label="Usuario" name="username" changeInput={setValue} />
-        </div>
-      </div>
-      <div className="row pt-2">
-        <div className="col">
-          <FormInput
-            label="Contraseña"
-            name="password"
-            type="password"
-            changeInput={setValue}
-          />
-        </div>
-        <div className="row py-2 justify-content-center">
-          <button
-            className="btn btn-danger w-auto"
-            type="sumbit"
-            disabled={!loginData.username || !loginData.password}
-          >
-            Iniciar Sesión
-          </button>
-        </div>
+    <>
+      <div className="card bg-base-200 w-11/12 max-w-fit shadow-xl shadow-neutral m-auto">
+        <form className="card-body" onSubmit={(e) => login(e)}>
+          <h2 className="card-title text-center mb-8">
+            Sistema de Gestión de Mantenimiento
+          </h2>
+          <p className="mb-4">Ingresa tus credenciales para iniciar sesión</p>
+          <label className="input input-bordered flex items-center gap-2 text-base-content/75 font-bold">
+            <span className="w-24">Usuario</span>
+            <input
+              type="text"
+              name="username"
+              className="grow text-base-content font-normal"
+              placeholder="Ingresa aquí tu nombre de usuario"
+              onChange={setValue}
+            />
+          </label>
+          <label className="input input-bordered flex items-center gap-2 text-base-content/75 font-bold">
+            <span className="w-24">Contraseña</span>
+            <input
+              type="password"
+              className="grow text-base-content font-normal"
+              name="password"
+              placeholder="Ingresa aquí tu contraseña"
+              onChange={setValue}
+            />
+          </label>
+          <div className="card-actions justify-end mt-4">
+            <button className="btn btn-primary">Iniciar sesión</button>
+          </div>
+        </form>
       </div>
       {peopleResult.error && (
         <ErrorModal message={peopleResult.error} close={handleClose} />
       )}
-    </form>
+    </>
   );
 }

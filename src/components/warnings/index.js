@@ -6,27 +6,22 @@ export const ErrorModal = (props) => {
     e.preventDefault();
     close();
   }
+  // <button className="btn" onClick={()=>document.getElementById('my_modal_1').showModal()}>open modal</button>
   return (
-    <div className="modal" style={{ zIndex: "none" }}>
-      <form className="alert alert-danger" onSubmit={handleClose} role="alert">
-        <div className="container">
-          <div className="row" style={{ alignItems: "center" }}>
-            <div className="col-12">
-              <h3 style={{ textAlign: "center" }}>ERROR</h3>
-              <h5 style={{ textAlign: "center" }}>{message}</h5>
-            </div>
-          </div>
-          <div className="row" style={{ alignItems: "center" }}>
-            Si no logra resolverlo, dé aviso al administrador.
-          </div>
-          <div className="row" style={{ alignItems: "center" }}>
-            <button className="btn btn-danger" type="submit">
-              Cerrar
+    <dialog id="error-modal" className="modal w-full h-full" open>
+      <div className="modal-box bg-error text-error-content">
+        <h3 className="font-bold text-lg">Ocurrió un error</h3>
+        <p className="py-4">{message}</p>
+        <div className="modal-action">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn" onClick={handleClose}>
+              Entendido
             </button>
-          </div>
+          </form>
         </div>
-      </form>
-    </div>
+      </div>
+    </dialog>
   );
 };
 
