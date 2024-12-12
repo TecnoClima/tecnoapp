@@ -1,16 +1,13 @@
-import React from "react";
-import NavBar from "../components/NavBar";
-import "./index.css";
+// import Layout from "../components/Layout/InnerLayout";
+// import "./index.css";
 
-const Layout = (props) => {
-  return (
-    <React.Fragment>
-      <NavBar />
-
-      <div className="container d-flex flex-grow-1 overflow-auto">
-        {props.children}
-      </div>
-    </React.Fragment>
-  );
-};
-export default Layout;
+// const InnerLayout = (props) => {
+//   return (
+//     <Layout>
+//       <div className="container d-flex flex-grow-1 overflow-auto">
+//         {props.children}
+//       </div>
+//     </Layout>
+//   );
+// };
+// export default InnerLayout;

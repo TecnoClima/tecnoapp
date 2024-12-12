@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import "./App.css";
 import Landing from "./pages/Landing";
-import Layout from "./layout/index";
 import Panel from "./pages/Panel";
 import Plan from "./pages/Plan";
 import WorkOrders from "./pages/WorkOrders";
@@ -13,6 +12,7 @@ import WorkOrder from "./pages/WorkOrder";
 import Device from "./pages/Device";
 import { peopleActions, planActions } from "./actions/StoreActions";
 import NotFound from "./pages/NotFound";
+import InnerLayout from "./components/Layout/InnerLayout";
 
 function App() {
   const { userData } = useSelector((state) => state.people);
@@ -49,9 +49,9 @@ function App() {
               exact
               path={"/panel"}
               element={
-                <Layout>
+                <InnerLayout>
                   <Panel />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -60,9 +60,9 @@ function App() {
               exact
               path={"/ots"}
               element={
-                <Layout>
+                <InnerLayout>
                   <WorkOrders />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -71,9 +71,9 @@ function App() {
               exact
               path={"/ots/new"}
               element={
-                <Layout>
+                <InnerLayout>
                   <WorkOrder />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -82,9 +82,9 @@ function App() {
               exact
               path={"/ots/detail/:orderCode"}
               element={
-                <Layout>
+                <InnerLayout>
                   <WorkOrder />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -93,9 +93,9 @@ function App() {
               exact
               path={"/equipos"}
               element={
-                <Layout>
+                <InnerLayout>
                   <Device />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -103,9 +103,9 @@ function App() {
             exact
             path={"/equipos/:code"}
             element={
-              <Layout>
+              <InnerLayout>
                 <Device />
-              </Layout>
+              </InnerLayout>
             }
           />
           {access.isLogged && (
@@ -113,9 +113,9 @@ function App() {
               exact
               path={"/ots/edit/:otCode"}
               element={
-                <Layout>
+                <InnerLayout>
                   <WorkOrder />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -123,9 +123,9 @@ function App() {
             exact
             path={"/plan"}
             element={
-              <Layout>
+              <InnerLayout>
                 <Plan />
-              </Layout>
+              </InnerLayout>
             }
           />
           {access.isAdmin && (
@@ -133,9 +133,9 @@ function App() {
               exact
               path={"/admin"}
               element={
-                <Layout>
+                <InnerLayout>
                   <AdminPanel />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -144,9 +144,9 @@ function App() {
               exact
               path={"/admin/:selected"}
               element={
-                <Layout>
+                <InnerLayout>
                   <AdminPanel />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -154,9 +154,9 @@ function App() {
             exact
             path={"/plan"}
             element={
-              <Layout>
+              <InnerLayout>
                 <Plan />
-              </Layout>
+              </InnerLayout>
             }
           />
           <Route exact path="*" element={<NotFound />} />

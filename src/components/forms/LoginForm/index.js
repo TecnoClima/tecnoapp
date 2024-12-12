@@ -62,7 +62,12 @@ export default function LoginForm() {
             />
           </label>
           <div className="card-actions justify-end mt-4">
-            <button className="btn btn-primary">Iniciar sesión</button>
+            <button
+              disabled={!loginData.username || !loginData.password}
+              className="btn btn-primary"
+            >
+              Iniciar sesión
+            </button>
           </div>
         </form>
       </div>

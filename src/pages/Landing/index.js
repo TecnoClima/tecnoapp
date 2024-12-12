@@ -1,6 +1,6 @@
 import Logo from "../../assets/icons/logoTecnoclima.png";
 import LoginForm from "../../components/forms/LoginForm";
-import LandingLayout from "../../layout/LandingLayout";
+import LandingLayout from "../../components/Layout/LandingLayout";
 
 export default function Landing() {
   return (
