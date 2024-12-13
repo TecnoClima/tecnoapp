@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import "./index.css";
 import { useDispatch, useSelector } from "react-redux";
-import TaskList from "../../components/Panel/TaskList";
+import TaskList from "../../components/Panel/TaskLists";
 import { getDeviceFromList } from "../../actions/deviceActions";
 import { planActions } from "../../actions/StoreActions";
 import AssignedWO from "../../components/Panel/AssignedWO";

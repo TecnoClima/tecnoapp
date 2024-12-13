@@ -63,8 +63,7 @@ export default function TaskItem(props) {
 
             <div className="flex gap-2 items-center">
               <details className="dropdown">
-                <summary className="btn btn-sm btn-neutral bg-neutral/40 hover:bg-neutral/60 border-none">
-                  {" "}
+                <summary className="btn btn-xs btn-neutral bg-neutral/40 hover:bg-neutral/60 border-none">
                   Ver OTs
                 </summary>
                 <ul className="menu dropdown-content bg-base-100 rounded-lg z-[1] w-40 p-2 shadow">
@@ -82,14 +81,14 @@ export default function TaskItem(props) {
                 </ul>
               </details>
               <Link
-                className="btn btn-sm btn-neutral bg-neutral/40 hover:bg-neutral/60 border-none"
+                className="btn btn-xs btn-neutral bg-neutral/40 hover:bg-neutral/60 border-none"
                 to="/ots/new"
                 onClick={handleNewOrder}
               >
                 Crear OT
               </Link>
               <Link
-                className="btn btn-sm btn-neutral bg-neutral/40 hover:bg-neutral/60 border-none"
+                className="btn btn-xs btn-neutral bg-neutral/40 hover:bg-neutral/60 border-none"
                 to={`/devices/${task.code}`}
               >
                 Ver Equipo
