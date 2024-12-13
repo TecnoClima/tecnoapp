@@ -1,46 +1,73 @@
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { classBorderColor } from "../../../utils/Constants";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircle } from "@fortawesome/free-regular-svg-icons";
+import { faCircle as faFullCircle } from "@fortawesome/free-solid-svg-icons";
 
 export default function AssignedWO(props) {
   const { assignedOrders } = useSelector((state) => state.workOrder);
 
   return (
-    <div className="container-fluid d-flex flex-column h-100">
-      <h5 className="text-center fw-bold my-3">
-        <u>Órdenes Asignadas</u>
-      </h5>
-      <div
-        className="d-flex flex-wrap justify-content-center"
-        style={{ overflowY: "auto", minHeight: 0 }}
-      >
-        {assignedOrders.map(
-          ({ code, class: cls, device, description, completed }) => (
-            <div
-              key={code}
-              className="card m-1 bg-light"
-              style={{ width: "18rem" }}
-            >
-              <div className="card-body">
-                <div className="d-flex w-100 align-items-center mb-2">
-                  <h5 className="card-title mb-0">OT {code}</h5>
-                  <Link
-                    to={`/ots/detail/${code}`}
-                    className="card-link m-2 ms-auto text-decoration-underline"
-                  >
-                    Ver Detalle
-                  </Link>
-                </div>
-                <h6 className="card-subtitle mb-2 text-muted">
-                  {cls} - Avance: {completed}
-                </h6>
-                <p className="card-text fw-bold mb-0">
-                  [{device.code}] - {device.name}
-                </p>
-                <p className="card-text">{description || "Sin descripción"}</p>
+    <div className="flex flex-col h-full">
+      <div className="page-title">Órdenes Asignadas</div>
+      <div className="flex-grow overflow-y-auto">
+        <div className="flex flex-wrap items-stretch">
+          {assignedOrders.map(
+            ({ code, class: cls, device, description, completed }) => (
+              <div className="w-full sm:w-1/2 lg:w-1/3 p-3">
+                <Link key={code} to={`/ots/detail/${code}`} className="w-full">
+                  <div className="card bg-base-content/10 shadow-xl h-full hover:scale-105 transition-transform duration-500">
+                    <div className="card-body p-4 justify-start">
+                      <div className="flex flex-col gap-2">
+                        <div className="flex w-full items-center justify-between">
+                          <h2 className="card-title">OT {code}</h2>
+                          <div className="flex items-center gap-2">
+                            {completed}%
+                            {completed === 0 ? (
+                              <FontAwesomeIcon icon={faCircle} />
+                            ) : (
+                              <FontAwesomeIcon
+                                icon={faFullCircle}
+                                className={`${
+                                  completed === 100
+                                    ? `text-success`
+                                    : `text-warning`
+                                }`}
+                              />
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex w-full items-center">
+                          <div
+                            className={`flex-grow border ${classBorderColor[cls]}`}
+                          />
+                          <div
+                            className={`badge h-fit text-xs text-center w-fit border-2 bg-neutral/50 ${classBorderColor[cls]}`}
+                          >
+                            {cls}
+                          </div>
+                          <div
+                            className={`flex-grow border ${classBorderColor[cls]}`}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <p className=""></p>
+                        <p className="font-bold">
+                          [{device.code}] - {device.name}
+                        </p>
+                      </div>
+                      <div className="h-20 text-xs sm:text-sm text-ellipsis overflow-hidden">
+                        {description || "Sin descripción"}
+                      </div>
+                    </div>
+                  </div>
+                </Link>
               </div>
-            </div>
-          )
-        )}
+            )
+          )}
+        </div>
       </div>
     </div>
   );

@@ -11,6 +11,15 @@ module.exports = {
       backgroundImage: {
         "radial-gradient": "radial-gradient(circle, var(--tw-gradient-stops))",
       },
+      colors: {
+        inspection: "#ffc933",
+        maintenance: "#ea821f",
+        emergency: "#f42510",
+        mounting: "#14bbee",
+        preventive: "#11af16",
+        reclaim: "#FFFFFF",
+        workshop: "#81cacd",
+      },
     },
   },
 

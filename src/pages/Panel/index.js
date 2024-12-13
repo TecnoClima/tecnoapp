@@ -73,21 +73,18 @@ export default function Panel() {
   }, [plan]);
 
   return (
-    <div className="container-fluid h-100 p-0">
-      <div className="row h-100 m-0">
-        {assignedOrders.length > 0 ? (
-          <AssignedWO />
-        ) : (
-          <div className="h-100 p-0" style={{ overflowY: "auto" }}>
-            <TaskList
-              pendant={pendant}
-              current={current}
-              next={next}
-              access={userData.access}
-            />
-          </div>
-        )}
-      </div>
+    <div className="page-container">
+      {assignedOrders.length > 0 ? (
+        <AssignedWO />
+      ) : (
+        <TaskList
+          loading={!plan?.[0]}
+          pendant={pendant}
+          current={current}
+          next={next}
+          access={userData.access}
+        />
+      )}
     </div>
   );
 }

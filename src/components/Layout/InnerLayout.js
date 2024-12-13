@@ -54,12 +54,12 @@ export default function InnerLayout({ children }) {
 
   return (
     <div className="w-full h-full flex">
-      <div className="flex-grow bg-gradient-to-r from-base-100 via-base-100 to-base-200" />
+      <div className="flex-grow bg-gradient-to-r from-neutral via-neutral to-base-200" />
       <div className="lg:container w-full h-full mx-auto">
         <div className="drawer lg:drawer-open">
           <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-          <div className="drawer-content flex flex-col h-full min-h-0 overflow-y-auto">
-            <div className="navbar bg-base-200/50 lg:hidden flex-wrap">
+          <div className="drawer-content flex flex-col h-screen min-h-0">
+            <div className="navbar static bg-base-200/50 lg:hidden flex-wrap min-h-fit">
               <div className="flex flex-grow">
                 <label
                   title="Menu"
@@ -90,10 +90,8 @@ export default function InnerLayout({ children }) {
                 ))}
               </div>
             </div>
-            <div className="flex-grow">
-              <div className="container d-flex flex-grow-1 overflow-auto">
-                {children}
-              </div>
+            <div className="flex-grow overflow-y-auto">
+              <div className="h-full w-full">{children}</div>
             </div>
           </div>
           <div className="drawer-side ">
@@ -103,7 +101,7 @@ export default function InnerLayout({ children }) {
               className="drawer-overlay"
             ></label>
 
-            <div className="flex flex-col bg-base-200 h-full w-60 p-4">
+            <div className="flex flex-col bg-base-200 h-full min-h-0 overflow-y-auto w-60 p-4">
               <Link to="/panel">
                 <div className="bg-base-100/50 rounded-full p-1">
                   <img className="w-full" src={logo} alt="" />
@@ -175,6 +173,8 @@ export default function InnerLayout({ children }) {
           </div>
         </div>
       </div>
+      <div className="flex-grow bg-gradient-to-r from-base-100 to-neutral" />
+
       <PasswordForm open={openPassword} close={() => setOpenPassword(false)} />
     </div>
   );

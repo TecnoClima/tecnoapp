@@ -3,30 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  .flex-center {
-    @apply flex w-full h-full items-center justify-center;
-  }
-  .bg-landing {
-    @apply bg-repeat;
-    background: linear-gradient(45deg, black, darkred, black);
-    /* background-size: 10%; */
-    /* background-image: url("./assets/icons/backgroundT.png"); */
-  }
-  .page-title {
-    @apply text-xl;
-  }
-  /* buttons */
-  .btn-check:focus + .btn-primary,
-  .btn-primary:focus {
-    @apply text-primary-content bg-primary border-secondary outline-base-100
-    /* color: #fff;
-    background-color: #0b5ed7;
-    border-color: #0a58ca;
-    box-shadow: 0 0 0 0.25rem rgba(49, 132, 253, 0.5); */;
-  }
-}
-
-@layer utilities {
   /* Scrollbar */
   ::-webkit-scrollbar {
     width: 10px;
@@ -42,25 +18,75 @@
   ::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.8);
   }
+  *,
+  *:hover {
+    scrollbar-color: unset;
+  }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+      "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+      "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-gutter: unset;
+  }
+
+  #root {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+  }
+  :root:has(
+      :is(
+          .modal-open,
+          .modal:target,
+          .modal-toggle:checked + .modal,
+          .modal[open]
+        )
+    ) {
+    scrollbar-gutter: auto;
+  }
+
+  code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+      monospace;
+  }
+  .collapse-arrow:not(.collapse-close)
+    > input[type="radio"]:checked
+    ~ .collapse-title:after {
+    --tw-translate-y: -200% !important;
+  }
+  .collapse-arrow > .collapse-title:after {
+    --tw-translate-y: -200% !important;
+  }
 }
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-#root {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100vw;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+@layer utilities {
+  .flex-center {
+    @apply flex w-full h-full items-center justify-center;
+  }
+  .bg-landing {
+    @apply bg-repeat;
+    background: linear-gradient(45deg, black, darkred, black);
+    /* background-size: 10%; */
+    /* background-image: url("./assets/icons/backgroundT.png"); */
+  }
+  .page-title {
+    @apply text-xl font-bold mb-3;
+  }
+  /* buttons */
+  .btn-check:focus + .btn-primary,
+  .btn-primary:focus {
+    @apply text-primary-content bg-primary border-secondary outline-base-100
+    /* color: #fff;
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+    box-shadow: 0 0 0 0.25rem rgba(49, 132, 253, 0.5); */;
+  }
+  .page-container {
+    @apply flex flex-col h-full min-h-0 p-3;
+  }
 }

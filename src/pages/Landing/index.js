@@ -6,12 +6,11 @@ export default function Landing() {
   return (
     <LandingLayout>
       <div className="flex relative h-full w-full">
-        <img
-          className="absolute top-10 left-10 w-80 max-w-full"
-          src={Logo}
-          alt=""
-        />
-        <LoginForm />
+        <div className="flex w-full flex-col p-4 h-full">
+          <img className="w-80 max-w-full" src={Logo} alt="" />
+
+          <LoginForm />
+        </div>
       </div>
     </LandingLayout>
   );

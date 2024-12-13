@@ -35,36 +35,34 @@ export default function LoginForm() {
 
   return (
     <>
-      <div className="card bg-base-200 w-11/12 max-w-fit shadow-xl shadow-neutral m-auto">
-        <form className="card-body" onSubmit={(e) => login(e)}>
+      <div className="card bg-base-200 w-full max-w-sm shadow-xl shadow-neutral m-auto overflow-y-auto max-h-full">
+        <form className="card-body p-4 md:p-8" onSubmit={(e) => login(e)}>
           <h2 className="card-title text-center mb-8">
             Sistema de Gestión de Mantenimiento
           </h2>
           <p className="mb-4">Ingresa tus credenciales para iniciar sesión</p>
-          <label className="input input-bordered flex items-center gap-2 text-base-content/75 font-bold">
-            <span className="w-24">Usuario</span>
+          <label className="input input-bordered input-sm md:input-md flex items-center gap-2 text-base-content/75 font-bold">
+            <span className="w-20 text-sm flex-none">Usuario</span>
             <input
               type="text"
               name="username"
               className="grow text-base-content font-normal"
-              placeholder="Ingresa aquí tu nombre de usuario"
               onChange={setValue}
             />
           </label>
-          <label className="input input-bordered flex items-center gap-2 text-base-content/75 font-bold">
-            <span className="w-24">Contraseña</span>
+          <label className="input input-bordered input-sm md:input-md flex items-center gap-2 text-base-content/75 font-bold">
+            <span className="w-20 text-sm flex-none">Contraseña</span>
             <input
               type="password"
               className="grow text-base-content font-normal"
               name="password"
-              placeholder="Ingresa aquí tu contraseña"
               onChange={setValue}
             />
           </label>
           <div className="card-actions justify-end mt-4">
             <button
               disabled={!loginData.username || !loginData.password}
-              className="btn btn-primary"
+              className="btn btn-primary btn-sm md:btn-md"
             >
               Iniciar sesión
             </button>

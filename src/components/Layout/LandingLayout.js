@@ -48,7 +48,7 @@ export default function LandingLayout({ children }) {
       >
         <div className="w-[max(100vh,100vw)] h-[max(100vh,100vw)] flex-none rounded-full bg-radial-gradient from-base-300 to-neutral"></div>
       </div>
-      <div className="container h-full">{children}</div>
+      <div className="container h-full mx-auto">{children}</div>
     </div>
   );
 }
