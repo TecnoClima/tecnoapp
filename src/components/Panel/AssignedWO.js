@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { classBorderColor } from "../../../utils/Constants";
+import { classBorderColor } from "../../utils/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import { faCircle as faFullCircle } from "@fortawesome/free-solid-svg-icons";

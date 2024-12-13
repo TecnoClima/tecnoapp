@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./index.css";
 import { useDispatch, useSelector } from "react-redux";
-import TaskList from "../../components/lists/taskList";
+import TaskList from "../../components/Panel/TaskList";
 import { getDeviceFromList } from "../../actions/deviceActions";
 import { planActions } from "../../actions/StoreActions";
-import AssignedWO from "../../components/lists/AssignedWO";
+import AssignedWO from "../../components/Panel/AssignedWO";
 import { workOrderActions } from "../../actions/StoreActions";
 
 export default function Panel() {

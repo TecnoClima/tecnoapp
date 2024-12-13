@@ -1,10 +1,16 @@
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { deviceActions, planActions } from "../../../actions/StoreActions";
+import { deviceActions, planActions } from "../../actions/StoreActions";
 
-function TaskItem(props) {
+export default function TaskItem(props) {
   const { className, task } = props;
   const dispatch = useDispatch();
+
+  let borderClass = {
+    pendant: "border-error text-error font-bold",
+    current: "border-warning text-warning font-bold",
+    next: "border-info text-info font-bold",
+  };
 
   let zero = [139, 0, 0];
   let half = [180, 180, 0];
@@ -28,8 +34,24 @@ function TaskItem(props) {
 
   return (
     <div className="card bg-base-content/10 text-xs p-2">
-      <div className="">
-        <p className="text-sm font-bold">{task.device}</p>
+      <div>
+        <div className="flex flex-wrap-reverse justify-between items-start">
+          <div
+            className="text-sm font-bold flex-grow"
+            style={{ flexGrow: 1000 }}
+          >
+            {task.device}
+          </div>
+          <div className="flex items-center mx-auto" style={{ flexGrow: 1 }}>
+            <div className={`flex-grow border  ${borderClass[className]}`} />
+            <div
+              className={`badge h-fit text-[11px] leading-snug text-center w-fit bg-neutral/10 border-2 ${borderClass[className]}`}
+            >
+              {task.strategy}
+            </div>
+            <div className={`flex-grow border ${borderClass[className]}`} />
+          </div>
+        </div>
         <div className="flex flex-col md:flex-row">
           <div className="flex flex-col w-full md:w-1/2 min-w-fit gap-2 md:pr-4">
             <p>
@@ -95,83 +117,6 @@ function TaskItem(props) {
                   />
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default function TaskList({ pendant, current, next, loading }) {
-  return (
-    <div className="flex flex-col h-full">
-      <div className="page-title">Pendientes del plan</div>
-      <div className="flex flex-col gap-2 flex-grow overflow-y-auto">
-        <div className="collapse collapse-arrow bg-error/50">
-          <input type="radio" name="my-accordion-2" className="h-12 min-h-0" />
-          <div className="collapse-title text-base sm:text-lg font-medium p-2 h-fit min-h-0">
-            {loading
-              ? "Cargando pendientes..."
-              : `${
-                  pendant[0] ? pendant.length + " P" : "No hay p"
-                }endientes hasta la semana pasada`}
-          </div>
-          <div className="collapse-content px-2 min-h-0 overflow-y-auto">
-            <div className="flex flex-col gap-2 min-h-0 max-h-[65vh] overflow-y-auto">
-              {pendant.map((task, index) => (
-                <TaskItem key={index} task={task} className="pendant" />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="collapse collapse-arrow bg-warning/50">
-          <input
-            type="radio"
-            name="my-accordion-2"
-            className="h-12 min-h-0"
-            defaultChecked
-          />
-          <div className="collapse-title text-base sm:text-lg font-medium p-2 h-fit min-h-0">
-            {loading
-              ? "Cargando pendientes..."
-              : `${
-                  loading
-                    ? "Cargando p"
-                    : current[0]
-                    ? current.length + " P"
-                    : "No hay p"
-                }endientes de esta semana`}
-          </div>
-          <div className="collapse-content px-2">
-            <div className="flex flex-col gap-2 min-h-0 max-h-[65vh] overflow-y-auto">
-              {current.map((task, index) => (
-                <TaskItem
-                  key={index}
-                  task={task}
-                  className={
-                    task.completed < 75
-                      ? "pendant"
-                      : task.completed === 100
-                      ? "completed"
-                      : "incourse"
-                  }
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="collapse collapse-arrow bg-info/50">
-          <input type="radio" name="my-accordion-2" className="h-12 min-h-0" />
-          <div className="collapse-title text-base sm:text-lg font-medium py-2 h-fit min-h-0 py-auto">
-            {loading ? "Cargando taras" : `Tareas de la próxima semana`}
-          </div>
-          <div className="collapse-content">
-            <div className="flex flex-col gap-2 min-h-0 max-h-[65vh] overflow-y-auto">
-              {next.map((task, index) => (
-                <TaskItem key={index} task={task} className="next" />
-              ))}
             </div>
           </div>
         </div>
