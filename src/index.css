@@ -75,7 +75,7 @@
     /* background-image: url("./assets/icons/backgroundT.png"); */
   }
   .page-title {
-    @apply text-xl font-bold mb-3;
+    @apply text-xl font-bold mb-4 py-2;
   }
   /* buttons */
   .btn-check:focus + .btn-primary,

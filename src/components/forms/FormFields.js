@@ -9,14 +9,16 @@ export default function TextInput({
 }) {
   return (
     <label className={`form-control w-full max-w-xs ${className}`}>
-      <div className="label">
-        <span className="label-text font-bold">{label}</span>
-      </div>
+      {label && (
+        <div className="label">
+          <span className="label-text font-bold">{label}</span>
+        </div>
+      )}
       <input
         name={name}
         type={type}
         placeholder={placeholder}
-        className="input input-bordered w-full max-w-xs input-sm"
+        className="input input-bordered w-full max-w-xs input-sm text-base-content focus-visible:outline-none"
         onChange={handleChange}
         value={value}
       />
