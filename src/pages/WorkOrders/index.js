@@ -18,6 +18,14 @@ import "./index.css";
 import { ErrorModal } from "../../components/warnings";
 import { getHour, getShortDate } from "../../utils/utils";
 import OrdersFilters from "./OrderFilters";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBell,
+  faPlus,
+  faTable,
+  faToolbox,
+} from "@fortawesome/free-solid-svg-icons";
+import TextInput from "../../components/forms/FormFields";
 
 //Método para editar intervención
 //Asignar garrafas a personal
@@ -198,33 +206,36 @@ export default function WorkOrders() {
   }, [filters]);
 
   return (
-    <div className="container d-flex flex-column px-0">
-      <div className="row d-flex justify-content-end mt-2 mb-2">
-        <div className="col-md-3 d-grid gap-2">
+    <div className="page-container">
+      <div className="flex w-full justify-between items-center flex-wrap">
+        <div className="page-title">Listado de Órdenes de trabajo</div>
+        <div className="flex gap-2 flex-wrap mb-4">
           <Link
             to="/ots/new"
             onClick={() => dispatch(deviceActions.resetDevice())}
-            className="btn btn-success ps-0 pe-0"
+            className="btn btn-sm btn-success flex-grow"
           >
-            <i className="fas fa-toolbox" /> Nueva Orden
+            <FontAwesomeIcon icon={faToolbox} />
+            <span>Nueva Orden</span>
           </Link>
-        </div>
-        <div className="col-md-3 d-grid gap-2">
           <Link
             to="/ots/new"
             onClick={handleNewReclaim}
-            className="btn btn-warning ps-0 pe-0"
+            className="btn btn-sm btn-warning flex-grow"
           >
-            <i className="fas fa-bell" /> Nuevo Reclamo
+            <FontAwesomeIcon icon={faBell} />
+            Nuevo Reclamo
           </Link>
-        </div>
-        {userData.access === "Admin" && (
-          <div className="col-md-3 d-grid gap-2">
-            <button onClick={handleReport} className="btn btn-info ps-0 pe-0">
-              <i className="fas fa-table" /> Generar Reporte
+          {userData.access === "Admin" && (
+            <button
+              onClick={handleReport}
+              className="btn btn-sm btn-info flex-grow"
+            >
+              <FontAwesomeIcon icon={faTable} />
+              Generar Reporte
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       <OrdersFilters
@@ -232,8 +243,7 @@ export default function WorkOrders() {
       />
 
       {workOrderList ? (
-        <div className="wOList">
-          <div className="title">Listado de OT</div>
+        <div className="mt-6">
           <Paginate
             length={Math.min(7, filteredList.length)}
             pages={filteredList.length / page.size}

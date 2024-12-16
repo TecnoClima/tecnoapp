@@ -18,7 +18,7 @@ export default function TextInput({
         name={name}
         type={type}
         placeholder={placeholder}
-        className="input input-bordered w-full max-w-xs input-sm text-base-content focus-visible:outline-none"
+        className="custom-input-text w-full max-w-xs"
         onChange={handleChange}
         value={value}
       />

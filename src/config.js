@@ -29,6 +29,9 @@ const appConfig = {
     supervisor: "Supervisor",
     idNumber: "DNI",
     phone: "Teléfono",
+    following: "Siguiendo",
+    dateMin: "Desde",
+    dateMax: "Hasta",
 
     //forms
     location: "Ubicación",

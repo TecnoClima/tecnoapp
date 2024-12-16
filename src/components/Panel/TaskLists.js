@@ -49,7 +49,6 @@ function CollapseTask({ list, title, className, listName, defaultChecked }) {
           <div className="flex gap-2 items-center text-base-100 w-fit mx-auto sm:ml-0 sm:mr-auto">
             <TextInput
               className=""
-              name="newPassword"
               handleChange={(e) => setSearchKey(e.target.value)}
               value={searchKey}
               placeholder="3 caracteres o más"
