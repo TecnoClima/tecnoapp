@@ -16,97 +16,94 @@
   color: #61dafb;
 }
 
-.button{
+.button {
   background-color: darkred;
   color: white;
   border-radius: 5em;
   margin: 5px;
-  font-size: .8em;
+  font-size: 0.8em;
   padding: 5px;
   width: fit-content;
   min-width: 2rem;
   text-align: center;
   text-decoration: none;
 }
-.button:hover{
+.button:hover {
   background-color: red;
-  color: whitesmoke
+  color: whitesmoke;
 }
-.button{
+.button {
   box-shadow: 2px 2px 2px grey;
-  cursor: pointer
+  cursor: pointer;
 }
-.button:active{
-  transform: scale(.95);
-  box-shadow: 0 0 2px grey
+.button:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 2px grey;
 }
-.button:disabled{
+.button:disabled {
   border: 1px solid grey;
   background-color: silver;
-  color: grey
+  color: grey;
 }
-.input-group .btn{
-  z-index:0;
+.input-group .btn {
+  z-index: 0;
 }
-*::-webkit-scrollbar{
+*::-webkit-scrollbar {
   -webkit-appearance: none;
 }
-*::-webkit-scrollbar:vertical{
-  width: .5rem;
+*::-webkit-scrollbar:vertical {
+  width: 0.5rem;
 }
-*::-webkit-scrollbar:horizontal{
-  height: .5rem;
+*::-webkit-scrollbar:horizontal {
+  height: 0.5rem;
 }
-*::-webkit-scrollbar-thumb{
-  background: rgba(150,150,150,.5) ;
+*::-webkit-scrollbar-thumb {
+  background: rgba(150, 150, 150, 0.5);
   border-radius: 20px;
 }
-*::-webkit-scrollbar-track{
-  border-radius: .5rem;  
+*::-webkit-scrollbar-track {
+  border-radius: 0.5rem;
 }
-.hidden{
-  display:none
-}
-.removeButton{
+.removeButton {
   background-color: none;
   height: 1.5rem;
   min-width: 2.5rem;
-  background-image: url('./assets/icons/trash2.png');
+  background-image: url("./assets/icons/trash2.png");
   background-size: 50%;
   background-position: center;
   background-repeat: no-repeat;
 }
-.editButton{
+.editButton {
   background-color: lightseagreen;
   height: 1.5rem;
-  background-image: url('./assets/icons/editIcon.png');
+  background-image: url("./assets/icons/editIcon.png");
   background-size: 80%;
   background-position: center;
   background-repeat: no-repeat;
 }
-.editButton:hover{
+.editButton:hover {
   background-color: green;
 }
-.spaced{
+.spaced {
   justify-content: space-evenly;
 }
-.errorMessage{
+.errorMessage {
   color: red;
-  font-size: .6rem;
+  font-size: 0.6rem;
   font-weight: bold;
   text-decoration: none;
 }
-a{
+a {
   text-decoration: none;
-  color: inherit
+  color: inherit;
 }
-.pageBackground{
+.pageBackground {
   width: 100%;
   height: 100%;
 }
-.bg-form{
+.bg-form {
   background-color: silver;
 }
-.bg-nav{
+.bg-nav {
   background-color: darkRed;
 }

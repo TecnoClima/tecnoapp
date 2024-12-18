@@ -1,38 +1,51 @@
-import { useState } from "react"
+import { useState } from "react";
 
-export default function WarningErrors(props){
-    const {proceed, close} = props
-    const [warnings, setWarnings] = useState(props.warnings)
-    function deleteWarning(e){
-        e.preventDefault()
-        const index = Number(e.target.value)
-        const newList = [...warnings]
-        newList.splice(index,1)
-        if (newList[0]){
-            setWarnings(newList)
-        }else{
-            proceed()
-            close()
-        }
+export default function WarningErrors(props) {
+  const { proceed, close } = props;
+  const [warnings, setWarnings] = useState(props.warnings);
+  function deleteWarning(e) {
+    e.preventDefault();
+    const index = Number(e.target.value);
+    const newList = [...warnings];
+    newList.splice(index, 1);
+    if (newList[0]) {
+      setWarnings(newList);
+    } else {
+      proceed();
+      close();
     }
+  }
 
-    return(
-        <div className="modal">
-            <div className="alert alert-warning" role="alert">
-            <div className="container p-0">
-            <div className="row" style={{alignItems: 'center'}}>
-                <div className="col-12">
-                    <h3 style={{textAlign: 'center'}}>¡CUIDADO!</h3>
-                </div>
+  return (
+    <>
+      <dialog id="warning-modal" className="modal w-full h-full" open={true}>
+        <div className="modal-box bg-warning text-warning-content p-4 relative">
+          <h3 className="font-bold text-lg">¡ATENCIÓN!</h3>
+          {warnings.map((warning, index) => (
+            <div className="flex gap-2">
+              <p key={warning} className="py-1">
+                {warning}
+              </p>
+              <button
+                type="button"
+                className="btn btn-success btn-sm px-3"
+                value={index}
+                onClick={deleteWarning}
+              >
+                SI
+              </button>
+              <button
+                type="button"
+                className="btn btn-warning bg-neutral/30 btn-sm px-3"
+                value={index}
+                onClick={() => close()}
+              >
+                NO
+              </button>
             </div>
-                {warnings.map((warning, index)=>
-                <div className="row" key={index} style={{alignItems: 'center'}}>
-                    <div className="col-8">{warning}</div>
-                    <div className="col-2"><button type="button" className="btn btn-success p-0" value={index} style={{width:'100%'}} onClick={deleteWarning}>SI</button></div>
-                    <div className="col-2"><button type="button" className="btn btn-warning p-0" value={index} style={{width:'100%'}} onClick={()=>close()}>NO</button></div>
-                </div>)}
-                </div>
-            </div>
+          ))}
         </div>
-    )
+      </dialog>
+    </>
+  );
 }

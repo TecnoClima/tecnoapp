@@ -34,7 +34,7 @@ export const SuccessModal = ({ message, link, close, open }) => {
   return (
     <dialog id="success-modal" className="modal w-full h-full" open={open}>
       <div className="modal-box bg-success text-success-content p-4 relative">
-        <h3 className="font-bold text-lg">Éxito!</h3>
+        <h3 className="font-bold text-lg">¡Éxito!</h3>
         <p className="py-1">{message}</p>
         {link && (
           <Link className="py-1 underline">Click aquí para acceder</Link>

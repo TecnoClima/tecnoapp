@@ -245,11 +245,17 @@ export default function OrdersFilters({
         <div className="flex w-full items-center bg-base-content/10 rounded-lg justify-between pl-2">
           <div className="font-bold">Filtros</div>
           <div className="flex flex-grow px-2 sm:px-4 h-full items-center flex-wrap gap-1 py-1">
-            {Object.keys(filters).map((value, index) => (
-              <div key={index} className="badge text-xs">
-                <b>{headersRef[value]}:</b> {filters[value]}
+            {Object.keys(filters)[0] ? (
+              Object.keys(filters).map((value, index) => (
+                <div key={index} className="badge text-xs">
+                  <b>{headersRef[value]}:</b> {filters[value]}
+                </div>
+              ))
+            ) : (
+              <div className="italic text-sm opacity-50">
+                No hay filtros seleccionados
               </div>
-            ))}
+            )}
           </div>
           <button
             className={`btn btn-primary ml-auto ${
@@ -266,175 +272,188 @@ export default function OrdersFilters({
           onClick={() => setDisplayFilters(!displayFilters)}
           className="btn btn-circle btn-outline bg-transparent hover:bg-base-content/10 hover:text-base-content border-2 btn-sm border-base-content"
         >
-          <FontAwesomeIcon icon={faChevronDown} />
+          <FontAwesomeIcon
+            icon={faChevronDown}
+            className={`transition-transform duration-300 ${
+              displayFilters ? "rotate-180" : ""
+            }`}
+          />
         </button>
       </div>
 
-      <div className="flex w-full flex-col sm:flex-row gap-2">
-        <div className="flex w-full sm:w-1/2 flex-grow flex-col gap-1">
-          <div className="flex gap-4">
-            <input
-              name="code"
-              className="custom-input-text min-w-0 w-28 focus:bg-base-content/10"
-              placeholder="Nro OT"
-              onChange={handleSelect}
-            />
-            <input
-              name="device"
-              className="custom-input-text min-w-0 flex-grow focus:bg-base-content/10"
-              placeholder="Nombre o Código de Equipo"
-              onChange={handleSelect}
-            />
-          </div>
-          <div className="flex gap-x-4 gap-y-1 flex-wrap">
-            {[
-              { label: "Planta", field: "plant" },
-              { label: "Área", field: "area" },
-              { label: "Línea", field: "line" },
-            ].map(({ label, field }) => (
-              <DropdowOptions
-                key={field}
-                className={field === "area" ? "dropdown-end" : undefined}
-                label={label}
-                value={filters[field]}
-                list={filteredList}
-                field={field}
-                onClick={handleSelect}
-                onDelete={removeKey}
+      {true && (
+        <div
+          className={`flex w-full flex-col sm:flex-row gap-2 overflow-hidden transition-[height] duration-300 ${
+            displayFilters ? "h-[9rem] min-h-fit" : "h-0"
+          }`}
+        >
+          <div className="flex flex-col gap-1 flex-grow w-full sm:w-1/2 justify-between">
+            <div className="flex gap-4">
+              <input
+                name="code"
+                className="custom-input-text min-w-0 w-28 focus:bg-base-content/10"
+                placeholder="Nro OT"
+                onChange={handleSelect}
               />
-            ))}
-          </div>
-          <div className="flex gap-x-4 gap-y-1 flex-wrap">
-            {[
-              { label: "Supervisor", field: "supervisor" },
-              { label: "Solicitante", field: "solicitor" },
-            ].map(({ label, field }) => (
-              <DropdowOptions
-                className={field === "solicitor" ? "dropdown-end" : undefined}
-                key={field}
-                label={label}
-                value={filters[field]}
-                list={filteredList}
-                field={field}
-                onClick={handleSelect}
-                onDelete={removeKey}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="flex flex-col gap-1 flex-grow max-w-full">
-          {[
-            {
-              label: "Estado",
-              options: ["Abierta", "Cerrada"],
-              name: "status",
-              replacements: { Abierta: "Pendiente" },
-            },
-            {
-              label: "Clase",
-              options: ["Reclamo", "no-reclamo"],
-              name: "class",
-              replacements: { "no-reclamo": "No Reclamo" },
-            },
-            {
-              label: "Siguiendo",
-              options: ["si", "no"],
-              name: "following",
-              replacements: { si: "Si", no: "No" },
-            },
-          ].map(({ label, options, name, replacements }) => (
-            <GroupedOptions
-              key={name}
-              label={label}
-              options={options}
-              name={name}
-              filters={filters}
-              onClick={handleSelect}
-              onDelete={removeKey}
-              replacements={replacements}
-            />
-          ))}
-          <div className="flex items-center gap-1 flex-grow">
-            <div className="w-[5.5rem] sm:w-24 flex">
-              <DropdowOptions
-                label={timelapse}
-                value={timelapse}
-                list={timelapses}
-                field={"label"}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setTimelapse(
-                    timelapses.find((t) => t.label === e.currentTarget.value)
-                      .label
-                  );
-                }}
-                onDelete={null}
+              <input
+                name="device"
+                className="custom-input-text min-w-0 flex-grow focus:bg-base-content/10"
+                placeholder="Nombre o Código de Equipo"
+                onChange={handleSelect}
               />
             </div>
-            {timelapseIndex === 0 ? (
-              <button
-                className={`btn btn-sm px-1 btn-primary flex-grow ${
-                  dateMin === datesByYear(yyyyMm).dateMin &&
-                  dateMax === datesByYear(yyyyMm).dateMax
-                    ? "border-none"
-                    : "btn-outline opacity-75"
-                }`}
-                onClick={clickYear}
-                value={yyyyMm}
-              >
-                {yyyyMm}
-              </button>
-            ) : timelapseIndex === 1 ? (
-              <div className="flex flex-grow gap-1">
-                {[0, 1, 2].map((d) => (
-                  <button
-                    key={d}
-                    className={`btn btn-sm px-1 btn-primary flex-grow ${
-                      dateMin === datesByYear(currentYear - d).dateMin &&
-                      dateMax === datesByYear(currentYear - d).dateMax
-                        ? "border-none"
-                        : "btn-outline opacity-75"
-                    }`}
-                    onClick={clickYear}
-                    value={currentYear - d}
-                  >
-                    {currentYear - d}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <>
-                {["dateMin", "dateMax"].map((item) => (
-                  <input
-                    name={item}
-                    value={filters[item] || dates[item]}
-                    className="input input-bordered input-sm w-20 text-xs sm:text-sm flex-grow focus-visible:outline-none border-primary min-w-0 text-primary focus:bg-base-content/10 px-1"
-                    type="date"
-                    onChange={handleSelect}
-                  />
-                ))}
-              </>
-            )}
-            <button
-              className="disabled:opacity-0 ml-1"
-              title={filters.dateMin || filters.dateMax ? "borrar filtro" : ""}
-              onClick={() => {
-                const newFilters = { ...filters };
-                delete newFilters.dateMin;
-                delete newFilters.dateMax;
-                setFilters(newFilters);
-                applyFilters(newFilters);
-              }}
-              disabled={!(filters.dateMin || filters.dateMax)}
-            >
-              <FontAwesomeIcon
-                icon={faTimesCircle}
-                className="text-error pl-2"
+            <div className="flex gap-x-4 gap-y-1 flex-wrap">
+              {[
+                { label: "Planta", field: "plant" },
+                { label: "Área", field: "area" },
+                { label: "Línea", field: "line" },
+              ].map(({ label, field }) => (
+                <DropdowOptions
+                  key={field}
+                  className={field === "area" ? "dropdown-end" : undefined}
+                  label={label}
+                  value={filters[field]}
+                  list={filteredList}
+                  field={field}
+                  onClick={handleSelect}
+                  onDelete={removeKey}
+                />
+              ))}
+            </div>
+            <div className="flex gap-x-4 gap-y-1 flex-wrap">
+              {[
+                { label: "Supervisor", field: "supervisor" },
+                { label: "Solicitante", field: "solicitor" },
+              ].map(({ label, field }) => (
+                <DropdowOptions
+                  className={field === "solicitor" ? "dropdown-end" : undefined}
+                  key={field}
+                  label={label}
+                  value={filters[field]}
+                  list={filteredList}
+                  field={field}
+                  onClick={handleSelect}
+                  onDelete={removeKey}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-col gap-1 flex-grow max-w-full">
+            {[
+              {
+                label: "Estado",
+                options: ["Abierta", "Cerrada"],
+                name: "status",
+                replacements: { Abierta: "Pendiente" },
+              },
+              {
+                label: "Clase",
+                options: ["Reclamo", "no-reclamo"],
+                name: "class",
+                replacements: { "no-reclamo": "No Reclamo" },
+              },
+              {
+                label: "Siguiendo",
+                options: ["si", "no"],
+                name: "following",
+                replacements: { si: "Si", no: "No" },
+              },
+            ].map(({ label, options, name, replacements }) => (
+              <GroupedOptions
+                key={name}
+                label={label}
+                options={options}
+                name={name}
+                filters={filters}
+                onClick={handleSelect}
+                onDelete={removeKey}
+                replacements={replacements}
               />
-            </button>
+            ))}
+            <div className="flex items-center gap-1 flex-grow">
+              <div className="w-[5.5rem] sm:w-24 flex">
+                <DropdowOptions
+                  label={timelapse}
+                  value={timelapse}
+                  list={timelapses}
+                  field={"label"}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setTimelapse(
+                      timelapses.find((t) => t.label === e.currentTarget.value)
+                        .label
+                    );
+                  }}
+                  onDelete={null}
+                />
+              </div>
+              {timelapseIndex === 0 ? (
+                <button
+                  className={`btn btn-sm px-1 btn-primary flex-grow ${
+                    dateMin === datesByYear(yyyyMm).dateMin &&
+                    dateMax === datesByYear(yyyyMm).dateMax
+                      ? "border-none"
+                      : "btn-outline opacity-75"
+                  }`}
+                  onClick={clickYear}
+                  value={yyyyMm}
+                >
+                  {yyyyMm}
+                </button>
+              ) : timelapseIndex === 1 ? (
+                <div className="flex flex-grow gap-1">
+                  {[0, 1, 2].map((d) => (
+                    <button
+                      key={d}
+                      className={`btn btn-sm px-1 btn-primary flex-grow ${
+                        dateMin === datesByYear(currentYear - d).dateMin &&
+                        dateMax === datesByYear(currentYear - d).dateMax
+                          ? "border-none"
+                          : "btn-outline opacity-75"
+                      }`}
+                      onClick={clickYear}
+                      value={currentYear - d}
+                    >
+                      {currentYear - d}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <>
+                  {["dateMin", "dateMax"].map((item) => (
+                    <input
+                      name={item}
+                      value={filters[item] || dates[item]}
+                      className="input input-bordered input-sm w-20 text-xs sm:text-sm flex-grow focus-visible:outline-none border-primary min-w-0 text-primary focus:bg-base-content/10 px-1"
+                      type="date"
+                      onChange={handleSelect}
+                    />
+                  ))}
+                </>
+              )}
+              <button
+                className="disabled:opacity-0 ml-1"
+                title={
+                  filters.dateMin || filters.dateMax ? "borrar filtro" : ""
+                }
+                onClick={() => {
+                  const newFilters = { ...filters };
+                  delete newFilters.dateMin;
+                  delete newFilters.dateMax;
+                  setFilters(newFilters);
+                  applyFilters(newFilters);
+                }}
+                disabled={!(filters.dateMin || filters.dateMax)}
+              >
+                <FontAwesomeIcon
+                  icon={faTimesCircle}
+                  className="text-error pl-2"
+                />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

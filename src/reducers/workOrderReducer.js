@@ -16,6 +16,15 @@ export default function workOrderReducer(state = initialState, action) {
   let array = [];
   const error = action?.payload?.error || null;
   switch (action.type) {
+    case "DELETED_ORDER":
+      if (error) return { ...state, orderResult: { error } };
+      return {
+        state,
+        workOrderList: state.workOrderList.filter(
+          (o) => o.code !== action.payload.code
+        ),
+        orderResult: { success: `Orden ${action.payload.code} eliminada` },
+      };
     case "NEW_ORDER":
       if (error) return { ...state, orderResult: { error } };
       return {

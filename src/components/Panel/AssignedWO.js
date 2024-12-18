@@ -4,6 +4,7 @@ import { classBorderColor } from "../../utils/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import { faCircle as faFullCircle } from "@fortawesome/free-solid-svg-icons";
+import ClassBadge from "../Badges/ClassBadge";
 
 export default function AssignedWO(props) {
   const { assignedOrders } = useSelector((state) => state.workOrder);
@@ -38,7 +39,8 @@ export default function AssignedWO(props) {
                             )}
                           </div>
                         </div>
-                        <div className="flex w-full items-center">
+                        <ClassBadge cls={cls} />
+                        {/* <div className="flex w-full items-center">
                           <div
                             className={`flex-grow border ${classBorderColor[cls]}`}
                           />
@@ -50,7 +52,7 @@ export default function AssignedWO(props) {
                           <div
                             className={`flex-grow border ${classBorderColor[cls]}`}
                           />
-                        </div>
+                        </div> */}
                       </div>
                       <div>
                         <p className=""></p>
