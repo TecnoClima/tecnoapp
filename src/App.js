@@ -99,15 +99,17 @@ function App() {
               }
             />
           )}
-          <Route
-            exact
-            path={"/equipos/:code"}
-            element={
-              <Layout>
-                <Device />
-              </Layout>
-            }
-          />
+          {access.isLogged && (
+            <Route
+              exact
+              path={"/equipos/:code"}
+              element={
+                <Layout>
+                  <Device />
+                </Layout>
+              }
+            />
+          )}
           {access.isLogged && (
             <Route
               exact
