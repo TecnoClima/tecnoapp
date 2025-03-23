@@ -46,6 +46,7 @@ const appConfig = {
     powerKcal: "Pot Kcal",
     powerTnRef: "Pot TnRef",
     refrigerant: "Gas",
+    gasAmount: "Cant.Gas",
     extraDetails: "Descripción Larga",
     service: "Servicio",
     category: "Categoría",

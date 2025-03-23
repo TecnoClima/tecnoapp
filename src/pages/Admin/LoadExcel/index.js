@@ -18,6 +18,7 @@ const valueTypes = {
   power: "Número en kCal",
   date: "dd/mm/yyy",
   none: "",
+  gasAmount: "Número en gramos",
 };
 
 function buildXLSX(data) {
@@ -71,6 +72,7 @@ export function LoadExcel() {
       type: { subtitle: valueTypes.list, examples: [] },
       power: { subtitle: valueTypes.power, examples: [] },
       refrigerant: { subtitle: valueTypes.list, examples: [] },
+      gasAmount: { subtitle: valueTypes.gasAmount, examples: [] },
       extraDetails: { subtitle: valueTypes.text, examples: [] },
       service: { subtitle: valueTypes.list, examples: [] },
       status: { subtitle: valueTypes.list, examples: [] },
