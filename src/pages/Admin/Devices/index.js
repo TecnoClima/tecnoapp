@@ -176,6 +176,7 @@ export default function DeviceAdmin() {
                 <th scope="col">Tipo</th>
                 <th scope="col">Potencia</th>
                 <th scope="col">Refrigerante</th>
+                <th scope="col">Cant.Gas</th>
                 <th scope="col">Acción</th>
               </tr>
             </thead>
@@ -198,6 +199,7 @@ export default function DeviceAdmin() {
                       : `${device.power} frig`}
                   </td>
                   <td>{device.refrigerant}</td>
+                  <td>{device.gasAmount ? `${device.gasAmount}g` : ""}</td>
                   <td>
                     <div className="d-flex">
                       <button

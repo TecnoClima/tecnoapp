@@ -25,6 +25,7 @@ const emptyDevice = {
   category: "",
   service: "",
   environment: "",
+  gasAmount: "",
 };
 
 export default function WorkOrder() {
@@ -140,19 +141,16 @@ export default function WorkOrder() {
       if (d.name) {
         newDevice = { ...device };
         const { plant, area, line } = d;
-        const { type, power, refrigerant } = d;
+        const { type, power, refrigerant, gasAmount } = d;
         for (let key of Object.keys(device).filter(
-          (k) => !["location", "type"].includes(k)
+          (k) => !["location", "type", "gasAmount"].includes(k)
         )) {
           newDevice[key] = d[key];
         }
         newDevice.location = plant + "> " + area + "> " + line;
-        newDevice.type =
-          type +
-          " " +
-          (power >= 9000 ? Math.floor(power / 3000) + "TR" : power + " fg") +
-          " - " +
-          refrigerant;
+        newDevice.type = `${type} ${
+          power >= 9000 ? Math.floor(power / 3000) + "TR" : power + " fg"
+        } - ${refrigerant}${gasAmount ? ` (${gasAmount}g)` : ""}`;
       } else {
         newDevice = emptyDevice;
       }
