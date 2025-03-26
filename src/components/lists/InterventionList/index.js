@@ -14,6 +14,7 @@ export default function InterventionList(props) {
 
   function getDate(dateInput) {
     const givenDate = new Date(dateInput);
+    if (isNaN(givenDate.getTime())) return ["", ""];
     const date = givenDate.toISOString().split("T")[0];
     let hours = givenDate.getHours();
     let minutes = givenDate.getMinutes();
