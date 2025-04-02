@@ -133,7 +133,7 @@ export const workOrderActions = {
   getWOOptions: () => getAction(`workorder/options`, "GET_WO_OPTIONS"),
   newWorkOrder: (order) => postAction(`workorder`, order, "NEW_ORDER"),
   updateOrder: (code, update) =>
-    putAction(`workorder/${code}`, update, "NEW_ORDER"),
+    putAction(`workorder/${code}`, update, "UPDATE_ORDER"),
   resetNewOrder: () => ({
     type: "NEW_ORDER",
     payload: null,

@@ -26,6 +26,17 @@ export default function workOrderReducer(state = initialState, action) {
         ],
         orderResult: { success: action.payload.code },
       };
+    case "UPDATE_ORDER":
+      if (error) return { ...state, orderResult: { error } };
+      return {
+        ...state,
+        workOrderList: state.workOrderList.map((o) => {
+          if (o.code === action.payload.code) return action.payload;
+          return o;
+        }),
+        orderDetail: action.payload,
+        orderResult: { success: action.payload.code },
+      };
     case "RESET_ORDER_RESULT":
       return {
         ...state,
