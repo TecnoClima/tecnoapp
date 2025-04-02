@@ -34,7 +34,7 @@ export default function workOrderReducer(state = initialState, action) {
           if (o.code === action.payload.code) return action.payload;
           return o;
         }),
-        orderDetail: action.payload,
+        orderDetail: { ...state.orderDetail, ...action.payload },
         orderResult: { success: action.payload.code },
       };
     case "RESET_ORDER_RESULT":

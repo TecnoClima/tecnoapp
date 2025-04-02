@@ -112,9 +112,9 @@ export default function WorkOrder() {
     setInterventions(orderDetail.interventions);
     delete editOrder.interventions;
     setMinProgress(orderDetail.completed);
-    setForPlan(!!order.taskDate);
+    setForPlan(!!editOrder.taskDate);
     setOrder(editOrder);
-  }, [orderDetail, dispatch]);
+  }, [orderDetail, dispatch, order.taskDate]);
 
   // Allow Saving
   useEffect(() => {
@@ -178,12 +178,12 @@ export default function WorkOrder() {
   function handleSearch(e) {
     e.preventDefault();
     // const newDevice = deviceFullList.find((d) => d.code === device.code);
-    dispatch(deviceActions.getDetail(device.code, true));
+    if (device?.code) dispatch(deviceActions.getDetail(device.code, true));
   }
 
   function handleDeleteCode(e) {
     e.preventDefault();
-    dispatch(deviceActions.setDevice(emptyDevice));
+    dispatch(deviceActions.resetDevice());
     setDevice(emptyDevice);
   }
   function handleOpenList(e) {
@@ -253,8 +253,6 @@ export default function WorkOrder() {
     setOrder({ ...order, taskDate: taskDate?.id });
   }
 
-  // useEffect(() => console.log("order", order), [order]);
-
   function handleSuccess() {
     if (!orderCode) {
       let emptyOrder = { ...order };
@@ -262,7 +260,7 @@ export default function WorkOrder() {
       setOrder(emptyOrder);
       setForPlan(false);
       setDevice(emptyDevice);
-      dispatch(deviceActions.setDevice({}));
+      dispatch(deviceActions.resetDevice());
     }
     dispatch(workOrderActions.resetOrderResult());
     navigate("/ots");
@@ -281,9 +279,6 @@ export default function WorkOrder() {
     handleSave(newOrder);
   }
   useEffect(() => orderResult && setSaving(false), [orderResult]);
-
-  // useEffect(() => console.log("order", order), [order]);
-  // useEffect(() => console.log("forPlan", forPlan), [forPlan]);
 
   return (
     <div className="w-100">
