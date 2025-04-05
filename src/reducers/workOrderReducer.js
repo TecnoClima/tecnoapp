@@ -7,6 +7,7 @@ const initialState = {
   orderResult: {},
   reportData: null,
   assignedOrders: [],
+  checkedData: null,
 };
 
 export default function workOrderReducer(state = initialState, action) {
@@ -25,6 +26,20 @@ export default function workOrderReducer(state = initialState, action) {
           ...state.workOrderList.filter((o) => o.code !== action.payload.code),
         ],
         orderResult: { success: action.payload.code },
+      };
+    case "CHECK_DATA":
+      return {
+        ...state,
+        checkedData: action.payload,
+      };
+    case "LOAD_WORKORDER_FROM_EXCEL":
+      return {
+        ...state,
+        orderResult: { success: "Todo se cargó exitosamente" },
+        workOrderList: [
+          ...action.payload.sort((a, b) => a.code < b.code),
+          ...state.workOrderList,
+        ],
       };
     case "UPDATE_ORDER":
       if (error) return { ...state, orderResult: { error } };
@@ -70,7 +85,8 @@ export default function workOrderReducer(state = initialState, action) {
       );
       return {
         ...state,
-        workOrderList: [...state.workOrderList, ...ordersToAdd],
+        // workOrderList: [...state.workOrderList, ...ordersToAdd],
+        workOrderList: ordersToAdd,
       };
     case "ORDER_DETAIL":
       return {

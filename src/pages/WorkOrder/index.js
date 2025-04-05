@@ -14,6 +14,7 @@ import ForPlan from "./ForPlan";
 import { useNavigate, useParams } from "react-router-dom";
 import WorkerSelector from "./WorkerSelector";
 import FollowDevice from "../Device/FollowDevice";
+import LoadOrdersFromExcel from "./UploadFromExcel";
 
 const { headersRef } = appConfig;
 
@@ -316,7 +317,7 @@ export default function WorkOrder() {
           close={() => dispatch(workOrderActions.resetOrderResult())}
         />
       )}
-      {orderResult.success && (
+      {orderResult.success && orderCode && (
         <SuccessModal
           message={`La orden de trabajo N° ${orderResult.success} fue guardada exitosamente.`}
           link={orderCode ? null : `/ots/detail/${orderResult.success}`}
@@ -379,16 +380,23 @@ export default function WorkOrder() {
                 <h5>"Nueva Orden de Trabajo"</h5>
               </div>
             )}
-            <div className="col-md-6">
-              <WorkerSelector
-                key={order.code}
-                label={"Responsable"}
-                defaultValue={order.responsible}
-                permissions={permissions}
-                action={(value) =>
-                  handleInputOrderData({ name: "responsible", value })
-                }
-              />
+            <div className="row justify-content-between">
+              <div className="col-md-6">
+                <WorkerSelector
+                  key={order.code}
+                  label={"Responsable"}
+                  defaultValue={order.responsible}
+                  permissions={permissions}
+                  action={(value) =>
+                    handleInputOrderData({ name: "responsible", value })
+                  }
+                />
+              </div>
+              {!order.code && (permissions.admin || permissions.supervisor) && (
+                <div className="col-md-auto">
+                  <LoadOrdersFromExcel />
+                </div>
+              )}
             </div>
           </div>
         </div>

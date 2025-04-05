@@ -162,6 +162,9 @@ export const workOrderActions = {
     ),
   getAssignedOrders: () => getAction(`workorder/assigned`, "ASSIGNED_ORDERS"),
   resetReport: () => ({ type: "RESET_REPORT", payload: {} }),
+  checkData: (body) => postAction(`workorder/checkData`, body, "CHECK_DATA"),
+  loadFromExcel: (data) =>
+    postAction(`workorder/excel`, data, "LOAD_WORKORDER_FROM_EXCEL"),
 };
 export const plantActions = {
   getLocations: (plant) =>
