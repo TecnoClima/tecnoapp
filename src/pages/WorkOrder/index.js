@@ -281,8 +281,10 @@ export default function WorkOrder() {
   }
   useEffect(() => orderResult && setSaving(false), [orderResult]);
 
+  const isClosed = order.status === "Cerrada";
+
   return (
-    <div className="w-100">
+    <div className="page-container">
       {warnings[0] && (
         <WarningErrors
           warnings={warnings}
@@ -347,58 +349,44 @@ export default function WorkOrder() {
         </div>
       )}
 
-      <div className="container d-flex flex-column align-items h-100">
-        <div className="row pt-2">
-          <div>
-            {orderCode ? (
-              <div className="row pt-2 align-items-end">
-                <div className="col-md-auto">
-                  <div className="d-flex gap-2">
-                    <h5>{"Orden de trabajo N° " + orderCode}</h5>{" "}
-                    <h5
-                      className={
-                        order.status === "Cerrada"
-                          ? "text-success"
-                          : "text-danger"
-                      }
-                    >
-                      [{order.status}]
-                    </h5>
-                  </div>
-                </div>
-                <div className="col-md-auto">
-                  <h6>
-                    {"Creada por " +
-                      order.user +
-                      " el " +
-                      new Date(order.regDate).toLocaleDateString()}
-                  </h6>{" "}
+      <div className="flex flex-col">
+        <div className="page-title">
+          {orderCode ? (
+            <div>
+              <div className="flex gap-6 items-center">
+                {"Orden de trabajo N° " + orderCode}
+                <div
+                  className={`badge ${
+                    isClosed ? "badge-success" : "badge-error"
+                  }`}
+                >
+                  {order.status}
                 </div>
               </div>
-            ) : (
-              <div className="col-md-auto">
-                <h5>"Nueva Orden de Trabajo"</h5>
+              <div className="text-sm font-normal">
+                {"Creada por " +
+                  order.user +
+                  " el " +
+                  new Date(order.regDate).toLocaleDateString()}
               </div>
-            )}
-            <div className="row justify-content-between">
-              <div className="col-md-6">
-                <WorkerSelector
-                  key={order.code}
-                  label={"Responsable"}
-                  defaultValue={order.responsible}
-                  permissions={permissions}
-                  action={(value) =>
-                    handleInputOrderData({ name: "responsible", value })
-                  }
-                />
-              </div>
-              {!order.code && (permissions.admin || permissions.supervisor) && (
-                <div className="col-md-auto">
-                  <LoadOrdersFromExcel />
-                </div>
-              )}
             </div>
-          </div>
+          ) : (
+            <div>Nueva Orden de Trabajo</div>
+          )}
+        </div>
+        <div className="flex justify-between">
+          <WorkerSelector
+            key={order.code}
+            label={"Responsable"}
+            defaultValue={order.responsible}
+            permissions={permissions}
+            action={(value) =>
+              handleInputOrderData({ name: "responsible", value })
+            }
+          />
+          {!order.code && (permissions.admin || permissions.supervisor) && (
+            <LoadOrdersFromExcel />
+          )}
         </div>
         <div className="row py-2">
           {(!!selectedDevice?.taskDates?.length ||

@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { peopleActions } from "../../actions/StoreActions";
+import ModalBase from "../../Modals/ModalBase";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSyncAlt, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 export default function WorkerSelector({
   label,
@@ -8,7 +11,8 @@ export default function WorkerSelector({
   action,
   permissions,
 }) {
-  const [selected, setSelected] = useState(`${defaultValue}`);
+  const [openModal, setOpenModal] = useState(false);
+  const [selected, setSelected] = useState(`${defaultValue || ""}`);
   const [requested, setRequested] = useState(false);
   const { workersList } = useSelector((s) => s.people);
   const dispatch = useDispatch();
@@ -19,44 +23,69 @@ export default function WorkerSelector({
     }
   }, [workersList, requested, dispatch]);
 
+  function toggleModal(e) {
+    e.preventDefault();
+    setOpenModal(!openModal);
+  }
+
   function handleChange(e) {
     e.preventDefault();
-    const { value } = e.target;
+    const { value } = e.currentTarget;
     setSelected(value);
     action && action(value);
+    setOpenModal(false);
   }
+
+  const id = selected;
+  const name = workersList.find(
+    (worker) => worker.idNumber === Number(id)
+  )?.name;
+  const isEnabled =
+    permissions?.admin || permissions?.author || permissions?.supervisor;
 
   return (
     <>
-      <div className="position-relative w-100">
-        <div className="input-group">
-          <span className="input-group-text" id="inputGroup-sizing-default">
-            {label}
-          </span>
-          {permissions?.admin ||
-          permissions?.author ||
-          permissions?.supervisor ? (
-            <select
-              className="form-select"
-              value={selected}
-              onChange={handleChange}
-              disabled={!workersList.length}
-            >
-              <option value="">Sin Seleccionar</option>
-              {workersList.map(({ idNumber, name }, i) => (
-                <option key={i} value={idNumber}>
-                  ({idNumber}) - {name}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <span className="input-group-text fw-bold">
-              {workersList.find((w) => w.idNumber == selected)?.name ||
-                "Sin Asignar"}
-            </span>
-          )}
+      <div className="join">
+        <div>
+          <label className="label btn btn-sm  join-item">Responsable</label>
+        </div>
+        {selected && (
+          <div
+            className="flex items-center input-sm join-item cursor-default min-w-fit bg-base-100 border-2 border-primary"
+            readOnly
+          >
+            {`(${id}) - ${name}`}
+          </div>
+        )}
+        <div>
+          <button
+            className="label btn btn-sm btn-primary join-item"
+            onClick={toggleModal}
+            disabled={!isEnabled}
+          >
+            {selected ? <FontAwesomeIcon icon={faSyncAlt} /> : "Seleccionar..."}
+          </button>
         </div>
       </div>
+      <ModalBase
+        className="bg-base-200 max-w-2xl"
+        title="Selecciona Responsable"
+        onClose={toggleModal}
+        open={openModal}
+      >
+        <div className="flex flex-wrap gap-2 md:gap-4 max-h-[50vh] min-h-0 overflow-auto">
+          {workersList.map(({ idNumber, name }) => (
+            <button
+              className="btn btn-sm btn-primary w-1/3 flex-grow justify-start"
+              key={idNumber}
+              value={idNumber}
+              onClick={handleChange}
+            >
+              ({idNumber}) - {name}
+            </button>
+          ))}
+        </div>
+      </ModalBase>
     </>
   );
 }

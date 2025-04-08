@@ -9,13 +9,14 @@ export default function ExcelTableViewer({
   let approved = true;
   return (
     <table
-      className="table"
-      style={{ fontSize: ".7rem", maxHeight: "50vh", overflowY: "auto" }}
+      id="excelTable"
+      className="table table-xs max-h-[50vh] overflow-y-auto
+"
     >
       <thead>
         <tr>
           {fields.map(({ field }) => (
-            <th key={field} scope="col">
+            <th key={field} scope="col" className="p-2">
               {field}
             </th>
           ))}
@@ -28,7 +29,7 @@ export default function ExcelTableViewer({
           return (
             <tr
               key={i}
-              className={rowError ? "table-danger text-danger fw-bold" : ""}
+              className={`${rowError ? "error-data" : ""}`}
               title={rowError || ""}
             >
               {fields.map(({ field, options }) => {
@@ -47,7 +48,7 @@ export default function ExcelTableViewer({
                 if (i === data.length - 1) setApproved(approved);
                 return (
                   <td
-                    className={error ? "table-danger text-danger fw-bold" : ""}
+                    className={`py-1 px-2 ${error ? "error-data" : ""}`}
                     key={field}
                   >
                     <div

@@ -10,6 +10,14 @@ import * as XLSX from "xlsx/xlsx.mjs";
 import ExcelTableViewer from "./ExcelTableViewer";
 import { SuccessModal } from "../../components/warnings";
 import { Navigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faFileExcel } from "@fortawesome/free-solid-svg-icons";
+import ModalBase from "../../Modals/ModalBase";
+import { faFileAlt, faFileExcel } from "@fortawesome/free-regular-svg-icons";
+import {
+  faFileDownload,
+  faFileUpload,
+} from "@fortawesome/free-solid-svg-icons";
 
 const options = {
   CLASE: "class",
@@ -51,6 +59,7 @@ export default function LoadOrdersFromExcel() {
   const [dataToCheck, setDataToCheck] = useState(null);
   const [errorChecks, setErrorChecks] = useState([]);
   const [approved, setApproved] = useState(false);
+  const [viewInstructive, setViewInstructive] = useState(false);
   const fileInput = useRef(null);
 
   const dispatch = useDispatch();
@@ -217,8 +226,9 @@ export default function LoadOrdersFromExcel() {
 
   return (
     <>
-      <button className="btn btn-info" onClick={toggleModal}>
-        Cargar desde Excel
+      <button className="btn btn-sm btn-info" onClick={toggleModal}>
+        <FontAwesomeIcon icon={faFileExcel} />
+        Cargar de Excel
       </button>
 
       {orderResult.success && (
@@ -231,6 +241,128 @@ export default function LoadOrdersFromExcel() {
           }}
         />
       )}
+      <ModalBase
+        title="Cargar Órdenes desde Archivo Excel"
+        open={modal}
+        onClose={toggleModal}
+        className={`bg-base-200 ${data[0] ? "max-w-full" : ""}`}
+      >
+        <div className="flex flex-wrap gap-2">
+          <input
+            type="file"
+            className="file-input file-input-primary file-input-sm flex-grow"
+            ref={fileInput}
+            onInput={changeFile}
+          />
+          <div className="flex gap-2 flex-grow">
+            <button
+              type="button"
+              className="btn btn-sm btn-info"
+              onClick={buildExcel}
+            >
+              Descargar plantilla <FontAwesomeIcon icon={faFileDownload} />
+            </button>
+            <button
+              className="btn btn-sm btn-primary"
+              type="button"
+              onClick={() => setViewInstructive(!viewInstructive)}
+            >
+              Ver/ocultar instructivo <FontAwesomeIcon icon={faFileAlt} />
+            </button>
+          </div>
+        </div>
+        <div>
+          <div className="collapse my-2">
+            <input
+              type="checkbox"
+              className="min-h-0"
+              checked={viewInstructive}
+            />
+            <div
+              className={`collapse-content text-sm bg-base-100/50 ${
+                viewInstructive ? "p-4" : ""
+              }`}
+            >
+              <ul className="list-disc pl-4">
+                <li>Descargar la plantilla</li>
+                <li>
+                  Comenzar a llenarla desde la fila siguiente a la última
+                  ocupada
+                </li>
+                <li>
+                  <b>EQUIPO y LUGAR_SERVICIO:</b> Requieren los respectivos
+                  códigos de nuestra base de datos.
+                </li>
+                <li>
+                  <b>ESTADO:</b> Siempre se carga como "Abierta"
+                </li>
+                <li>
+                  <b>CLASE, TIPO, SUPERVISOR, CAUSA, RESPONSABLE:</b>{" "}
+                  Seleccionar de la lista de opciones según el caso del que se
+                  trate. Los valores tienen que ser textualmente iguales.
+                  Preferiblemente, copiar el valor de la lista y pegarlo. Evitar
+                  lo más posible opciones genéricas como "OTRO"
+                </li>
+                <li>
+                  <b>EMISION,FECHA_PLAN:</b> Fecha en formato dd/mm/aaaa
+                </li>
+                <li>
+                  <b>HORA_EMISION:</b> Hora en formato hh:mm
+                </li>
+                <li>
+                  <b>OT_PLANTA:</b> Código de la orden de trabajo proveída por
+                  la planta, si es que existe.
+                </li>
+                <li>
+                  <b>SOLICITANTE, TELEFONO</b> Persona a la que contactar por
+                  asuntos relacionados con la tarea.
+                </li>
+                <li>
+                  <b>DESCRIPCION:</b> Tarea que debe realizarse.
+                </li>
+                <li>
+                  Una vez completada la lista, eliminar las filas que muestran
+                  las opciones.{" "}
+                  <b>
+                    Deben quedar sólo los encabezados y las órdenes a cargar.
+                  </b>
+                  .
+                </li>
+                <li>
+                  <b>Todas las órdenes se cargan con el estado "Abierta"</b>.
+                </li>
+                <li>
+                  <span className="text-danger fw-bold">IMPORTANTE:</span> Los
+                  datos que presenten errores en el chequeo previo a la carga se
+                  verán en rojo{" "}
+                  <span className="error-data">con este formato</span>. Al dejar
+                  el puntero del mouse sobre la celda, se indicará el error.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        {fields && data[0] && (
+          <ExcelTableViewer
+            fields={fields.filter(({ field }) => field !== "HORA_EMISION")}
+            data={data}
+            errors={errors}
+            errorChecks={errorChecks}
+            validateRow={validateRow}
+            setApproved={setApproved}
+          />
+        )}
+        {approved && (
+          <div className="flex w-full pt-4">
+            <button
+              className="btn btn-sm btn-success mx-auto"
+              onClick={handleSubmit}
+            >
+              Cargar Órdenes <FontAwesomeIcon icon={faFileUpload} />
+            </button>
+          </div>
+        )}
+      </ModalBase>
 
       <div
         className={`modal fade ${modal ? "show" : ""}`}
@@ -300,72 +432,7 @@ export default function LoadOrdersFromExcel() {
 
               <div className="row">
                 <div className="col">
-                  <div className="collapse" id="intructionsCollapse">
-                    <ul>
-                      <li>Descargar la plantilla</li>
-                      <li>
-                        Comenzar a llenarla desde la fila siguiente a la última
-                        ocupada
-                      </li>
-                      <li>
-                        <b>EQUIPO y LUGAR_SERVICIO:</b> Requieren los
-                        respectivos códigos de nuestra base de datos.
-                      </li>
-                      <li>
-                        <b>ESTADO:</b> Siempre se carga como "Abierta"
-                      </li>
-                      <li>
-                        <b>CLASE, TIPO, SUPERVISOR, CAUSA, RESPONSABLE:</b>{" "}
-                        Seleccionar de la lista de opciones según el caso del
-                        que se trate. Los valores tienen que ser textualmente
-                        iguales. Preferiblemente, copiar el valor de la lista y
-                        pegarlo. Evitar lo más posible opciones genéricas como
-                        "OTRO"
-                      </li>
-                      <li>
-                        <b>EMISION,FECHA_PLAN:</b> Fecha en formato dd/mm/aaaa
-                      </li>
-                      <li>
-                        <b>HORA_EMISION:</b> Hora en formato hh:mm
-                      </li>
-                      <li>
-                        <b>OT_PLANTA:</b> Código de la orden de trabajo proveída
-                        por la planta, si es que existe.
-                      </li>
-                      <li>
-                        <b>SOLICITANTE, TELEFONO</b> Persona a la que contactar
-                        por asuntos relacionados con la tarea.
-                      </li>
-                      <li>
-                        <b>DESCRIPCION:</b> Tarea que debe realizarse.
-                      </li>
-                      <li>
-                        Una vez completada la lista, eliminar las filas que
-                        muestran las opciones.{" "}
-                        <b>
-                          Deben quedar sólo los encabezados y las órdenes a
-                          cargar.
-                        </b>
-                        .
-                      </li>
-                      <li>
-                        <b>
-                          Todas las órdenes se cargan con el estado "Abierta"
-                        </b>
-                        .
-                      </li>
-                      <li>
-                        <span className="text-danger fw-bold">IMPORTANTE:</span>{" "}
-                        Los datos que presenten errores en el chequeo previo a
-                        la carga se verán en rojo{" "}
-                        <span className="alert-danger text-danger fw-bold">
-                          con este formato
-                        </span>
-                        . Al dejar el puntero del mouse sobre la celda, se
-                        indicará el error.
-                      </li>
-                    </ul>
-                  </div>
+                  <div className="collapse" id="intructionsCollapse"></div>
                 </div>
               </div>
               {fields && data[0] && (

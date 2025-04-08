@@ -104,9 +104,9 @@ function App() {
               exact
               path={"/equipos/:code"}
               element={
-                <Layout>
+                <InnerLayout>
                   <Device />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}

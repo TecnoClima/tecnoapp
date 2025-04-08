@@ -1,6 +1,7 @@
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { deviceActions, planActions } from "../../actions/StoreActions";
+import { useEffect } from "react";
 
 export default function TaskItem(props) {
   const { className, task } = props;
