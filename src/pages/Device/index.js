@@ -184,7 +184,9 @@ export default function Device() {
                   />
                   <FormInput
                     label="Gas"
-                    value={device.refrigerant}
+                    value={`${device.refrigerant} ${
+                      device.gasAmount ? `(${device.gasAmount}g)` : ""
+                    }`}
                     readOnly={true}
                   />
                   <FormInput

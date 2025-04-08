@@ -283,6 +283,18 @@ export default function CreateDevice({ edit, close }) {
                   onSelect={setValue}
                 />
               </div>
+
+              <div className="col-md-4 mb-2">
+                <FormInput
+                  label="Cantidad de gas (g)"
+                  type="number"
+                  name="gasAmount"
+                  min={"0"}
+                  value={device.gasAmount}
+                  changeInput={setValue}
+                />
+              </div>
+
               <div className="col-md-4 mb-2">
                 <FormSelector
                   label="Servicio"
@@ -301,8 +313,6 @@ export default function CreateDevice({ edit, close }) {
                   onSelect={setValue}
                 />
               </div>
-            </div>
-            <div className="row align-items-center">
               <div className="col-md-4 mb-2">
                 <FormSelector
                   label="Ambiente"

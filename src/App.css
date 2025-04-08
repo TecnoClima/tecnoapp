@@ -93,6 +93,9 @@
   font-weight: bold;
   text-decoration: none;
 }
+.cursor-default {
+  cursor: default;
+}
 a {
   text-decoration: none;
   color: inherit;

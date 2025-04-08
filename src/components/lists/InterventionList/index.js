@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import { useSelector } from 'react-redux'
 import AddIntervention from "../../forms/InterventionForm";
 import "./index.css";
@@ -12,6 +12,18 @@ export default function InterventionList(props) {
     onDelete(id);
   }
 
+  function getDate(dateInput) {
+    const givenDate = new Date(dateInput);
+    if (isNaN(givenDate.getTime())) return ["", ""];
+    const date = givenDate.toISOString().split("T")[0];
+    let hours = givenDate.getHours();
+    let minutes = givenDate.getMinutes();
+    const time = `${hours < 10 ? "0" : ""}${hours}:${
+      minutes < 10 ? "0" : ""
+    }${minutes}`;
+    return [date, time];
+  }
+
   return (
     <div
       className="container p-0 align-items-center"
@@ -22,7 +34,7 @@ export default function InterventionList(props) {
         style={{ fontWeight: "bold" }}
       >
         <div className="col-1 p-1" style={{ minWidth: "fit-content" }}>
-          Fecha
+          Inicio
         </div>
         <div className="col-2 p-1" style={{ minWidth: "fit-content" }}>
           Intervinientes
@@ -30,6 +42,11 @@ export default function InterventionList(props) {
         <div className="col p-1" style={{ minWidth: "fit-content" }}>
           Tareas
         </div>
+        {interventions.find((e) => e.endDate) && (
+          <div className="col-1 p-1" style={{ minWidth: "fit-content" }}>
+            Fin
+          </div>
+        )}
         <div className="col-2 p-1" style={{ minWidth: "fit-content" }}>
           Gas
         </div>
@@ -40,23 +57,36 @@ export default function InterventionList(props) {
       {interventions &&
         interventions[0] &&
         interventions.map((item, index) => {
-          const date = new Date(item.date);
-          const itemDate = date.toISOString().split("T")[0];
-          const time = item.time || `${date.getHours()}:${date.getMinutes()}`;
+          const [date, time] = getDate(item.date);
+          const [endDate, endTime] = getDate(item.endDate);
           return (
             <div className="input-group border-bottom border-2" key={index}>
               <div
-                className="btn btn-dark col-sm-1 p-1"
+                className="btn btn-dark w-fit p-1 "
                 style={{ fontSize: "100%" }}
               >
                 <b>
-                  {itemDate} {time}
+                  {date}
+                  <br />
+                  {time}
                 </b>
               </div>
               <div className="col-sm-2 p-1">
                 <b>{item.workers.map((e) => e.name).join(", ")}</b>
               </div>
               <div className="col p-1">{item.task}</div>
+              {endDate && (
+                <div
+                  className="btn btn-light w-fit p-1 "
+                  style={{ fontSize: "100%" }}
+                >
+                  <b>
+                    {endDate}
+                    <br />
+                    {endTime}
+                  </b>
+                </div>
+              )}
               <div className="col-sm-2 p-1 d-flex flex-column">
                 {item.refrigerant.map((cyl, index) => (
                   <div className="d-flex" key={index}>

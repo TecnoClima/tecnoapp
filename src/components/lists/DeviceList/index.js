@@ -119,6 +119,9 @@ export default function DeviceList({ close, select }) {
                       Refrigerante
                     </th>
                     <th scope="col" className="text-center">
+                      Cant.gas (g)
+                    </th>
+                    <th scope="col" className="text-center">
                       Categoría
                     </th>
                     <th scope="col" className="text-center">
@@ -155,6 +158,9 @@ export default function DeviceList({ close, select }) {
                         </td>
                         <td className="text-center">
                           {device.refrigerant?.refrigerante || ""}
+                        </td>
+                        <td className="text-center">
+                          {device.gasAmount || ""}
                         </td>
                         <td className="text-center">{device.category}</td>
                         <td className="text-center">{device.environment}</td>

@@ -85,7 +85,9 @@ export default function PlanDevice(props) {
                     ? Math.floor(device.power / 3000) + "TR"
                     : device.power + "Frig"
                 }
-                                ${device.refrigerant})`}
+                                ${device.refrigerant})${
+                  device.gasAmount ? ` - ${device.gasAmount}g` : ""
+                }`}
               </div>
               <div
                 className="col-auto d-flex align-items-center"

@@ -119,6 +119,9 @@ export default function WorkOrders() {
   }
 
   useEffect(() => dispatch(resetDetail()), [dispatch]);
+  useEffect(() => {
+    dispatch(workOrderActions.resetOrderResult());
+  }, [dispatch]);
 
   function handleNewReclaim() {
     dispatch(deviceActions.resetDevice());

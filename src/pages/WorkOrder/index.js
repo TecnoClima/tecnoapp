@@ -14,6 +14,7 @@ import ForPlan from "./ForPlan";
 import { useNavigate, useParams } from "react-router-dom";
 import WorkerSelector from "./WorkerSelector";
 import FollowDevice from "../Device/FollowDevice";
+import LoadOrdersFromExcel from "./UploadFromExcel";
 
 const { headersRef } = appConfig;
 
@@ -25,6 +26,7 @@ const emptyDevice = {
   category: "",
   service: "",
   environment: "",
+  gasAmount: "",
 };
 
 export default function WorkOrder() {
@@ -111,9 +113,9 @@ export default function WorkOrder() {
     setInterventions(orderDetail.interventions);
     delete editOrder.interventions;
     setMinProgress(orderDetail.completed);
-    setForPlan(!!order.taskDate);
+    setForPlan(!!editOrder.taskDate);
     setOrder(editOrder);
-  }, [orderDetail, dispatch]);
+  }, [orderDetail, dispatch, order.taskDate]);
 
   // Allow Saving
   useEffect(() => {
@@ -140,19 +142,16 @@ export default function WorkOrder() {
       if (d.name) {
         newDevice = { ...device };
         const { plant, area, line } = d;
-        const { type, power, refrigerant } = d;
+        const { type, power, refrigerant, gasAmount } = d;
         for (let key of Object.keys(device).filter(
-          (k) => !["location", "type"].includes(k)
+          (k) => !["location", "type", "gasAmount"].includes(k)
         )) {
           newDevice[key] = d[key];
         }
         newDevice.location = plant + "> " + area + "> " + line;
-        newDevice.type =
-          type +
-          " " +
-          (power >= 9000 ? Math.floor(power / 3000) + "TR" : power + " fg") +
-          " - " +
-          refrigerant;
+        newDevice.type = `${type} ${
+          power >= 9000 ? Math.floor(power / 3000) + "TR" : power + " fg"
+        } - ${refrigerant}${gasAmount ? ` (${gasAmount}g)` : ""}`;
       } else {
         newDevice = emptyDevice;
       }
@@ -180,12 +179,12 @@ export default function WorkOrder() {
   function handleSearch(e) {
     e.preventDefault();
     // const newDevice = deviceFullList.find((d) => d.code === device.code);
-    dispatch(deviceActions.getDetail(device.code, true));
+    if (device?.code) dispatch(deviceActions.getDetail(device.code, true));
   }
 
   function handleDeleteCode(e) {
     e.preventDefault();
-    dispatch(deviceActions.setDevice(emptyDevice));
+    dispatch(deviceActions.resetDevice());
     setDevice(emptyDevice);
   }
   function handleOpenList(e) {
@@ -255,8 +254,6 @@ export default function WorkOrder() {
     setOrder({ ...order, taskDate: taskDate?.id });
   }
 
-  // useEffect(() => console.log("order", order), [order]);
-
   function handleSuccess() {
     if (!orderCode) {
       let emptyOrder = { ...order };
@@ -264,7 +261,7 @@ export default function WorkOrder() {
       setOrder(emptyOrder);
       setForPlan(false);
       setDevice(emptyDevice);
-      dispatch(deviceActions.setDevice({}));
+      dispatch(deviceActions.resetDevice());
     }
     dispatch(workOrderActions.resetOrderResult());
     navigate("/ots");
@@ -283,9 +280,6 @@ export default function WorkOrder() {
     handleSave(newOrder);
   }
   useEffect(() => orderResult && setSaving(false), [orderResult]);
-
-  // useEffect(() => console.log("order", order), [order]);
-  // useEffect(() => console.log("forPlan", forPlan), [forPlan]);
 
   return (
     <div className="w-100">
@@ -323,7 +317,7 @@ export default function WorkOrder() {
           close={() => dispatch(workOrderActions.resetOrderResult())}
         />
       )}
-      {orderResult.success && (
+      {orderResult.success && orderCode && (
         <SuccessModal
           message={`La orden de trabajo N° ${orderResult.success} fue guardada exitosamente.`}
           link={orderCode ? null : `/ots/detail/${orderResult.success}`}
@@ -386,16 +380,23 @@ export default function WorkOrder() {
                 <h5>"Nueva Orden de Trabajo"</h5>
               </div>
             )}
-            <div className="col-md-6">
-              <WorkerSelector
-                key={order.code}
-                label={"Responsable"}
-                defaultValue={order.responsible}
-                permissions={permissions}
-                action={(value) =>
-                  handleInputOrderData({ name: "responsible", value })
-                }
-              />
+            <div className="row justify-content-between">
+              <div className="col-md-6">
+                <WorkerSelector
+                  key={order.code}
+                  label={"Responsable"}
+                  defaultValue={order.responsible}
+                  permissions={permissions}
+                  action={(value) =>
+                    handleInputOrderData({ name: "responsible", value })
+                  }
+                />
+              </div>
+              {!order.code && (permissions.admin || permissions.supervisor) && (
+                <div className="col-md-auto">
+                  <LoadOrdersFromExcel />
+                </div>
+              )}
             </div>
           </div>
         </div>

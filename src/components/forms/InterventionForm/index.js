@@ -60,6 +60,17 @@ export default function AddIntervention(props) {
       let minutes = date.getMinutes();
       editable.time =
         editable.time || `${hours}:${(minutes < 10 ? "0" : "") + minutes}`;
+
+      if (editable.endDate) {
+        const endDate = new Date(editable.endDate);
+        editable.endDate = endDate.toISOString().split("T")[0];
+        let endHours = endDate.getHours();
+        let endMinutes = endDate.getMinutes();
+        editable.endTime =
+          editable.endTime ||
+          `${endHours}:${(endMinutes < 10 ? "0" : "") + endMinutes}`;
+      }
+
       setIntervention({ ...editable });
       dispatch(cylinderActions.getList(data.workers.map((e) => e.id)));
       setGasUsages(editable.refrigerant.filter((e) => !!e.code));
@@ -99,11 +110,18 @@ export default function AddIntervention(props) {
       }
       if (intervention.task !== data.task) update.task = intervention.task;
       const date = intervention.date + " " + intervention.time;
+      const endDate = intervention.endDate + " " + intervention.endTime;
       if (date !== data.date)
         update = {
           ...update,
           date: intervention.date,
           time: intervention.time,
+        };
+      if (endDate !== data.endDate)
+        update = {
+          ...update,
+          endDate: intervention.endDate,
+          endTime: intervention.endTime,
         };
       if (Object.keys(update).length >= 1)
         dispatch(updateIntervention(intervention.id, update));
@@ -162,11 +180,12 @@ export default function AddIntervention(props) {
           </div>
         </div>
         <div className="row">
-          <div className="col-sm-6 text-center">
+          <div className="col-sm-6">
+            <div className="col fw-bold">Inicio</div>
             <FormInput
               label="Fecha"
               type="date"
-              defaultValue={intervention.date || today}
+              value={intervention.date || today}
               onBlur={(e) =>
                 setIntervention({ ...intervention, date: e.target.value })
               }
@@ -177,8 +196,6 @@ export default function AddIntervention(props) {
                 Debe ingresarse una fecha menor o igual que hoy.
               </div>
             )}
-          </div>
-          <div className="col-sm-6">
             <FormInput
               label="Hora"
               type="time"
@@ -188,6 +205,34 @@ export default function AddIntervention(props) {
               max={intervention.date === today ? time : "23:59"}
               changeInput={(e) =>
                 setIntervention({ ...intervention, time: e.target.value })
+              }
+            />
+          </div>
+          <div className="col-sm-6">
+            <div className="col fw-bold">Fin</div>
+            <FormInput
+              label="Fecha"
+              type="date"
+              value={intervention.endDate}
+              onBlur={(e) =>
+                setIntervention({ ...intervention, endDate: e.target.value })
+              }
+              max={today}
+            />
+            {!intervention.date && (
+              <div className="errorMessage">
+                Debe ingresarse una fecha menor o igual que hoy.
+              </div>
+            )}
+            <FormInput
+              label="Hora"
+              type="time"
+              disabled={!intervention.date}
+              min="00:00"
+              value={intervention.endTime || ""}
+              max={intervention.date === today ? time : "23:59"}
+              changeInput={(e) =>
+                setIntervention({ ...intervention, endTime: e.target.value })
               }
             />
           </div>
