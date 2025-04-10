@@ -44,20 +44,13 @@ export default function WorkerSelector({
     permissions?.admin || permissions?.author || permissions?.supervisor;
 
   return (
-    <>
-      <div className="join">
-        <div>
-          <label className="label btn btn-sm  join-item">Responsable</label>
-        </div>
-        {selected && (
-          <div
-            className="flex items-center input-sm join-item cursor-default min-w-fit bg-base-100 border-2 border-primary"
-            readOnly
-          >
-            {`(${id}) - ${name}`}
+    <div className="flex sm:w-1/3 flex-grow">
+      <div className="w-full ">
+        <div className="text-xs">Responsable</div>
+        <div className="join w-full max-w-full">
+          <div className="flex flex-grow items-center input-sm join-item cursor-default bg-base-100 border-2 border-primary text-ellipsis whitespace-nowrap overflow-hidden">
+            {selected ? `(${id}) - ${name}` : "Sin seleccionar"}
           </div>
-        )}
-        <div>
           <button
             className="label btn btn-sm btn-primary join-item"
             onClick={toggleModal}
@@ -76,7 +69,7 @@ export default function WorkerSelector({
         <div className="flex flex-wrap gap-2 md:gap-4 max-h-[50vh] min-h-0 overflow-auto">
           {workersList.map(({ idNumber, name }) => (
             <button
-              className="btn btn-sm btn-primary w-1/3 flex-grow justify-start"
+              className="btn btn-sm btn-primary sm:w-1/3 flex-grow justify-start"
               key={idNumber}
               value={idNumber}
               onClick={handleChange}
@@ -86,6 +79,6 @@ export default function WorkerSelector({
           ))}
         </div>
       </ModalBase>
-    </>
+    </div>
   );
 }

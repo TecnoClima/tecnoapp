@@ -8,7 +8,7 @@ import {
 import { orderFields } from "../../constants/OrderData";
 import * as XLSX from "xlsx/xlsx.mjs";
 import ExcelTableViewer from "./ExcelTableViewer";
-import { SuccessModal } from "../../components/warnings";
+import { SuccessModal } from "../warnings";
 import { Navigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faFileExcel } from "@fortawesome/free-solid-svg-icons";
