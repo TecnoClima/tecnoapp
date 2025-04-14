@@ -80,7 +80,10 @@
     @apply border-t border-b border-dotted border-white/20;
   }
   .error-data {
-    @apply bg-error text-error-content font-bold;
+    @apply bg-error/50 text-error-content font-bold;
+  }
+  .warning-data {
+    @apply bg-warning/50 text-warning-content font-bold;
   }
   .bg-landing {
     @apply bg-repeat;

@@ -350,6 +350,12 @@ export default function LoadOrdersFromExcel() {
             errorChecks={errorChecks}
             validateRow={validateRow}
             setApproved={setApproved}
+            deseableFields={
+              ['LUGAR_SERVICIO','OT_PLANTA']
+            }
+            requiredFields={
+              ['EQUIPO','CLASE','TIPO','SOLICITANTE','TELEFONO','SUPERVISOR','EMISION','HORA_EMISION','DESCRIPCION','CAUSA','RESPONSABLE','FECHA_PLAN']
+            }
           />
         )}
         {approved && (
@@ -435,7 +441,7 @@ export default function LoadOrdersFromExcel() {
                   <div className="collapse" id="intructionsCollapse"></div>
                 </div>
               </div>
-              {fields && data[0] && (
+              {/* {fields && data[0] && (
                 <ExcelTableViewer
                   fields={fields.filter(
                     ({ field }) => field !== "HORA_EMISION"
@@ -445,8 +451,14 @@ export default function LoadOrdersFromExcel() {
                   errorChecks={errorChecks}
                   validateRow={validateRow}
                   setApproved={setApproved}
+                  deseableFields={
+                    ['LUGAR_SERVICIO','OT_PLANTA']
+                  }
+                  requiredFields={
+                    ['EQUIPO','CLASE','TIPO','SOLICITANTE','TELEFONO','SUPERVISOR','EMISION','HORA_EMISION','DESCRIPCION','CAUSA','RESPONSABLE','FECHA_PLAN']
+                  }
                 />
-              )}
+              )} */}
               {approved && (
                 <button
                   className="btn btn-success mx-auto"

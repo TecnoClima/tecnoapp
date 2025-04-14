@@ -5,6 +5,8 @@ export default function ExcelTableViewer({
   errorChecks,
   validateRow,
   setApproved,
+  deseableFields,
+  requiredFields,
 }) {
   let approved = true;
   return (
@@ -34,6 +36,8 @@ export default function ExcelTableViewer({
             >
               {fields.map(({ field, options }) => {
                 const value = d[field];
+                const emptyDeseable = deseableFields.includes(field) && !value;
+                if(emptyDeseable)console.log(field)
                 let error;
                 if (options && !options.includes(value)) {
                   error = "El dato no está en la lista de opciones";
@@ -44,15 +48,17 @@ export default function ExcelTableViewer({
                 if (errors && errors[field] === value) {
                   error = errors[field];
                 }
+                // if(!error && requiredFields.includes(field) && !value) error = "Dato requerido";
                 if (error) approved = false;
                 if (i === data.length - 1) setApproved(approved);
                 return (
                   <td
-                    className={`py-1 px-2 ${error ? "error-data" : ""}`}
+                  title={rowError || error || (emptyDeseable?"Dato deseable":"")}
+                                      className={`py-1 px-2 ${error ? "error-data" : emptyDeseable? "warning-data" : ""}`}
                     key={field}
                   >
                     <div
-                      title={rowError || error || ""}
+
                       className="cursor-default"
                     >
                       {value}
