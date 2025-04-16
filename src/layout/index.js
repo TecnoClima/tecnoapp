@@ -7,7 +7,7 @@ const Layout = (props) => {
     <React.Fragment>
       <NavBar />
 
-      <div className="container d-flex flex-grow-1 overflow-auto">
+      <div className="container-md d-flex flex-grow-1 overflow-auto">
         {props.children}
       </div>
     </React.Fragment>
