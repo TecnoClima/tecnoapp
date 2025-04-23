@@ -16,7 +16,7 @@ export default function AssignedWO(props) {
       </h5>
       <Filters list={assignedOrders} setList={setFilteredList} />
       <div className="row">
-        {filteredList.map(
+        {filteredList.filter(o=>!!o).map(
           ({
             code,
             class: cls,
@@ -24,8 +24,9 @@ export default function AssignedWO(props) {
             description,
             registration,
             completed,
-          }) => (
-            <div className="col-md-6 col-lg-4 px-2 py-2">
+          }) => {
+            if(!device?.line?.area?.plant)console.log('device',device,'order',code);
+            return <div className="col-md-6 col-lg-4 px-2 py-2">
             <div
               key={code}
               className="card bg-light w-100 h-100 "
@@ -69,8 +70,8 @@ export default function AssignedWO(props) {
               </div>
             </div>
             </div>
-          )
-        )}
+          })
+        }
       </div>
     </div>
   );
