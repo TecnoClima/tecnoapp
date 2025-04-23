@@ -12,6 +12,7 @@ import {
 import { cylinderActions, peopleActions } from "../../../actions/StoreActions";
 import { FormInput } from "../FormInput";
 import ModalBase from "../../../Modals/ModalBase";
+import DateAndTime from "../DateAndTime";
 
 export default function AddIntervention(props) {
   const today = new Date().toISOString().split("T")[0];
@@ -166,67 +167,43 @@ export default function AddIntervention(props) {
     );
   }, [userData, dispatch]);
 
+  function handleChange(e) {
+    const { name, value } = e.currentTarget;
+    setIntervention({
+      ...intervention,
+      [name]: value,
+    });
+  }
+
   return (
     <ModalBase title="AGREGAR INTERVENCIÓN" open={true} onClose={close}>
-      <div className="row">
-        <div className="col-sm-6">
-          <div className="col fw-bold">Inicio</div>
-          <FormInput
-            label="Fecha"
-            type="date"
-            value={intervention.date || today}
-            onBlur={(e) =>
-              setIntervention({ ...intervention, date: e.target.value })
-            }
-            max={today}
-          />
-          {!intervention.date && (
-            <div className="errorMessage">
-              Debe ingresarse una fecha menor o igual que hoy.
-            </div>
-          )}
-          <FormInput
-            label="Hora"
-            type="time"
-            disabled={!intervention.date}
-            min="00:00"
-            value={intervention.time || ""}
-            max={intervention.date === today ? time : "23:59"}
-            changeInput={(e) =>
-              setIntervention({ ...intervention, time: e.target.value })
-            }
-          />
-        </div>
-        <div className="col-sm-6">
-          <div className="col fw-bold">Fin</div>
-          <FormInput
-            label="Fecha"
-            type="date"
-            value={intervention.endDate}
-            onBlur={(e) =>
-              setIntervention({ ...intervention, endDate: e.target.value })
-            }
-            max={today}
-          />
-          {!intervention.date && (
-            <div className="errorMessage">
-              Debe ingresarse una fecha menor o igual que hoy.
-            </div>
-          )}
-          <FormInput
-            label="Hora"
-            type="time"
-            disabled={!intervention.date}
-            min="00:00"
-            value={intervention.endTime || ""}
-            max={intervention.date === today ? time : "23:59"}
-            changeInput={(e) =>
-              setIntervention({ ...intervention, endTime: e.target.value })
-            }
-          />
-        </div>
-      </div>
-      <div className="row text-center">
+      <div className="flex w-full gap-4 justify-between flex-wrap">
+        <DateAndTime
+          className="flex-grow"
+          label="Fecha Inicio"
+          name="date"
+          value={intervention.date}
+          time={intervention.time}
+          timeName="time"
+          onChange={handleChange}
+          max={today}
+          maxTime={time}
+        />
+
+        <DateAndTime
+          className="flex-grow"
+          label="Fecha Fin"
+          name="date"
+          value={intervention.endDate}
+          disabled={!intervention.date}
+          time={intervention.endTime}
+          timeName="time"
+          onChange={handleChange}
+          max={today}
+          maxTime={time}
+        />
+    </div>
+      <div className="my-2 text-center">
         <PeoplePicker
           name="Intervinientes"
           options={list}

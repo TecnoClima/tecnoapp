@@ -11,7 +11,7 @@ export default function ModalBase({
 }) {
   return (
     <dialog id={id} className="modal w-full h-full bg-black/30" open={open}>
-      <div className={`modal-box p-4 relative ${className}`}>
+      <div className={`modal-box w-full sm:max-w-lg p-4 relative ${className}`}>
         <div className="flex justify-between items-baseline mb-3">
           {title && <h3 className="text-lg font-bold">{title}</h3>}
           {onClose && (

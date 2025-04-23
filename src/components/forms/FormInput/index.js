@@ -20,31 +20,33 @@ export function FormInput(props) {
     placeholder,
   } = props;
   return (
-    <div className="input-group">
-      <span
-        className="input-group-text col-3 p-1 is-flex justify-content-center"
-        style={{ minWidth: "fit-content" }}
-      >
-        {headersRef[label] || label}
-      </span>
-      <input
-        className="form-control p-1"
-        autoComplete="off"
-        disabled={disabled}
-        defaultValue={defaultValue}
-        readOnly={readOnly}
-        ref={ref}
-        value={value}
-        placeholder={placeholder}
-        type={type || "text"}
-        name={name}
-        min={type === "number" ? min : undefined}
-        max={["number", "date"].includes(type) ? max : undefined}
-        step={["number", "date"].includes(type) ? step : undefined}
-        onBlur={onBlur}
-        onChange={(e) => changeInput && changeInput(e)}
-      />
-    </div>
+    <>
+      <div className="input-group">
+        <span
+          className="input-group-text col-3 p-1 is-flex justify-content-center"
+          style={{ minWidth: "fit-content" }}
+        >
+          {headersRef[label] || label}
+        </span>
+        <input
+          className="form-control p-1"
+          autoComplete="off"
+          disabled={disabled}
+          defaultValue={defaultValue}
+          readOnly={readOnly}
+          ref={ref}
+          value={value}
+          placeholder={placeholder}
+          type={type || "text"}
+          name={name}
+          min={type === "number" ? min : undefined}
+          max={["number", "date"].includes(type) ? max : undefined}
+          step={["number", "date"].includes(type) ? step : undefined}
+          onBlur={onBlur}
+          onChange={(e) => changeInput && changeInput(e)}
+        />
+      </div>
+    </>
   );
 }
 
