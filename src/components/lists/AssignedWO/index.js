@@ -16,62 +16,67 @@ export default function AssignedWO(props) {
       </h5>
       <Filters list={assignedOrders} setList={setFilteredList} />
       <div className="row">
-        {filteredList.filter(o=>!!o).map(
-          ({
-            code,
-            class: cls,
-            device,
-            description,
-            registration,
-            completed,
-          }) => {
-            if(!device?.line?.area?.plant)console.log('device',device,'order',code);
-            return <div className="col-md-6 col-lg-4 px-2 py-2">
-            <div
-              key={code}
-              className="card bg-light w-100 h-100 "
-              // style={{ width: "20rem", maxWidth: "100%" }}
-            >
-              <div className="card-body">
-                <div className="d-flex d-grid w-100 align-items-center justify-content-between mb-2">
-                  <div className="badge fs-6 font-bold mb-0 bg-dark text-light ">
-                    OT {code}
-                  </div>
-                  <div className="d-flex ">
-                    <span className="badge bg-secondary">
-                      Emision <br />
-                      {registration?.date &&
-                        registration.date
-                          .split("T")[0]
-                          .split("-")
-                          .reverse()
-                          .join("/")}
-                    </span>
-                    <Link
-                      to={`/ots/detail/${code}`}
-                      className="btn btn-sm btn-info"
-                    >
-                      <i class="fas fa-search-plus"></i>
-                    </Link>
-                  </div>
-                </div>
-                <h6 className="card-subtitle mb-2 text-muted">
-                  {cls} - Avance: {completed}
-                </h6>
-                <div className="fw-bold" style={{ fontSize: "70%" }}>
-                  {`${device.line.area.plant.name} > 
+        {filteredList
+          .filter((o) => !!o)
+          .map(
+            ({
+              code,
+              class: cls,
+              device,
+              description,
+              registration,
+              completed,
+            }) => {
+              return (
+                <div key={code} className="col-md-6 col-lg-4 px-2 py-2">
+                  <div
+                    className="card bg-light w-100 h-100 "
+                    // style={{ width: "20rem", maxWidth: "100%" }}
+                  >
+                    <div className="card-body">
+                      <div className="d-flex d-grid w-100 align-items-center justify-content-between mb-2">
+                        <div className="badge fs-6 font-bold mb-0 bg-dark text-light ">
+                          OT {code}
+                        </div>
+                        <div className="d-flex ">
+                          <span className="badge bg-secondary">
+                            Emision <br />
+                            {registration?.date &&
+                              registration.date
+                                .split("T")[0]
+                                .split("-")
+                                .reverse()
+                                .join("/")}
+                          </span>
+                          <Link
+                            to={`/ots/detail/${code}`}
+                            className="btn btn-sm btn-info"
+                          >
+                            <i className="fas fa-search-plus"></i>
+                          </Link>
+                        </div>
+                      </div>
+                      <h6 className="card-subtitle mb-2 text-muted">
+                        {cls} - Avance: {completed}
+                      </h6>
+                      <div className="fw-bold" style={{ fontSize: "70%" }}>
+                        {`${device.line.area.plant.name} > 
                   ${device.line.area.name} > 
                   ${device.line.name}`}
+                      </div>
+                      <p className="card-text fw-bold mb-0">
+                        [{device.code}]<br />
+                        {device.name}
+                      </p>
+                      <p className="card-text">
+                        {description || "Sin descripción"}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <p className="card-text fw-bold mb-0">
-                  [{device.code}]<br/>{device.name}
-                </p>
-                <p className="card-text">{description || "Sin descripción"}</p>
-              </div>
-            </div>
-            </div>
-          })
-        }
+              );
+            }
+          )}
       </div>
     </div>
   );
