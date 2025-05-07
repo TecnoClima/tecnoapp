@@ -381,7 +381,7 @@ export default function LoadOrdersFromExcel() {
         role="dialog"
       >
         <div
-          className={`modal-dialog modal-dialog-centered ${
+          className={`modal-dialog modal-dialog-centered modal-dialog-scrollable ${
             data[0] ? "modal-fullscreen" : ""
           }`}
         >
