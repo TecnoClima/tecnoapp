@@ -91,8 +91,12 @@
     /* background-size: 10%; */
     /* background-image: url("./assets/icons/backgroundT.png"); */
   }
+  /* titles */
   .page-title {
     @apply text-xl font-bold mb-4 py-2;
+  }
+  .card-title {
+    @apply text-base sm:text-lg font-bold;
   }
   /* buttons */
   .btn-check:focus + .btn-primary,
@@ -104,9 +108,13 @@
     box-shadow: 0 0 0 0.25rem rgba(49, 132, 253, 0.5); */;
   }
   .custom-input-text {
-    @apply input input-bordered input-sm text-base-content focus-visible:outline-none;
+    @apply input input-bordered input-sm text-base-content px-1 sm:px-3 focus-visible:outline-none;
   }
   .page-container {
     @apply flex flex-col h-full min-h-0 p-3;
+  }
+  .table.no-padding th,
+  .table.no-padding td {
+    @apply p-1;
   }
 }

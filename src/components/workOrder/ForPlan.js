@@ -13,7 +13,6 @@ export default function ForPlan({ select, order }) {
     e.preventDefault();
     const { value } = e.currentTarget;
     const forPlan = value === "yes" ? true : value === "no" ? false : undefined;
-    console.log("forPlan", forPlan);
     if (forPlan) {
       select && select({ value: forPlan, taskDate: selectedTask });
     } else {

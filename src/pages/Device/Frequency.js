@@ -32,7 +32,7 @@ export default function SetFrequency() {
     <div className="d-flex gap-2 align-items-center">
       <div className="input-group">
         <div className="input-group-prepend flex-grow-1">
-          <label className="input-group-text" for="inputGroupSelect01">
+          <label className="input-group-text" htmlFor="inputGroupSelect01">
             Frecuencia MTO
           </label>
         </div>

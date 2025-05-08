@@ -92,7 +92,6 @@ export default function DaisyuiCarousel({ className }) {
   function handleClick(e) {
     e.preventDefault();
     const index = e.currentTarget.value;
-    console.log(e.currentTarget.id, index);
     document
       .getElementById(`slide${index}`)
       .scrollIntoView({ behavior: "smooth" });

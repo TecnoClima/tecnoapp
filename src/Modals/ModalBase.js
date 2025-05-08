@@ -10,8 +10,10 @@ export default function ModalBase({
   onClose,
 }) {
   return (
-    <dialog id={id} className="modal w-full h-full bg-black/30" open={open}>
-      <div className={`modal-box w-full sm:max-w-lg p-4 relative ${className}`}>
+    <dialog id={id} className="modal w-full h-full bg-black/50" open={open}>
+      <div
+        className={`modal-box w-full sm:max-w-lg px-2 sm:px-4 py-3 relative shadow-md shadow-secondary/20 ${className}`}
+      >
         <div className="flex justify-between items-baseline mb-3">
           {title && <h3 className="text-lg font-bold">{title}</h3>}
           {onClose && (

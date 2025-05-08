@@ -6,30 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const item = {
-  id: "67dea19d11cf48d2a7cbede0",
-  date: "2025-03-21T20:00:00.000Z",
-  endDate: "2025-03-25T18:00:00.000Z",
-  workers: [
-    {
-      name: "Hector Oscar tarragona",
-      id: 25262988,
-    },
-    {
-      name: "Cristian hinojosa",
-      id: 25492616,
-    },
-  ],
-  task: "vc no funciona y esta pesado\nse cambio capacitor y lubrico anduvo un rato y se clavo\nse desconecta y trae al taller para que lo cambien ",
-  refrigerant: [
-    { code: 346, total: 0.5 },
-    {
-      total: 0,
-    },
-  ],
-};
-
-function ActionButtons({ setEdit, handleDelete, permissions, index }) {
+function ActionButtons({ setEdit, handleDelete, permissions, index, item }) {
   return (
     <>
       <button
@@ -39,7 +16,7 @@ function ActionButtons({ setEdit, handleDelete, permissions, index }) {
       >
         <FontAwesomeIcon icon={faPencilAlt} />
       </button>
-      {(!item.id || permissions?.admin) && (
+      {(!item?.id || permissions?.admin) && (
         <button
           className="btn btn-xs btn-square btn-ghost text-error text-base"
           title="Eliminar"
@@ -57,6 +34,7 @@ export default function InterventionCard({
   index,
   handleDelete,
   setEdit,
+  item,
 }) {
   const { id, date, endDate, workers, task, refrigerant } = item;
   function getDate(dateInput) {
@@ -75,7 +53,7 @@ export default function InterventionCard({
   return (
     <div className="flex flex-col xl:flex-row xl:text-sm gap-1 text-xs bg-base-content/5 xl:p-2 rounded-md">
       <div className="w-full xl:w-fit flex justify-between ">
-        <div className="flex xl:flex-col xl:items-start xl:gap-2 flex-wrap items-center gap-x-1 xl:gap-x-4">
+        <div className="flex xl:flex-col xl:items-start xl:gap-2 flex-wrap items-center gap-x-1 xl:gap-x-4 w-full">
           <div className="join flex-grow xl:flex-grow-0 max-w-40">
             <div
               className="xl:flex xl:items-center join-item bg-base-100 text-center font-semibold px-1 xl:px-2"
@@ -87,15 +65,19 @@ export default function InterventionCard({
               {getDate(date).join(" ")}
             </div>
           </div>
-          <div className="join flex-grow xl:flex-grow-0 max-w-40">
+          <div
+            className={`join flex-grow xl:flex-grow-0 max-w-40 ${
+              !endDate ? "border border-error text-error" : ""
+            }`}
+          >
             <div
               className="xl:flex xl:items-center join-item bg-base-100 text-center font-semibold px-1 xl:px-2"
               title="Fecha Fin"
             >
               <FontAwesomeIcon icon={faCalendarCheck} />
             </div>
-            <div className="join-item bg-base-content/10 px-1 xl:px-2 whitespace-nowrap">
-              {getDate(endDate).join(" ")}
+            <div className="join-item bg-base-content/10 px-1 xl:px-2 whitespace-nowrap flex-grow ">
+              {endDate ? getDate(endDate).join(" ") : "-"}
             </div>
           </div>
         </div>
@@ -104,6 +86,7 @@ export default function InterventionCard({
             setEdit={setEdit}
             handleDelete={handleDelete}
             permissions={permissions}
+            item={item}
             index={index}
           />
         </div>
@@ -131,7 +114,7 @@ export default function InterventionCard({
                     ? "border-l border-base-content/10 xl:border-none whitespace-nowrap xl:w-24"
                     : ""
                 }`}
-                key={cyl.code}
+                key={cyl.code || index}
               >
                 <p>
                   <b>

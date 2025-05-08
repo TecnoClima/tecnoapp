@@ -1,4 +1,11 @@
-export default function OrderField({ field, name, value, options, onInput }) {
+export default function OrderField({
+  field,
+  name,
+  value = "",
+  options,
+  onInput,
+  placeholder,
+}) {
   return (
     <div className="join">
       <label
@@ -14,14 +21,16 @@ export default function OrderField({ field, name, value, options, onInput }) {
           onChange={onInput}
         >
           {options.map((o) => (
-            <option value={o.id || o}>{o.name || o}</option>
+            <option key={o.id || o} value={o.id || o}>
+              {o.name || o}
+            </option>
           ))}
         </select>
       ) : (
         <input
           name={name}
           className="input input-xs md:input-sm input-bordered join-item flex-grow"
-          placeholder="Search"
+          placeholder={placeholder}
           value={value}
           onChange={onInput}
         />

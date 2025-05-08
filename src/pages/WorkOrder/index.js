@@ -496,52 +496,56 @@ export default function WorkOrder() {
           </WorkOrderCard>
 
           <WorkOrderCard title="DETALLES DE LA ORDEN">
-            <OrderField
-              field="Supervisor"
-              name="supervisor"
-              options={workOrderOptions.supervisor || []}
-              value={order.supervisor}
-              onInput={handleInputOrderData}
-            />
-            <OrderField
-              field="OT Planta"
-              name="clientWO"
-              value={order.clientWO}
-              onInput={handleInputOrderData}
-            />
-            <OrderField
-              field="Clase"
-              value={order.class}
-              name="class"
-              options={workOrderOptions.class}
-              onInput={handleInputOrderData}
-            />
-            <OrderField
-              field="Problema"
-              options={workOrderOptions.issue}
-              value={order.issue}
-              name="issue"
-              onInput={handleInputOrderData}
-            />
-            <OrderField
-              field="Solicitante"
-              value={order.solicitor}
-              name="solicitor"
-              onInput={handleInputOrderData}
-            />
-            <OrderField
-              field="Teléfono"
-              value={order.phone}
-              name="phone"
-              onInput={handleInputOrderData}
-            />
-            <OrderField
-              field="Lugar Servicio"
-              name="servicePoint"
-              value={order.servicePoint}
-              options={selectedDevice.servicePoints}
-              onInput={handleInputOrderData}
-            />
+            {order && (
+              <>
+                <OrderField
+                  field="Supervisor"
+                  name="supervisor"
+                  options={workOrderOptions.supervisor || []}
+                  value={order.supervisor}
+                  onInput={handleInputOrderData}
+                />
+                <OrderField
+                  field="OT Planta"
+                  name="clientWO"
+                  value={order.clientWO}
+                  onInput={handleInputOrderData}
+                />
+                <OrderField
+                  field="Clase"
+                  value={order.class}
+                  name="class"
+                  options={workOrderOptions.class}
+                  onInput={handleInputOrderData}
+                />
+                <OrderField
+                  field="Problema"
+                  options={workOrderOptions.issue}
+                  value={order.issue}
+                  name="issue"
+                  onInput={handleInputOrderData}
+                />
+                <OrderField
+                  field="Solicitante"
+                  value={order.solicitor}
+                  name="solicitor"
+                  onInput={handleInputOrderData}
+                />
+                <OrderField
+                  field="Teléfono"
+                  value={order.phone}
+                  name="phone"
+                  onInput={handleInputOrderData}
+                />
+                <OrderField
+                  field="Lugar Servicio"
+                  name="servicePoint"
+                  value={order.servicePoint}
+                  options={selectedDevice.servicePoints}
+                  onInput={handleInputOrderData}
+                />
+              </>
+            )}
           </WorkOrderCard>
           <WorkOrderObservations
             user={userData.user}

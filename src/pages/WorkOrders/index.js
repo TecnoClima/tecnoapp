@@ -215,10 +215,6 @@ export default function WorkOrders() {
     setYearList(year);
   }, [filters]);
 
-  useEffect(() => {
-    console.log(workOrderList);
-  }, [workOrderList]);
-
   return (
     <>
       {warning && (

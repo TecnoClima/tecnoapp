@@ -10,9 +10,13 @@ import {
   updateIntervention,
 } from "../../../actions/workOrderActions";
 import { cylinderActions, peopleActions } from "../../../actions/StoreActions";
-import { FormInput } from "../FormInput";
+import CylinderIcon from "../../../assets/icons/Garrafa.svg";
 import ModalBase from "../../../Modals/ModalBase";
 import DateAndTime from "../DateAndTime";
+import ErrorMessage from "../ErrorMessage";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faComment } from "@fortawesome/free-regular-svg-icons";
 
 export default function AddIntervention(props) {
   const today = new Date().toISOString().split("T")[0];
@@ -37,6 +41,7 @@ export default function AddIntervention(props) {
   const [gasUsages, setGasUsages] = useState([]);
   const [addText, setAddText] = useState(false);
   const [list, setList] = useState(workersList);
+  const [enableAddCylinder, setEnableAddCylinder] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -125,6 +130,7 @@ export default function AddIntervention(props) {
           endDate: intervention.endDate,
           endTime: intervention.endTime,
         };
+
       if (Object.keys(update).length >= 1)
         dispatch(updateIntervention(intervention.id, update));
 
@@ -176,7 +182,12 @@ export default function AddIntervention(props) {
   }
 
   return (
-    <ModalBase title="AGREGAR INTERVENCIÓN" open={true} onClose={close}>
+    <ModalBase
+      title={`${intervention.id ? "EDITAR" : "AGREGAR"} INTERVENCIÓN`}
+      open={true}
+      onClose={close}
+      className="flex flex-col h-full"
+    >
       <div className="flex w-full gap-4 justify-between flex-wrap">
         <DateAndTime
           className="flex-grow"
@@ -202,7 +213,7 @@ export default function AddIntervention(props) {
           max={today}
           maxTime={time}
         />
-    </div>
+      </div>
       <div className="my-2 text-center">
         <PeoplePicker
           name="Intervinientes"
@@ -215,47 +226,63 @@ export default function AddIntervention(props) {
           update={(idArray) => handlePeople(idArray)}
         />
         {(!intervention.workers || intervention.workers.length < 2) && (
-          <div className="errorMessage">Debe ingresar al menos 2 personas.</div>
+          <ErrorMessage>Debe ingresar al menos 2 personas.</ErrorMessage>
         )}
       </div>
-      <b>Tarea Realizada</b>
-      <div className="row">
-        <div className="col text-center">
+      {intervention.workers?.[0] && (
+        <div className="mb-4">
+          <b>Tarea Realizada</b>
           <textarea
-            className="form-text-area w-100"
+            className="textarea w-full bg-primary/10"
             disabled={!intervention.workers || !intervention.workers[0]}
-            defaultValue={intervention.task}
+            value={intervention.task}
             onBlur={(e) =>
               setIntervention({ ...intervention, task: e.target.value })
             }
           />
+
           {!intervention.task && (
-            <div className="errorMessage">
-              Este campo no puede quedar vacío.
-            </div>
+            <ErrorMessage>Este campo no puede quedar vacío.</ErrorMessage>
           )}
-          {intervention.id && (
-            <button className="btn btn-info" onClick={() => setAddText(true)}>
-              Agregar comentario
-            </button>
-          )}
-          {addText && (
-            <AddTextForm
-              user={userData.user}
-              select={(text) =>
-                setIntervention({
-                  ...intervention,
-                  task: intervention.task + " || " + text,
-                })
-              }
-              close={() => setAddText(false)}
-            />
+          {intervention.id ? (
+            addText ? (
+              <AddTextForm
+                user={userData.user}
+                select={(text) =>
+                  setIntervention({
+                    ...intervention,
+                    task: intervention.task + " || " + text,
+                  })
+                }
+                close={() => setAddText(false)}
+              />
+            ) : (
+              <button
+                className="btn btn-xs border-base-content/30 w-full"
+                onClick={() => setAddText(true)}
+              >
+                Agregar comentario
+                <FontAwesomeIcon icon={faComment} />
+              </button>
+            )
+          ) : (
+            <></>
           )}
         </div>
-      </div>
-      <b>Consumos de GAS</b>
-      <div className="row">
-        <div className="col">
+      )}
+
+      {enableAddCylinder ? (
+        <div className="w-full bg-primary/10 rounded-md p-1">
+          <div className="flex w-full justify-between items-center mb-2">
+            <div className="card-title">Agregar consumo de gas</div>
+            <button className="opacity-75 hover:opacity-100 mx-2">
+              <FontAwesomeIcon
+                icon={faTimes}
+                onClick={() => setEnableAddCylinder(false)}
+              />
+            </button>
+          </div>
+
           <AddCylinder
             cylinderList={cylinderList}
             disabled={false}
@@ -265,10 +292,22 @@ export default function AddIntervention(props) {
             }
           />
         </div>
-      </div>
-      <div className="row">
-        <div className="col">
-          <table className="table text-center">
+      ) : intervention.task ? (
+        <button
+          className="btn btn-sm btn-info w-full"
+          onClick={() => setEnableAddCylinder(true)}
+        >
+          <img src={CylinderIcon} alt="garrafa" className="w-6" />
+          Agregar consumo de gas
+        </button>
+      ) : (
+        <></>
+      )}
+
+      {gasUsages.length > 0 && (
+        <div className="mt-4">
+          <div className="card-title">Consumos de gas</div>
+          <table className="table text-center no-padding">
             <thead>
               <tr>
                 <th>Código</th>
@@ -280,27 +319,27 @@ export default function AddIntervention(props) {
             <tbody>
               {gasUsages.map((cylinder, index) => (
                 <tr key={index}>
-                  <td>
+                  <td className="p-0">
                     <b>{cylinder.code}</b>
                   </td>
-                  <td>{cylinder.owner}</td>
-                  <td>{cylinder.total} kg.</td>
-                  <td>
+                  <td className="p-0">{cylinder.owner}</td>
+                  <td className="p-0">{cylinder.total} kg.</td>
+                  <td className="p-0">
                     <button
-                      className="btn btn-danger h-50 p-0 w-100"
+                      className="btn btn-xs btn-error my-1"
                       id={index}
                       onClick={deleteCylinder}
                     >
-                      <i id={index} className="fas fa-trash-alt" />
+                      <FontAwesomeIcon icon={faTrashAlt} />
                     </button>
                   </td>
                 </tr>
               ))}
-              <tr className="table-secondary">
-                <td colSpan="2">
+              <tr className="bg-secondary/50">
+                <td colSpan="2" className="p-0">
                   <b>Total:</b>
                 </td>
-                <td>
+                <td className="p-0">
                   <b>{`${Number(
                     gasUsages.map((e) => e.total).reduce((a, b) => a + b, 0)
                   )} kg.`}</b>
@@ -310,18 +349,15 @@ export default function AddIntervention(props) {
             </tbody>
           </table>
         </div>
-      </div>
+      )}
 
-      <div className="row">
-        <div className="col d-flex justify-content-center">
-          <button
-            className="btn btn-success"
-            onClick={() => saveIntervention()}
-          >
-            GUARDAR INTERVENCIÓN
-          </button>
-        </div>
-      </div>
+      <button
+        className="btn btn-sm btn-success mt-auto"
+        onClick={() => saveIntervention()}
+        disabled={!intervention.task}
+      >
+        GUARDAR INTERVENCIÓN
+      </button>
     </ModalBase>
   );
 }
