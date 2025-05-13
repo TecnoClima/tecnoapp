@@ -1,18 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { appConfig } from "../../../config";
 import { useSelector } from "react-redux";
+import ErrorMessage from "../../forms/ErrorMessage";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 const { headersRef } = appConfig;
 // const unassigned = "SIN PROGRAMA ASIGNADO";
 
 function FilterSelect({ id, value, options, onSelect }) {
   return (
-    <div className="form-group mb-2">
-      <label htmlFor={id} className="fw-bold" style={{ fontSize: "14px" }}>
+    <div className="join text-sm bg-base-content/10 w-full">
+      <label
+        htmlFor={id}
+        className="label w-20 flex-none join-item input-sm px-2"
+      >
         {headersRef[id] || id}
       </label>
       <select
         onChange={onSelect && onSelect}
-        className="form-control form-control-sm"
+        className="select join-item select-sm w-40 flex-grow px-1"
         value={value || ""}
         name={id}
         id={id}
@@ -29,6 +35,84 @@ function FilterSelect({ id, value, options, onSelect }) {
   );
 }
 
+function FilterInput({ id, value, onChange }) {
+  return (
+    <div className="join text-sm bg-base-content/10 w-full">
+      <label
+        htmlFor={id}
+        className="label w-20 flex-none join-item input-sm px-2"
+      >
+        {headersRef[id] || id}
+      </label>
+      <input
+        onChange={onChange && onChange}
+        className="input input-sm join-item flex-grow w-40 px-1"
+        value={value || ""}
+        type="text"
+        name={id}
+        id={id}
+      />
+    </div>
+  );
+}
+
+function FilterRangedInput({
+  id,
+  name,
+  min,
+  max,
+  handleSetFilter,
+  errors,
+  unit,
+  unitArray,
+  errorMessage,
+}) {
+  return (
+    <div className="relative">
+      <div className="join items-center w-full bg-base-content/10">
+        <label htmlFor={id} className="w-20 flex-none join-item input-sm px-2">
+          {headersRef[id] || id}
+        </label>
+        <input
+          id={`${id}Min`}
+          type="number"
+          min="0"
+          placeholder="Min"
+          value={min || ""}
+          onChange={handleSetFilter}
+          name={`${id}Min`}
+          className="input input-sm join-item w-12 flex-grow"
+        />
+        <input
+          id={`${id}Max`}
+          type="number"
+          min="0"
+          placeholder="Max"
+          value={max || ""}
+          onChange={handleSetFilter}
+          name={`${id}Max`}
+          className="input input-sm join-item w-12 flex-grow"
+        />
+        {unitArray?.[0] &&
+          unitArray.map((u) => (
+            <button
+              key={u}
+              value={u}
+              name={`${id}Unit`}
+              onClick={unitArray.length > 0 ? handleSetFilter : undefined}
+              className={`btn btn-sm btn-primary join-item" ${
+                unit === u ? "" : "btn-outline"
+              }`}
+            >
+              {u}
+            </button>
+          ))}
+      </div>
+      {errors[id] && <ErrorMessage>{errorMessage}</ErrorMessage>}
+    </div>
+  );
+}
+
 export default function DeviceFilters({
   onSubmit,
   filters,
@@ -38,6 +122,7 @@ export default function DeviceFilters({
   const { deviceOptions } = useSelector((state) => state.devices);
   const { userData } = useSelector((state) => state.people);
   const [errors, setErrors] = useState({});
+  const closeSidebar = useRef(null);
 
   function handleSetRequestFilters(e) {
     e.preventDefault();
@@ -90,266 +175,142 @@ export default function DeviceFilters({
 
   return (
     <>
-      <button
-        className="btn btn-primary btn-sm"
-        type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#offcanvasExample"
-        aria-controls="offcanvasExample"
-      >
-        <i className="fas fa-filter me-2"></i>
-        Filtros
-      </button>
-
-      <div
-        className="offcanvas offcanvas-start"
-        tabIndex="-1"
-        id="offcanvasExample"
-        aria-labelledby="offcanvasExampleLabel"
-      >
-        <div className="offcanvas-header">
-          <h5 className="offcanvas-title" id="offcanvasExampleLabel">
-            Filtros de equipo
-          </h5>
-          <button
-            type="button"
-            className="btn-close text-reset"
-            data-bs-dismiss="offcanvas"
-            aria-label="Close"
-          />
+      <div className="drawer z-10">
+        <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+        <div className="drawer-content">
+          {/* Page content here */}
+          <label
+            htmlFor="my-drawer"
+            className="btn btn-sm btn-primary drawer-button"
+          >
+            <i className="fas fa-filter me-2"></i>
+            Filtros
+          </label>
         </div>
-        <div className="offcanvas-body pt-0">
-          {userData.access === "Admin" && (
-            <FilterSelect
-              id="plant"
-              value={filters.plant}
-              options={deviceOptions?.plant}
-              onSelect={handleSetRequestFilters}
-            />
-          )}
-          <FilterSelect
-            id="area"
-            value={filters.area}
-            options={deviceOptions?.area?.filter((a) =>
-              filters?.plant ? a.plant === filters.plant : true
-            )}
-            onSelect={handleSetRequestFilters}
-          />
-          <FilterSelect
-            id="line"
-            value={filters.line}
-            options={deviceOptions?.line?.filter((l) =>
-              filters?.area
-                ? l.area === filters.area
-                : filters?.plant
-                ? deviceOptions.area
-                    .filter((a) => a.plant === filters.plant)
-                    .map((a) => a._id)
-                    .includes(l.area)
-                : true
-            )}
-            onSelect={handleSetRequestFilters}
-          />
-          <div className="form-group mb-2">
-            <label
-              htmlFor="device"
-              className="fw-bold"
-              style={{ fontSize: "14px" }}
-            >
-              Equipo
-            </label>
-            <input
-              type="text"
-              onChange={handleSetRequestFilters}
-              value={filters.device}
-              className="form-control form-control-sm"
-              name="device"
-              id="device"
-              placeholder="Parte del código o nombre"
-            />
-          </div>
-          <FilterSelect
-            id="type"
-            value={filters.type}
-            options={deviceOptions?.type}
-            onSelect={handleSetRequestFilters}
-          />
-          <div className="form-group mb-2">
-            <label
-              htmlFor="device"
-              className="fw-bold"
-              style={{ fontSize: "14px" }}
-            >
-              Potencia
-            </label>
-            <div className="d-flex w-100">
-              <div className="input-group flex-grow-1 input-group-sm">
-                <span className="input-group-text px-1">Min</span>
-                <input
-                  type="number"
-                  min="0"
-                  value={filters.powerMin || ""}
-                  onChange={handleSetRequestFilters}
-                  name="powerMin"
-                  className="form-control"
-                />
-              </div>
-              <div className="input-group flex-grow-1 input-group-sm">
-                <span className="input-group-text px-1">Max</span>
-                <input
-                  type="number"
-                  min="0"
-                  value={filters.powerMax || ""}
-                  onChange={handleSetRequestFilters}
-                  name="powerMax"
-                  className="form-control"
-                />
-              </div>
-              <div className="input-group w-auto flex-nowrap input-group">
-                {["frig", "TR"].map((u) => (
-                  <button
-                    key={u}
-                    value={u}
-                    name="powerUnit"
-                    onClick={handleSetRequestFilters}
-                    className={`btn btn-sm ${
-                      filters.powerUnit === u
-                        ? "btn-primary"
-                        : "btn-outline-primary"
-                    }`}
-                  >
-                    {u}
-                  </button>
-                ))}
-              </div>
-            </div>
-            {errors.power && (
-              <div
-                className="alert alert-danger py-0 px-1 fw-bold text-danger"
-                style={{ fontSize: "12px" }}
-              >
-                Las potencias deben ser mínimo cero y Max debe ser mayor o igual
-                que Min
-              </div>
-            )}
-          </div>
-          {["refrigerant", "category", "environment", "service"].map((k) => (
-            <FilterSelect
-              id={k}
-              key={k}
-              value={filters[k] || ""}
-              options={deviceOptions?.[k]}
-              onSelect={handleSetRequestFilters}
-            />
-          ))}
-          <div className="form-group mb-2">
-            <label
-              htmlFor="device"
-              className="fw-bold"
-              style={{ fontSize: "14px" }}
-            >
-              Antigüedad (en años)
-            </label>
-            <div className="d-flex w-100">
-              <div className="input-group flex-grow-1 input-group-sm">
-                <span className="input-group-text px-1">Min</span>
-                <input
-                  type="number"
-                  min="0"
-                  value={filters.ageMin || ""}
-                  onChange={handleSetRequestFilters}
-                  name="ageMin"
-                  className="form-control"
-                />
-              </div>
-              <div className="input-group flex-grow-1 input-group-sm">
-                <span className="input-group-text px-1">Max</span>
-                <input
-                  type="number"
-                  min="0"
-                  value={filters.ageMax || ""}
-                  onChange={handleSetRequestFilters}
-                  name="ageMax"
-                  className="form-control"
-                />
-              </div>
-            </div>
-            {errors.age && (
-              <div
-                className="alert alert-danger py-0 px-1 fw-bold text-danger"
-                style={{ fontSize: "12px" }}
-              >
-                Las antigüedades deben ser mínimo cero y Max debe ser mayor o
-                igual que Min
-              </div>
-            )}
-          </div>
-          <FilterSelect
-            id="status"
-            value={filters.status}
-            options={deviceOptions?.status}
-            onSelect={handleSetRequestFilters}
-          />
+        <div className="drawer-side">
+          <label
+            htmlFor="my-drawer"
+            aria-label="close sidebar"
+            className="drawer-overlay"
+            ref={closeSidebar}
+          ></label>
+          <div className="menu bg-base-200 text-base-content min-h-full w-80 gap-1 px-1">
+            {/* Sidebar content here */}
+            <div className="flex w-full justify-between items-start">
+              <div className="page-title">Filtros de equipo</div>
 
-          <div className="form-group mb-2">
-            <label
-              htmlFor="device"
-              className="fw-bold"
-              style={{ fontSize: "14px" }}
-            >
-              Reclamos (cantidad)
-            </label>
-            <div className="d-flex w-100">
-              <div className="input-group flex-grow-1 input-group-sm">
-                <span className="input-group-text px-1">Min</span>
-                <input
-                  type="number"
-                  min="0"
-                  value={filters.recMin || ""}
-                  onChange={handleSetRequestFilters}
-                  name="recMin"
-                  className="form-control"
-                />
-              </div>
-              <div className="input-group flex-grow-1 input-group-sm">
-                <span className="input-group-text px-1">Max</span>
-                <input
-                  type="number"
-                  min="0"
-                  onChange={handleSetRequestFilters}
-                  value={filters.recMax || ""}
-                  name="recMax"
-                  className="form-control"
-                />
-              </div>
-            </div>
-            {errors.rec && (
-              <div
-                className="alert alert-danger py-0 px-1 fw-bold text-danger"
-                style={{ fontSize: "12px" }}
-              >
-                Los reclamos deben ser mínimo cero y Max debe ser mayor o igual
-                que Min
-              </div>
-            )}
-          </div>
-          <div className="row">
-            <div className="col">
               <button
-                className="btn btn-danger w-100"
+                type="button"
+                className="btn-close text-reset"
+                aria-label="Close"
+                onClick={() => closeSidebar?.current?.click()}
+              >
+                <FontAwesomeIcon icon={faTimes} className="h-5 mx-1" />
+              </button>
+            </div>
+            {userData.access === "Admin" && (
+              <FilterSelect
+                id="plant"
+                value={filters.plant}
+                options={deviceOptions?.plant}
+                onSelect={handleSetRequestFilters}
+              />
+            )}
+            <FilterSelect
+              id="area"
+              value={filters.area}
+              options={deviceOptions?.area?.filter((a) =>
+                filters?.plant ? a.plant === filters.plant : true
+              )}
+              onSelect={handleSetRequestFilters}
+            />
+            <FilterSelect
+              id="line"
+              value={filters.line}
+              options={deviceOptions?.line?.filter((l) =>
+                filters?.area
+                  ? l.area === filters.area
+                  : filters?.plant
+                  ? deviceOptions.area
+                      .filter((a) => a.plant === filters.plant)
+                      .map((a) => a._id)
+                      .includes(l.area)
+                  : true
+              )}
+              onSelect={handleSetRequestFilters}
+            />
+            <FilterInput
+              id={"device"}
+              value={filters.device}
+              onChange={handleSetRequestFilters}
+            />
+            <FilterSelect
+              id="type"
+              value={filters.type}
+              options={deviceOptions?.type}
+              onSelect={handleSetRequestFilters}
+            />
+            <FilterRangedInput
+              id="power"
+              min={filters.powerMin}
+              max={filters.powerMax}
+              handleSetFilter={handleSetRequestFilters}
+              errors={errors}
+              unit={filters.powerUnit}
+              unitArray={["frig", "TR"]}
+              errorMessage="Las potencias deben ser mínimo cero y Max debe ser mayor o igual que
+          Min"
+            />
+            {["refrigerant", "category", "environment", "service"].map((k) => (
+              <FilterSelect
+                id={k}
+                key={k}
+                value={filters[k] || ""}
+                options={deviceOptions?.[k]}
+                onSelect={handleSetRequestFilters}
+              />
+            ))}
+            <FilterRangedInput
+              id="age"
+              min={filters.ageMin}
+              max={filters.ageMax}
+              handleSetFilter={handleSetRequestFilters}
+              errors={errors}
+              unit={"años"}
+              unitArray={["años"]}
+              errorMessage="Las antigüedades deben ser mínimo cero y Max debe ser mayor o
+                igual que Min"
+            />
+            <FilterSelect
+              id="status"
+              value={filters.status}
+              options={deviceOptions?.status}
+              onSelect={handleSetRequestFilters}
+            />
+            <FilterRangedInput
+              id="reclaims"
+              min={filters.recMin}
+              max={filters.recMax}
+              handleSetFilter={handleSetRequestFilters}
+              errors={errors}
+              errorMessage="Los reclamos deben ser mínimo cero y Max debe ser mayor o igual
+                que Min"
+            />
+            <div className="flex w-full flex-col flex-grow gap-1">
+              <button
+                className="btn btn-sm btn-error w-fit ml-auto mt-4"
                 onClick={handleReset}
                 disabled={JSON.stringify(filters) === "{}"}
               >
                 Limpiar Filtros
+                <i className="fa fa-backspace"></i>
               </button>
-            </div>
-            <div className="col">
               <button
-                className="btn btn-info w-100"
+                className="btn btn-success mt-auto"
                 onClick={handleSubmit}
                 disabled={JSON.stringify(errors) !== "{}"}
               >
-                <i className="fa fa-search me-1"></i>
+                <i className="fa fa-search"></i>
                 Buscar
               </button>
             </div>
