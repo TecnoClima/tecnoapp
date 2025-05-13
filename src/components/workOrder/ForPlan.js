@@ -55,7 +55,7 @@ export default function ForPlan({ select, order }) {
             : isForPlan === false
             ? "border-error"
             : "border-warning"
-        } w-full`}
+        } w-full xl:w-fit xl:ml-auto`}
       >
         <div className="join items-center flex-wrap py-1 gap-y-1 px-2 text-sm">
           <span className="font-bold join-item mr-2">¿Es orden de plan?</span>
@@ -81,7 +81,7 @@ export default function ForPlan({ select, order }) {
           {selectedTask && (
             <>
               <input
-                className="input input-sm form-control bg-base-content/10 join-item ml-2 sm:w-24"
+                className="input input-sm form-control bg-base-content/10 rounded-r-none ml-2 sm:w-24"
                 value={selectedTask.date
                   .split("T")[0]
                   .split("-")
@@ -91,7 +91,7 @@ export default function ForPlan({ select, order }) {
               />
               <button
                 value=""
-                className="btn btn-xs text-sm btn-error btn-outline join-item"
+                className="btn btn-xs sm:btn-sm text-sm btn-error btn-outline join-item"
                 onClick={selectDate}
               >
                 <i className="fa fa-backspace" />

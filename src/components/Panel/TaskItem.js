@@ -104,11 +104,11 @@ export default function TaskItem(props) {
                 </span>
               </p>
               <div className="flex w-full items-center text-xs font-semibold gap-4">
-                <div>Avance: {task.completed}%</div>
+                <div>Avance: {task.completed || 0}%</div>
                 <div className="flex-grow h-1 bg-base-content/20">
                   <div
                     style={{
-                      width: `${task.completed}%`,
+                      width: `${task.completed || 0}%`,
                       backgroundImage: `linear-gradient(to right, rgb(${zero.toString()}), ${
                         task.completed > 50 ? `rgb(${half.toString()}),` : ""
                       } ${bgColor})`,
