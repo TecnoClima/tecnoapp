@@ -70,10 +70,11 @@ export default function Filters({ list = [], setList }) {
         // Usa los paths configurados para filtrar
         const paths = filterConf.paths || [filterConf.path];
         filtered = filtered.filter((item) =>
-          paths.some((p) =>
-            `${getValueByPath(item, p) ?? ""}` // Convierte a string por seguridad
-              .toLowerCase()
-              .includes(value.toLowerCase()) // Filtro sin sensibilidad a mayúsculas
+          paths.some(
+            (p) =>
+              `${getValueByPath(item, p) ?? ""}` // Convierte a string por seguridad
+                .toLowerCase()
+                .includes(value.toLowerCase()) // Filtro sin sensibilidad a mayúsculas
           )
         );
       }
@@ -104,20 +105,22 @@ export default function Filters({ list = [], setList }) {
   }
 
   return (
-    <div className="row">
+    <div className="flex flex-wrap gap-2 bg-base-200 p-2">
       {/* Renderiza dinámicamente cada filtro definido en filterData */}
       {filterData.map(({ label, name, type, data }) => {
         // Si el filtro es de tipo texto
         if (type === "text") {
           return (
-            <div key={name} className="col-sm-6 col-md-4 mb-1 mb-sm-3">
-              <div className="input-group">
-                <span className="input-group-text">{label}</span>
+            <div key={name} className="">
+              <div className="join items-center gap-1 bg-base-content/10">
+                <span className="w-24 label join-item input-sm text-sm px-1">
+                  {label}
+                </span>
                 <input
                   type="text"
                   name={name}
                   onChange={handleChange}
-                  className="form-control"
+                  className="input input-sm join-item"
                 />
               </div>
             </div>
@@ -127,30 +130,34 @@ export default function Filters({ list = [], setList }) {
         // Si el filtro es de tipo botones (para ordenar)
         if (type === "buttons") {
           return (
-            <div key={name} className="col-md-8 mb-1 mb-sm-3">
-              <div className="input-group">
-                <span className="input-group-text">{label}</span>
-                <div className="btn-group flex-grow-1" role="group">
+            <div key={name} className="flex flex-grow">
+              <div className="flex bg-base-content/10 rounded-lg w-full sm:w-fit">
+                <span className="w-24 label join-item input-sm text-sm px-1">
+                  {label}
+                </span>
+                <div className="join items-center flex-grow" role="group">
                   {/* Botón por cada opción de ordenamiento */}
                   {data.map(({ caption, value }) => (
                     <button
                       key={value}
                       type="button"
-                      className={`btn btn-outline-primary px-0 ${
+                      className={`btn btn-sm btn-primary btn-outline px-1 md:px-4 join-item flex-grow ${
                         orderBy === value ? "active" : ""
                       }`}
                       onClick={() => handleSort(value)}
                     >
-                      <small>
+                      <div>
                         {caption}{" "}
                         {orderBy === value && (
                           <i
                             className={
-                              ascending ? "fas fa-caret-up" : "fas fa-caret-down"
+                              ascending
+                                ? "fas fa-caret-up"
+                                : "fas fa-caret-down"
                             }
                           />
                         )}
-                      </small>
+                      </div>
                     </button>
                   ))}
                 </div>
