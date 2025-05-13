@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { colorByPercent } from "../../../utils/utils";
 import "./index.css";
+import ErrorMessage from "../../forms/ErrorMessage";
 
 export default function WOProgress(props) {
   const { select, errorCond, disabled, min, max } = props;
@@ -27,26 +28,24 @@ export default function WOProgress(props) {
   }
 
   return (
-    <div className="container-fluid text-center">
-      <div className="row">
-        <div className="col-sm-11">
-          <input
-            className="WOProgress"
-            key={style ? JSON.stringify(style)[0] : 0}
-            type="range"
-            value={value}
-            onChange={(e) => handleChange(e)}
-            max={max}
-            disabled={disabled}
-            style={style}
-          />
-        </div>
-        <div className="col-sm-1 fw-bolder fs-5">{value}%</div>
+    <div className="relative flex-grow">
+      <div className="flex items-center gap-2">
+        <input
+          className="WOProgress"
+          key={style ? JSON.stringify(style)[0] : 0}
+          type="range"
+          value={value}
+          onChange={(e) => handleChange(e)}
+          max={max}
+          disabled={disabled}
+          style={style}
+        />
+        <div className="font-bold">{value}%</div>
       </div>
       {errorCond && error && (
-        <div className="row">
-          <div className="errorMessage">{`El avance debe ser mayor que el actual (${min}%).`}</div>
-        </div>
+        <ErrorMessage>
+          {`El avance debe ser mayor que el actual (${min}%).`}
+        </ErrorMessage>
       )}
     </div>
   );

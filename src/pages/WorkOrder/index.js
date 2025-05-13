@@ -367,7 +367,7 @@ export default function WorkOrder() {
         </div>
       )}
 
-      <div className="flex flex-col">
+      <div className="flex flex-col pb-4">
         <div className="page-title ">
           {orderCode ? (
             <div>
@@ -573,10 +573,55 @@ export default function WorkOrder() {
                   );
             }}
           />
-          <WorkOrderCard
-            title="CONTROL"
-            className="w-80 max-w-full md:max-w-80"
-          ></WorkOrderCard>
+          <WorkOrderCard className="w-full">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex items-center gap-2 flex-grow">
+                <div className="card-title"> Avance</div>
+                <WOProgress
+                  errorCond={
+                    order.interventions && order.interventions.length > 0
+                  }
+                  value={order.completed || 0}
+                  min={minProgress}
+                  max="99"
+                  disabled={false}
+                  select={handleInputOrderData}
+                />
+              </div>
+              <div className="flex gap-2 md:gap-4 flex-wrap-reverse">
+                {Object.values(permissions).includes(true) && (
+                  <button
+                    className="btn btn-sm btn-info flex-grow md:flex-grow-0"
+                    onClick={handleCheck}
+                    disabled={!allowSaving || saving}
+                  >
+                    <i className="fas fa-save" /> Guardar
+                  </button>
+                )}
+                {(permissions.author || permissions.worker) && (
+                  <button
+                    className="btn btn-sm btn-success flex-grow  md:flex-grow-0"
+                    disabled={!allowSaving || saving}
+                    onClick={handleAskToClose}
+                  >
+                    <i className="fas fa-lock" /> Solicitar Cierre
+                  </button>
+                )}
+                {(permissions.admin || permissions.supervisor) && (
+                  <>
+                    <button
+                      className="btn btn-sm btn-success flex-grow  md:flex-grow-0"
+                      disabled={!allowSaving || saving}
+                      onClick={handleCloseOrder}
+                    >
+                      <i className="fas fa-lock" /> CERRAR OT
+                    </button>
+                    {device.name && <FollowDevice />}
+                  </>
+                )}
+              </div>
+            </div>
+          </WorkOrderCard>
           {interventionForm && (
             <AddIntervention
               select={handleNewIntervention}
@@ -585,81 +630,9 @@ export default function WorkOrder() {
           )}
         </div>
 
-        {/* Interventions */}
-        {/* <div className="row py-2 flex-grow-1">
-          <div className="col">
-            <div className="btn btn-secondary w-100">Intervenciones</div>
-            <InterventionList
-              interventions={interventions}
-              permissions={permissions}
-              onDelete={(id) => {
-                permissions.admin && interventions[id].id
-                  ? alert(
-                      "No pueden eliminarse las intervenciones grabadas. Funcionalidad en desarrollo."
-                    )
-                  : setInterventions(
-                      interventions.filter((i, index) => index !== id)
-                    );
-              }}
-              openAdd={() => setInterventionForm(true)}
-            />
-            {interventionForm && (
-              <AddIntervention
-                select={handleNewIntervention}
-                close={() => setInterventionForm(false)}
-              />
-            )}
-          </div>
-        </div>*/}
         {/* work order progress */}
         <div className="hidden row py-2 h-25">
-          <div className="col-sm-6">
-            <div className="btn btn-secondary w-100"> Avance de OT</div>
-            <div className="py-4">
-              <WOProgress
-                errorCond={
-                  order.interventions && order.interventions.length > 0
-                }
-                value={order.completed || 0}
-                min={minProgress}
-                max="99"
-                disabled={false}
-                select={handleInputOrderData}
-              />
-            </div>
-          </div>
-          <div className="col-sm-6 d-flex align-items-start flex-wrap gap-1">
-            {Object.values(permissions).includes(true) && (
-              <button
-                className="btn btn-info flex-grow-1"
-                onClick={handleCheck}
-                disabled={!allowSaving || saving}
-              >
-                <i className="fas fa-save" /> Guardar
-              </button>
-            )}
-            {(permissions.author || permissions.worker) && (
-              <button
-                className="btn btn-success flex-grow-1"
-                disabled={!allowSaving || saving}
-                onClick={handleAskToClose}
-              >
-                <i className="fas fa-lock" /> Solicitar Cierre
-              </button>
-            )}
-            {(permissions.admin || permissions.supervisor) && (
-              <>
-                <button
-                  className="btn btn-success  flex-grow-1"
-                  disabled={!allowSaving || saving}
-                  onClick={handleCloseOrder}
-                >
-                  <i className="fas fa-lock" /> CERRAR OT
-                </button>
-                {device.name && <FollowDevice />}
-              </>
-            )}
-          </div>
+          <div className="col-sm-6 d-flex align-items-start flex-wrap gap-1"></div>
         </div>
       </div>
     </div>

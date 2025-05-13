@@ -28,14 +28,14 @@ export default function FollowDevice() {
     <div
       key={selectedDevice.code}
       className={`${
-        selectedDevice.following ? "bg-dark text-light" : ""
-      } btn px-2 rounded-2`}
+        selectedDevice.following ? "" : " btn-outline"
+      } btn-neutral btn btn-sm px-2 rounded-lg flex-grow md:flex-grow-0 justify-start`}
+      onClick={handleCheck}
+      disabled={!["Admin", "Supervisor"].includes(userData.access)}
     >
-      <div className="d-flex align-items-center gap-2">
+      <div className="flex items-center gap-4">
         {fetching ? (
-          <div className="spinner-border spinner-border-sm" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
+          <span className="loading loading-spinner loading-md"></span>
         ) : (
           <input
             style={{ transform: "scale(1.5)" }}
@@ -43,8 +43,7 @@ export default function FollowDevice() {
             value=""
             id="flexCheckDefault"
             checked={selectedDevice.following}
-            onChange={handleCheck}
-            disabled={!["Admin", "Supervisor"].includes(userData.access)}
+            // onChange={handleCheck}
           />
         )}
 
