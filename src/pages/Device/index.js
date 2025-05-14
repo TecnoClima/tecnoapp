@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { deviceActions } from "../../actions/StoreActions";
 import { FormInput } from "../../components/forms/FormInput";
-import DeviceList from "../../components/lists/DeviceList";
+import DeviceList from "../../components/Devices/DeviceList";
 import { Chart } from "../../components/Chart";
 import "./index.css";
 import FollowDevice from "./FollowDevice";

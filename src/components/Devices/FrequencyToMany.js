@@ -14,7 +14,7 @@ export default function FrequencyToMany({ filters }) {
     <>
       <button
         type="button"
-        className="btn btn-primary w-auto"
+        className="btn btn-sm btn-primary"
         disabled={devicePage.quantity < 1}
         onClick={toggleModal}
       >

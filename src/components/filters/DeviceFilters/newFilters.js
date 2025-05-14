@@ -175,7 +175,7 @@ export default function DeviceFilters({
 
   return (
     <>
-      <div className="drawer z-10">
+      <div className="drawer z-10 w-fit">
         <input id="my-drawer" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
           {/* Page content here */}
