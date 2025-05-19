@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import DeviceFilters from "../../filters/DeviceFilters/newFilters";
 import Paginate from "../../Paginate";
 import { ErrorModal } from "../../warnings";
-import FrequencyToMany from "./FrequencyToMany";
 
 export default function DeviceList({ close, select }) {
   const { deviceResult, devicePage, deviceOptions } = useSelector(
@@ -87,7 +86,6 @@ export default function DeviceList({ close, select }) {
             Seleccionados
           </div>
         </div>
-        <FrequencyToMany filters={filters} />
       </div>
       {initialized && devicePage.devices?.length === 0 && (
         <div className="row flex-grow-1 d-flex align-items-center justify-content-center">
