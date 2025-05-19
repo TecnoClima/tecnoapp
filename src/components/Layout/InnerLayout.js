@@ -55,7 +55,7 @@ export default function InnerLayout({ children }) {
   return (
     <div className="w-full h-full flex">
       <div className="flex-grow bg-gradient-to-r from-neutral via-neutral to-base-200" />
-      <div className="lg:container w-full h-full mx-auto">
+      <div className="xl:container w-full h-full mx-auto">
         <div className="drawer lg:drawer-open">
           <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content flex flex-col h-screen min-h-0">

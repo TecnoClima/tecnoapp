@@ -103,9 +103,8 @@ export default function WorkOrders() {
   const [yearList, setYearList] = useState(year);
   const [currentPage, setCurrentPage] = useState(1);
   const [size, setSize] = useState(10);
-  function handleSelectPage(e) {
-    e.preventDefault();
-    setCurrentPage(Number(e.target.value));
+  function handleSelectPage(value) {
+    setCurrentPage(Number(value));
   }
 
   const dispatch = useDispatch();
@@ -280,7 +279,7 @@ export default function WorkOrders() {
               <Pagination
                 length={filteredList.length}
                 current={currentPage}
-                select={handleSelectPage}
+                setPage={handleSelectPage}
                 size={size}
               />
             </div>

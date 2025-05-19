@@ -1,13 +1,26 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deviceActions } from "../../actions/StoreActions";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DeviceFilters from "../filters/DeviceFilters/newFilters";
-import Paginate from "../Paginate";
+// import Paginate from "../Paginate";
 import { ErrorModal } from "../warnings";
 import FrequencyToMany from "./FrequencyToMany";
-import NewPaginate from "../newPaginate";
+// import NewPaginate from "../newPaginate";
 import Pagination from "../Paginate/Pagination";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCalendarAlt,
+  faSnowflake,
+} from "@fortawesome/free-regular-svg-icons";
+import {
+  faBolt,
+  faFan,
+  faGlobe,
+  faStar,
+  faTable,
+  faTools,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function DeviceList({ close, select }) {
   const { deviceResult, devicePage, deviceOptions } = useSelector(
@@ -52,7 +65,6 @@ export default function DeviceList({ close, select }) {
 
   function handlePagination({ name, value }) {
     const newPage = { ...page, [name]: Number(value) };
-
     setPage(newPage);
     handleRequest({ ...filters, page: newPage });
   }
@@ -62,9 +74,6 @@ export default function DeviceList({ close, select }) {
   function handleRequest(body) {
     dispatch(deviceActions.getPage(body));
   }
-
-  // useEffect(() => console.log("devicePage", devicePage), [devicePage]);
-  // useEffect(() => console.log({ initialFilter }), [initialFilter]);
   useEffect(() => {
     if (!initialFilter || initialized) return;
     // esta línea hace que primero envíe el {}
@@ -72,24 +81,33 @@ export default function DeviceList({ close, select }) {
     setInitialized(true);
   }, [dispatch, devicePage, initialFilter, initialized]);
 
+  function handleClickPage(value) {
+    handlePagination({ name: "page", value });
+  }
+
   return (
     <div className="page-container">
-      <div className="flex w-full justify-between">
+      <div className="flex w-full justify-between flex-wrap-reverse">
         <div className="flex items-center w-fit">
-          {filters && (
-            <DeviceFilters
-              onSubmit={handleSubmit}
-              filters={filters}
-              setFilters={setFilters}
-              initialFilter={initialFilter}
-            />
-          )}
-          <div className="px-2">
-            <span className="font-bold">{devicePage.quantity}</span> Equipos
-            Seleccionados
+          <div className="flex items-center gap-2">
+            {filters && (
+              <DeviceFilters
+                onSubmit={handleSubmit}
+                filters={filters}
+                setFilters={setFilters}
+                initialFilter={initialFilter}
+              />
+            )}
+            <div>
+              <span className="font-bold">{devicePage.quantity}</span> Equipos
+              Seleccionados
+            </div>
           </div>
         </div>
-        <FrequencyToMany filters={filters} />
+
+        <div className="ml-auto">
+          <FrequencyToMany filters={filters} />
+        </div>
       </div>
       {initialized && devicePage.devices?.length === 0 && (
         <div className="flex flex-grow items-center justify-center">
@@ -102,7 +120,10 @@ export default function DeviceList({ close, select }) {
       {devicePage.devices?.length > 0 && (
         <>
           <div className="flex-grow overflow-auto">
-            <table className="table no-padding" style={{ fontSize: "80%" }}>
+            <table
+              className="hidden xl:table no-padding"
+              style={{ fontSize: "80%" }}
+            >
               <thead>
                 <tr>
                   <th scope="col">Codigo Eq.</th>
@@ -177,26 +198,76 @@ export default function DeviceList({ close, select }) {
                 })}
               </tbody>
             </table>
+            <div className="xl:hidden">
+              {devicePage?.devices?.map((device, index) => {
+                const age =
+                  new Date().getFullYear() -
+                  new Date(device.regDate).getFullYear();
+                return (
+                  <Link
+                    to={`/equipos/${device.code}`}
+                    key={device.code}
+                    className="flex flex-col w-full bg-base-content/10 p-2 rounded-md m-1 hover:bg-base-content/15 border-2 border-transparent hover:border-primary"
+                    // onClick={(e) => handleSelect(e, device.code)}
+                  >
+                    <div className="card-title">
+                      {device.code} - {device.name}
+                    </div>
+                    <div className="text-sm flex justify-between max-w-xl">
+                      <div className="flex items-center gap-2">
+                        <FontAwesomeIcon icon={faFan} />
+                        <div>{device.type}</div>
+                      </div>
+                      <div>
+                        <FontAwesomeIcon icon={faBolt} /> {device.powerKcal}{" "}
+                        kCal / ({Math.floor(device.powerKcal / 3000)} TR)
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FontAwesomeIcon icon={faSnowflake} />
+                        <div>{device.refrigerant?.refrigerante || ""}</div>
+                        <div>{device.gasAmount || ""}</div>
+                      </div>
+                    </div>
+                    <div className="flex justify-between flex-wrap text-sm">
+                      <div className="flex items-center gap-2 w-32 flex-grow">
+                        <FontAwesomeIcon icon={faTable} />
+
+                        <div>{device.category}</div>
+                      </div>
+
+                      <div className="flex items-center gap-2 w-32 flex-grow">
+                        <FontAwesomeIcon icon={faGlobe} />
+                        <div>{device.environment}</div>
+                      </div>
+                      <div className="flex items-center gap-2 w-32 flex-grow">
+                        <FontAwesomeIcon icon={faTools} />
+                        <div>{device.service}</div>
+                      </div>
+                      <div className="flex items-center gap-2 w-32 flex-grow">
+                        <FontAwesomeIcon icon={faCalendarAlt} />
+                        <div>{age} años</div>
+                      </div>
+                      <div className="flex items-center gap-2 w-32 flex-grow">
+                        <FontAwesomeIcon icon={faStar} />
+                        <div>{device.status}</div>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
           <div className="m-auto">
             {devicePage && (
               <Pagination
-                length={devicePage.pages * devicePage.size}
+                length={devicePage.quantity}
                 current={page.page || 1}
-                select={(value) => handlePagination({ name: "page", value })}
+                setPage={handleClickPage}
                 size={page.size || 10}
+                setSize={(value) => handlePagination({ name: "size", value })}
               />
             )}
-            <Paginate
-              pages={devicePage.pages || 1}
-              length={page.size || 10}
-              min="5"
-              step="5"
-              defaultValue={page.size}
-              select={(value) => handlePagination({ name: "page", value })}
-              size={(value) => handlePagination({ name: "size", value })}
-            />
           </div>
         </>
       )}

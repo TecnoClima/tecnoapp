@@ -1,10 +1,13 @@
-import { useState } from "react";
-
-function PageButton({ value, isCurrent, onClick }) {
+function PageButton({ value, isCurrent, setPage }) {
+  function handleClick(e) {
+    e.preventDefault();
+    const value = e.currentTarget.value;
+    setPage(value);
+  }
   return (
     <button
       value={value}
-      onClick={onClick}
+      onClick={handleClick}
       className={`join-item btn btn-xs bg-base-content/20 border-transparent hover:bg-base-content/5 hover:border-base-content ${
         !value
           ? `btn-disabled`
@@ -19,7 +22,13 @@ function PageButton({ value, isCurrent, onClick }) {
   );
 }
 
-export default function Pagination({ length, current, select, size }) {
+export default function Pagination({
+  length,
+  current,
+  size,
+  setSize,
+  setPage,
+}) {
   const pagesArray = [];
   const pages = Math.ceil(length / size);
   if (pages <= 9) {
@@ -56,16 +65,38 @@ export default function Pagination({ length, current, select, size }) {
     }
   }
 
+  function handleResize(e) {
+    e.preventDefault();
+    const newSize = e.target.value;
+    const newCurrent = Math.min(Math.floor((size * current) / newSize) - 1, 1);
+    setPage(newCurrent);
+    setSize(newSize);
+  }
+
   return (
-    <div className="join">
-      {pagesArray.map((value, index) => (
-        <PageButton
-          key={index}
-          value={isNaN(value) ? null : value}
-          isCurrent={value === current}
-          onClick={select}
-        />
-      ))}
+    <div className="flex items-center gap-4">
+      <div className="join">
+        {pagesArray.map((value, index) => (
+          <PageButton
+            key={index}
+            value={isNaN(value) ? null : value}
+            isCurrent={value === current}
+            setPage={setPage}
+          />
+        ))}
+      </div>
+      {setSize && (
+        <select
+          className="select select-bordered select-sm"
+          value={size}
+          onChange={handleResize}
+        >
+          <option disabled>items/pág</option>
+          {[10, 15, 20, 30, 50, 100, 200, 500, 1000].map((item) => (
+            <option key={item} value={item}>{`${item}/pág`}</option>
+          ))}
+        </select>
+      )}
     </div>
   );
 }

@@ -9,9 +9,8 @@ function CollapseTask({ list, title, className, listName, defaultChecked }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchKey, setSearchKey] = useState("");
   const [filteredList, setFilteredList] = useState(list);
-  function handleSelectPage(e) {
-    e.preventDefault();
-    setCurrentPage(Number(e.target.value));
+  function handleSelectPage(value) {
+    setCurrentPage(Number(value));
   }
 
   useEffect(() => {
@@ -59,7 +58,7 @@ function CollapseTask({ list, title, className, listName, defaultChecked }) {
             <Pagination
               length={filteredList.length}
               current={currentPage}
-              select={handleSelectPage}
+              setPage={handleSelectPage}
               size={10}
             />
           </div>
