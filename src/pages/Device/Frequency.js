@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { appConfig } from "../../config";
 import { useEffect, useState } from "react";
 import { deviceActions } from "../../actions/StoreActions";
+import Loading from "../../components/Loading";
 
 export default function SetFrequency() {
   const [isFetching, setIsFetching] = useState(false);
@@ -29,16 +30,18 @@ export default function SetFrequency() {
   }, [selectedDevice]);
 
   return (
-    <div className="d-flex gap-2 align-items-center">
-      <div className="input-group">
-        <div className="input-group-prepend flex-grow-1">
-          <label className="input-group-text" htmlFor="inputGroupSelect01">
-            Frecuencia MTO
-          </label>
-        </div>
+    <div className="flex gap-2 items-center">
+      <div className="join flex-grow-1">
+        <label
+          className="label text-sm join-item h-8 bg-primary/20 px-2"
+          htmlFor="inputGroupSelect01"
+        >
+          Frecuencia MTO
+        </label>
+
         <select
           value={selectedDevice.frequency || ""}
-          className="custom-select rounded-2"
+          className="select rounded-2 join-item select-sm select-bordered"
           id="inputGroupSelect01"
           onChange={handleSelect}
           disabled={
@@ -55,11 +58,7 @@ export default function SetFrequency() {
           ))}
         </select>
       </div>
-      {isFetching && (
-        <div className="spinner-border spinner-border-sm" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      )}
+      {isFetching && <Loading />}
     </div>
   );
 }

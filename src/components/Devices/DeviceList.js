@@ -3,10 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { deviceActions } from "../../actions/StoreActions";
 import { Link, useNavigate } from "react-router-dom";
 import DeviceFilters from "../filters/DeviceFilters/newFilters";
-// import Paginate from "../Paginate";
 import { ErrorModal } from "../warnings";
-import FrequencyToMany from "./FrequencyToMany";
-// import NewPaginate from "../newPaginate";
 import Pagination from "../Paginate/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -87,26 +84,20 @@ export default function DeviceList({ close, select }) {
 
   return (
     <div className="page-container">
-      <div className="flex w-full justify-between flex-wrap-reverse">
-        <div className="flex items-center w-fit">
-          <div className="flex items-center gap-2">
-            {filters && (
-              <DeviceFilters
-                onSubmit={handleSubmit}
-                filters={filters}
-                setFilters={setFilters}
-                initialFilter={initialFilter}
-              />
-            )}
-            <div>
-              <span className="font-bold">{devicePage.quantity}</span> Equipos
-              Seleccionados
-            </div>
+      <div className="flex items-center w-fit">
+        <div className="flex items-center gap-2">
+          {filters && (
+            <DeviceFilters
+              onSubmit={handleSubmit}
+              filters={filters}
+              setFilters={setFilters}
+              initialFilter={initialFilter}
+            />
+          )}
+          <div>
+            <span className="font-bold">{devicePage.quantity}</span> Equipos
+            Seleccionados
           </div>
-        </div>
-
-        <div className="ml-auto">
-          <FrequencyToMany filters={filters} />
         </div>
       </div>
       {initialized && devicePage.devices?.length === 0 && (

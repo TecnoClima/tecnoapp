@@ -8,6 +8,21 @@ import { Chart } from "../../components/Chart";
 import "./index.css";
 import FollowDevice from "./FollowDevice";
 import SetFrequency from "./Frequency";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBolt,
+  faCalendarAlt,
+  faFan,
+  faGlobe,
+  faMapMarkerAlt,
+  faStar,
+  faTable,
+  faToolbox,
+  faTools,
+} from "@fortawesome/free-solid-svg-icons";
+import WorkOrderCard from "../../components/workOrder/WorkOrderCard";
+import DeviceItem from "./DeviceItem";
+import { faSnowflake } from "@fortawesome/free-regular-svg-icons";
 
 export default function Device() {
   const { userData } = useSelector((state) => state.people);
@@ -127,126 +142,97 @@ export default function Device() {
   }, []);
 
   return (
-    <div className="pageBackground">
+    <>
       {!code ? (
         <DeviceList plant={userData.plant} />
       ) : (
-        <div className="container">
-          <div className="row justify-content-between flex-wrap-reverse gap-2 mt-3">
-            <div className="col col-sm-auto px-0">
-              <SetFrequency />
+        <div className="page-container mx-2">
+          <div className="page-title">{`[${device.code}] ${device.name}`}</div>
+          <div className="flex w-full justify-between flex-wrap-reverse gap-2 -mt-3">
+            <SetFrequency />
+
+            <div className="flex gap-2 sm:ml-auto">
+              {device && <FollowDevice device={device} />}
+              <Link
+                to="/ots/new"
+                onClick={(e) => dispatch(deviceActions.getDetail(code))}
+                className="btn btn-sm btn-success"
+              >
+                <FontAwesomeIcon icon={faToolbox} />
+                Nueva Orden
+              </Link>
             </div>
-            <Link
-              to="/ots/new"
-              onClick={(e) => dispatch(deviceActions.getDetail(code))}
-              className="btn btn-success col-sm-auto"
+          </div>
+          <div className="flex w-full flex-wrap gap-2">
+            <WorkOrderCard className="w-full flex flex-col gap-1 mt-2 md:w-80 md:flex-grow">
+              <DeviceItem
+                value={`${device.plant} > ${device.area} > ${device.line}`}
+              >
+                <FontAwesomeIcon icon={faMapMarkerAlt} />
+              </DeviceItem>
+              <DeviceItem value={device.type}>
+                <FontAwesomeIcon icon={faFan} />
+              </DeviceItem>
+              <DeviceItem
+                value={
+                  device.power >= 9000
+                    ? `${Math.floor(device.power / 3000)} TnRef`
+                    : `${device.power} Frigorías`
+                }
+              >
+                <FontAwesomeIcon icon={faBolt} />
+              </DeviceItem>
+
+              <DeviceItem
+                value={`${device.refrigerant} ${
+                  device.gasAmount ? `(${device.gasAmount}g)` : ""
+                }`}
+              >
+                <FontAwesomeIcon icon={faSnowflake} />
+              </DeviceItem>
+              <DeviceItem value={device.service}>
+                <FontAwesomeIcon icon={faTools} />
+              </DeviceItem>
+
+              <DeviceItem value={device.category}>
+                <FontAwesomeIcon icon={faTable} />
+              </DeviceItem>
+              <DeviceItem value={device.environment}>
+                <FontAwesomeIcon icon={faGlobe} />
+              </DeviceItem>
+              <DeviceItem value={`${device.age} años`}>
+                <FontAwesomeIcon icon={faCalendarAlt} />
+              </DeviceItem>
+              <DeviceItem value={device.status}>
+                <FontAwesomeIcon icon={faStar} />
+              </DeviceItem>
+            </WorkOrderCard>
+            <WorkOrderCard
+              title="Historial de Reclamos"
+              className="w-full flex flex-col gap-1 mt-2 md:w-80 md:flex-grow"
             >
-              <i className="fas fa-toolbox" /> Nueva Orden
-            </Link>
-          </div>
-          <div className="row py-3">
-            <div className="col-auto">
-              <h4>{`[${device.code}] ${device.name}`}</h4>
-            </div>
-            {device && (
-              <div className="col-auto ms-auto">
-                <FollowDevice device={device} />
-              </div>
-            )}
-          </div>
-          <div className="row mb-3">
-            <div className="col-md-6">
-              {device.code && (
-                <div className="container px-0">
-                  <div className="row">
-                    <h5>DATOS DEL EQUIPO</h5>
-                  </div>
-                  <FormInput
-                    key={device.plant}
-                    label={
-                      <div>
-                        <i className="fas fa-map-marker-alt" />
-                      </div>
-                    }
-                    value={`${device.plant} > ${device.area} > ${device.line}`}
-                    readOnly={true}
-                  />
-                  <FormInput label="Tipo" value={device.type} readOnly={true} />
-                  <FormInput
-                    key={device.power}
-                    label="Potencia"
-                    defaultValue={
-                      device.power >= 9000
-                        ? `${Math.floor(device.power / 3000)} TnRef`
-                        : `${device.power} Frigorías`
-                    }
-                    readOnly={true}
-                  />
-                  <FormInput
-                    label="Gas"
-                    value={`${device.refrigerant} ${
-                      device.gasAmount ? `(${device.gasAmount}g)` : ""
+              <div className="flex gap-2">
+                {years.map((year, index) => (
+                  <button
+                    key={chartValues + index}
+                    className={`yearBox ${
+                      chartValues.find((value) => value.label === year)
+                        ? "activeYearBox"
+                        : ""
                     }`}
-                    readOnly={true}
-                  />
-                  <FormInput
-                    label="Servicio"
-                    value={device.service}
-                    readOnly={true}
-                  />
-                  <FormInput
-                    label="Categoría"
-                    value={device.category}
-                    readOnly={true}
-                  />
-                  <FormInput
-                    label="Ambiente"
-                    value={device.environment}
-                    readOnly={true}
-                  />
-                  <FormInput
-                    key={device.age}
-                    label="Antigüedad"
-                    value={`${device.age ? `${device.age} años ` : ""} ${
-                      device.regDate ? `(${device.regDate.split("T")[0]})` : ""
-                    }`}
-                    readOnly={true}
-                  />
-                  <FormInput
-                    label="Estado"
-                    value={device.status}
-                    readOnly={true}
-                  />
-                </div>
-              )}
-            </div>
-            <div className="col-md-6">
-              <div className="container px-0">
-                <h5>HISTORIAL DE RECLAMOS</h5>
-                <div className="d-flex">
-                  {years.map((year, index) => (
-                    <button
-                      key={chartValues + index}
-                      className={`yearBox ${
-                        chartValues.find((value) => value.label === year)
-                          ? "activeYearBox"
-                          : ""
-                      }`}
-                      style={{ "--main-color": colors[index] }}
-                      onClick={handleClickYear}
-                      id={index}
-                      value={year}
-                    >
-                      {year}
-                    </button>
-                  ))}
-                </div>
-                <div className="row">
-                  <Chart values={chartValues} labels={labels} />
-                </div>
+                    style={{ "--main-color": colors[index] }}
+                    onClick={handleClickYear}
+                    id={index}
+                    value={year}
+                  >
+                    {year}
+                  </button>
+                ))}
               </div>
-            </div>
+              <Chart values={chartValues} labels={labels} />
+            </WorkOrderCard>
           </div>
+
           <div className="row overflow-x-auto">
             <h5>HISTORIAL DE INTERVENCIONES</h5>
             <table className="table table-hover" style={{ fontSize: "80%" }}>
@@ -310,6 +296,6 @@ export default function Device() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
