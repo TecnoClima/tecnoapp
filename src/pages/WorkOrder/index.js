@@ -112,7 +112,7 @@ export default function WorkOrder() {
     delete editOrder.device;
     setInterventions(orderDetail.interventions);
     delete editOrder.interventions;
-    setMinProgress(orderDetail.completed);
+    setMinProgress(orderDetail.completed || 0);
     setForPlan(!!editOrder.taskDate);
     setOrder(editOrder);
   }, [orderDetail, dispatch, order.taskDate]);
