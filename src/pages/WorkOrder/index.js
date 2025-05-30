@@ -12,13 +12,11 @@ import WarningErrors from "../../components/warnings/WarningErrors";
 import ForPlan from "../../components/workOrder/ForPlan";
 import { useNavigate, useParams } from "react-router-dom";
 import WorkerSelector from "../../components/workOrder/WorkerSelector";
-import FollowDevice from "../Device/FollowDevice";
+import FollowDevice from "../../components/DevicePage/FollowDevice";
 import LoadOrdersFromExcel from "../../components/workOrder/UploadFromExcel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faLocation,
   faMapMarkerAlt,
-  faPlus,
   faSearch,
   faSyncAlt,
   faTable,
@@ -26,7 +24,6 @@ import {
 import OrderField from "../../components/workOrder/OrderFields";
 import WorkOrderCard from "../../components/workOrder/WorkOrderCard";
 import WorkOrderObservations from "../../components/workOrder/WorkOrderObservations";
-import InterventionCard from "../../components/lists/InterventionList/interventionCard";
 
 const { headersRef } = appConfig;
 

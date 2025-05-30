@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { appConfig } from "../../config";
 import { useEffect, useState } from "react";
 import { deviceActions } from "../../actions/StoreActions";
-import Loading from "../../components/Loading";
+import Loading from "../Loading";
 
 export default function SetFrequency() {
   const [isFetching, setIsFetching] = useState(false);
