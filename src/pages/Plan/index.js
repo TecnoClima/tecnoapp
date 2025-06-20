@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import Paginate from "../../components/Paginate";
-import "./index.css";
+import Pagination from "../../components/Paginate/Pagination";
 import { planActions } from "../../actions/StoreActions";
 import ProgramFilters from "../../components/filters/ProgramFilters";
 import { ErrorModal } from "../../components/warnings";
 import PlanCard from "../../components/plan/PlanCard";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Plan() {
   const { plan, planResult } = useSelector((state) => state.plan);
@@ -18,6 +19,7 @@ export default function Plan() {
   const [supervisors, setSupervisors] = useState([]);
   const [responsibles, setResponsibles] = useState([]);
   const [page, setPage] = useState({ first: 0, size: 10 });
+  const [showFilters, setShowFilters] = useState(true);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -132,11 +134,28 @@ export default function Plan() {
   return (
     <div className="page-container">
       <div className="page-title mb-[0!important]">{`PLAN DE MANTENIMIENTO ${year}`}</div>
-      <ProgramFilters
-        responsibles={responsibles}
-        supervisors={supervisors}
-        select={(f) => updateFilter(f)}
-      />
+      <div className="my-2 px-2 py-0 bg-base-200/50 rounded-box">
+        <div
+          className="flex justify-between items-center cursor-pointer"
+          onClick={() => setShowFilters((s) => !s)}
+        >
+          <h3 className="font-bold text-base">Filtros</h3>
+          <button className="btn btn-ghost btn-sm">
+            <FontAwesomeIcon icon={showFilters ? faChevronUp : faChevronDown} />
+          </button>
+        </div>
+        <div
+          className={`transition-all duration-300 ease-in-out overflow-hidden ${
+            showFilters ? "max-h-screen mt-2" : "max-h-0"
+          }`}
+        >
+          <ProgramFilters
+            responsibles={responsibles}
+            supervisors={supervisors}
+            select={(f) => updateFilter(f)}
+          />
+        </div>
+      </div>
       <div className="flex flex-col min-h-0 gap-1 h-screen overflow-y-scroll">
         {filteredList[0]
           ? filteredList
@@ -144,17 +163,19 @@ export default function Plan() {
               .map((date, index) => <PlanCard date={date} key={index} />)
           : "No hay elementos que coincidan con ese criterio de búsqueda"}
       </div>
-      <Paginate
-        pages={Math.ceil(filteredList.length / page.size)}
-        length="10"
-        min="5"
-        step="5"
-        defaultValue={page.size}
-        select={(value) =>
-          setPage({ ...page, first: (Number(value) - 1) * page.size })
-        }
-        size={(value) => setPage({ ...page, size: Number(value) })}
-      />{" "}
+      <div className="flex justify-center pt-2">
+        <Pagination
+          length={filteredList.length}
+          current={Math.floor(page.first / page.size) + 1}
+          size={page.size}
+          setPage={(value) =>
+            setPage({ ...page, first: (Number(value) - 1) * page.size })
+          }
+          setSize={(value) =>
+            setPage({ ...page, size: Number(value), first: 0 })
+          }
+        />
+      </div>
       {planResult.error && (
         <ErrorModal
           message={planResult.error}

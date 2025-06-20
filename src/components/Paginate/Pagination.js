@@ -74,7 +74,7 @@ export default function Pagination({
   }
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center flex-wrap justify-center gap-x-4 gap-y-2">
       <div className="join">
         {pagesArray.map((value, index) => (
           <PageButton
