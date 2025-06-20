@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import logo from "../../assets/icons/logoTecnoclima.png";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -13,11 +13,13 @@ import {
   faTools,
 } from "@fortawesome/free-solid-svg-icons";
 import PasswordForm from "../../Modals/Password";
+import MenuOptions from "../MenuOptions";
 
 export default function InnerLayout({ children }) {
   const { userData } = useSelector((state) => state.people);
   const isAdmin = userData.access === "Admin";
   const [openPassword, setOpenPassword] = useState(false);
+  const location = useLocation();
 
   const routes = [
     {
@@ -41,6 +43,20 @@ export default function InnerLayout({ children }) {
     dev: "desarrollo",
     test: "prueba",
   }[process.env.REACT_APP_ENV];
+
+  // Opciones de administración (idénticas a AdminPanel)
+  const adminOptions = [
+    { caption: "Usuarios", url: "/admin/usuarios" },
+    { caption: "Equipos", url: "/admin/equipos" },
+    { caption: "Plantas", url: "/admin/plantas" },
+    { caption: "Plan", url: "/admin/plan" },
+    { caption: "Garrafas", url: "/admin/garrafas" },
+    { caption: "Cargar Equipos", url: "/admin/carga_excel" },
+    { caption: "Cargar Frecuencias", url: "/admin/carga_frecuencias" },
+  ];
+
+  // Detectar si estamos en /admin o subrutas
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   function handleLogOut() {
     localStorage.removeItem("tecnoToken");
@@ -137,20 +153,28 @@ export default function InnerLayout({ children }) {
               </ul>
 
               <ul className="menu flex flex-col text-base-content mt-auto gap-4">
-                <li>
-                  {isAdmin && (
-                    <NavLink
-                      to={"/admin"}
-                      className={({ isActive }) =>
-                        isActive
-                          ? "bg-warning text-neutral hover:bg-warning"
-                          : "shadow-md bg-base-content/5 shadow-base-content/10 text-warning"
-                      }
-                    >
-                      <FontAwesomeIcon icon={faShieldAlt} /> Menú Admin
-                    </NavLink>
-                  )}
-                </li>
+                {isAdmin && (
+                  <>
+                    {/* Mostrar opciones de admin sólo en /admin o subrutas */}
+                    {isAdminRoute && (
+                      <div className="bg-base-100/50 rounded-t-lg -mb-4">
+                        <MenuOptions options={adminOptions} />
+                      </div>
+                    )}
+                    <li>
+                      <NavLink
+                        to={"/admin"}
+                        className={({ isActive }) =>
+                          isActive
+                            ? "bg-warning text-neutral hover:bg-warning"
+                            : "shadow-md bg-base-content/5 shadow-base-content/10 text-warning"
+                        }
+                      >
+                        <FontAwesomeIcon icon={faShieldAlt} /> Menú Admin
+                      </NavLink>
+                    </li>
+                  </>
+                )}
                 <button
                   className="btn btn-sm btn-ghost w-full justify-start"
                   onClick={handlePassForm}

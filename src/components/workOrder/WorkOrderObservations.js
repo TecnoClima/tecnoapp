@@ -19,7 +19,7 @@ export default function WorkOrderObservations({ value, user, onSubmit }) {
   return (
     <WorkOrderCard title="OBSERVACIONES">
       <textarea
-        className="textarea textarea-bordered min-h-40"
+        className="textarea textarea-bordered min-h-40 flex-grow"
         value={value}
         readOnly
       />

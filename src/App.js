@@ -13,6 +13,13 @@ import Device from "./pages/Device";
 import { peopleActions, planActions } from "./actions/StoreActions";
 import NotFound from "./pages/NotFound";
 import InnerLayout from "./components/Layout/InnerLayout";
+import AdminUsers from "./pages/Admin/Users";
+import DeviceAdmin from "./pages/Admin/Devices";
+import AdminPlants from "./pages/Admin/Plants";
+import AdminPlan from "./pages/Admin/Plan";
+import AdminCylinders from "./pages/Admin/Cylinders";
+import { LoadExcel } from "./pages/Admin/LoadExcel";
+import { LoadFrequencies } from "./pages/Admin/LoadFrequencies";
 
 function App() {
   const { userData } = useSelector((state) => state.people);
@@ -161,6 +168,83 @@ function App() {
               </InnerLayout>
             }
           />
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/usuarios"}
+              element={
+                <InnerLayout>
+                  <AdminUsers />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/equipos"}
+              element={
+                <InnerLayout>
+                  <DeviceAdmin />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/plantas"}
+              element={
+                <InnerLayout>
+                  <AdminPlants />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/plan"}
+              element={
+                <InnerLayout>
+                  <AdminPlan />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/garrafas"}
+              element={
+                <InnerLayout>
+                  <AdminCylinders />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/carga_excel"}
+              element={
+                <InnerLayout>
+                  <LoadExcel />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/carga_frecuencias"}
+              element={
+                <InnerLayout>
+                  <LoadFrequencies />
+                </InnerLayout>
+              }
+            />
+          )}
           <Route exact path="*" element={<NotFound />} />
         </Routes>
       </Router>

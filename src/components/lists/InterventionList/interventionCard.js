@@ -51,9 +51,9 @@ export default function InterventionCard({
   }
 
   return (
-    <div className="flex flex-col xl:flex-row xl:text-sm gap-1 text-xs bg-base-content/5 xl:p-2 rounded-md">
-      <div className="w-full xl:w-fit flex justify-between ">
-        <div className="flex xl:flex-col xl:items-start xl:gap-2 flex-wrap items-center gap-x-1 xl:gap-x-4 w-full">
+    <div className="flex flex-col w-full xl:flex-row xl:text-sm gap-1 text-xs bg-base-content/5 xl:p-2 rounded-md">
+      <div className="flex">
+        <div className="flex xl:flex-col xl:items-start xl:gap-2 flex-wrap items-center gap-x-1 xl:gap-x-4 w-full lg:w-fit">
           <div className="join flex-grow xl:flex-grow-0 max-w-40">
             <div
               className="xl:flex xl:items-center join-item bg-base-100 text-center font-semibold px-1 xl:px-2"
@@ -91,7 +91,7 @@ export default function InterventionCard({
           />
         </div>
       </div>
-      <div>
+      <div className="flex-grow">
         <div className="px-2 pb-1">
           <b>{workers.map((e) => e.name).join(", ")}</b>
         </div>

@@ -7,7 +7,6 @@ import {
   resetDetail,
   setDetail,
 } from "../../actions/workOrderActions";
-import Paginate from "../../components/Paginate";
 import WarningErrors from "../../components/warnings/WarningErrors";
 import {
   deviceActions,
@@ -21,13 +20,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
   faChevronRight,
-  faPlus,
   faTable,
   faToolbox,
 } from "@fortawesome/free-solid-svg-icons";
-import TextInput from "../../components/forms/FormFields";
 import Pagination from "../../components/Paginate/Pagination";
 import ClassBadge from "../../components/Badges/ClassBadge";
+import WorkOrderListItem from "../../components/workOrder/WorkOrderListItem";
 
 //Método para editar intervención
 //Asignar garrafas a personal
@@ -46,7 +44,7 @@ export const FormSelector = ({
   return (
     <div
       className={`input-group mb-3 required  ${
-        result && !result[item] && `border border-2 border-danger`
+        result && !result[item] && `border-2 border-error`
       }`}
     >
       <span className="input-group-text" id="inputGroup-sizing-default">
@@ -294,70 +292,13 @@ export default function WorkOrders() {
               {filteredList
                 .slice((currentPage - 1) * size, currentPage * size)
                 .map((order) => (
-                  <div
+                  <WorkOrderListItem
                     key={order.code}
-                    className="flex w-full items-center gap-2"
-                  >
-                    <Link
-                      title="Detalle"
-                      to={`/ots/detail/${order.code}`}
-                      onClick={() => dispatch(planActions.selectTask({}))}
-                      className="card rounded-lg sm:rounded-box bg-base-content/10 overflow-x-auto flex flex-wrap flex-grow text-sm flex-row border-2 border-transparent hover:border-base-content/20"
-                    >
-                      <div className="flex items-center bg-neutral/75 text-base-content w-full sm:w-20 sm:px-2 font-bold">
-                        <p className="mx-auto">{order.code}</p>
-                      </div>
-                      <div className="pt-1 w-80 flex-grow ">
-                        <ClassBadge cls={order.class} />
-                        <div className="flex gap-3 py-1 px-2">
-                          <p>
-                            <b>{`[${order.devCode}]`}</b>{" "}
-                            <span>{order.devName}</span>
-                          </p>
-                        </div>
-
-                        <div className="flex items-center gap-1 text-xs px-2 bg-neutral/50 py-1">
-                          <span>{order.plant} </span>
-                          <FontAwesomeIcon
-                            icon={faChevronRight}
-                            className="h-3"
-                          />
-                          <b> {order.area}</b>
-                          <FontAwesomeIcon
-                            icon={faChevronRight}
-                            className="h-3"
-                          />
-                          <b> {order.line}</b>
-                        </div>
-                      </div>
-                      <div className="p-1 text-sm w-60 flex-grow">
-                        <div className="text-xs bg-neutral/50 px-1 ">
-                          Solicitó
-                        </div>
-                        <div className="px-1">
-                          {`${new Date(order.date).toLocaleDateString()} - 
-                      ${order.solicitor}`}
-                        </div>
-                        <div className="text-xs bg-neutral/50 px-1 ">
-                          Supervisa:
-                        </div>
-                        <div className="px-1">{order.supervisor}</div>
-                      </div>
-                      <div className="p-1 text-sm w-60 flex-grow">
-                        <div>{order.description}</div>
-                      </div>
-                    </Link>
-                    {isAdmin && (
-                      <button
-                        className="relative btn btn-error btn-sm mb-auto -ml-12 sm:mb-0 sm:ml-0"
-                        title="Eliminar"
-                        id={order.code}
-                        onClick={handleWarning}
-                      >
-                        <i className="fas fa-trash-alt" />
-                      </button>
-                    )}
-                  </div>
+                    order={order}
+                    onClick={() => dispatch(planActions.selectTask({}))}
+                    handleWarning={handleWarning}
+                    isAdmin={isAdmin}
+                  />
                 ))}
             </div>
           </div>

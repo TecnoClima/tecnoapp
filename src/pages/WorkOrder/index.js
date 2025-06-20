@@ -363,7 +363,7 @@ export default function WorkOrder() {
         </div>
       )}
 
-      <div className="flex flex-col pb-4">
+      <div className="flex flex-col min-h-0 pb-4 flex-grow">
         <div className="page-title ">
           {orderCode ? (
             <div>
@@ -411,7 +411,7 @@ export default function WorkOrder() {
             )}
           </div>
         </div>
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-col md:grid md:grid-cols-2 2xl:grid-cols-3 flex-grow gap-4 mb-4 md:min-h-0">
           <WorkOrderCard title="DATOS DEL EQUIPO">
             <div className="join my-1md:my-2">
               {!device.name && (
@@ -543,6 +543,7 @@ export default function WorkOrder() {
               </>
             )}
           </WorkOrderCard>
+
           <WorkOrderObservations
             user={userData.user}
             onSubmit={(text) =>
@@ -555,20 +556,24 @@ export default function WorkOrder() {
             }
             value={order.description}
           />
-          <InterventionList
-            interventions={interventions}
-            permissions={permissions}
-            openAdd={() => setInterventionForm(true)}
-            onDelete={(id) => {
-              permissions.admin && interventions[id].id
-                ? alert(
-                    "No pueden eliminarse las intervenciones grabadas. Funcionalidad en desarrollo."
-                  )
-                : setInterventions(
-                    interventions.filter((i, index) => index !== id)
-                  );
-            }}
-          />
+          <div className="flex xl:col-span-3 min-h-0 overflow-y-auto">
+            <InterventionList
+              interventions={interventions}
+              permissions={permissions}
+              openAdd={() => setInterventionForm(true)}
+              onDelete={(id) => {
+                permissions.admin && interventions[id].id
+                  ? alert(
+                      "No pueden eliminarse las intervenciones grabadas. Funcionalidad en desarrollo."
+                    )
+                  : setInterventions(
+                      interventions.filter((i, index) => index !== id)
+                    );
+              }}
+            />
+          </div>
+        </div>
+        <div className="mt-auto">
           <WorkOrderCard className="w-full">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex items-center gap-2 flex-grow">
@@ -624,11 +629,6 @@ export default function WorkOrder() {
               close={() => setInterventionForm(false)}
             />
           )}
-        </div>
-
-        {/* work order progress */}
-        <div className="hidden row py-2 h-25">
-          <div className="col-sm-6 d-flex align-items-start flex-wrap gap-1"></div>
         </div>
       </div>
     </div>
