@@ -51,6 +51,10 @@
     scrollbar-gutter: auto;
   }
 
+  .text-capitalize {
+    text-transform: capitalize;
+  }
+
   code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
       monospace;

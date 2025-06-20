@@ -37,9 +37,7 @@ export default function AdminPanel() {
   return (
     <div className="flex h-full w-full">
       <div className="flex-grow overflow-auto p-4">
-        <div className="w-full">
-          <WOList mostRecent={mostRecent} />
-        </div>
+        <WOList mostRecent={mostRecent} />
       </div>
     </div>
   );

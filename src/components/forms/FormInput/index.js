@@ -21,15 +21,15 @@ export function FormInput(props) {
   } = props;
   return (
     <>
-      <div className="input-group">
-        <span
-          className="input-group-text col-3 p-1 is-flex justify-content-center"
-          style={{ minWidth: "fit-content" }}
+      <div className="join w-full">
+        <label
+          className="label input-xs md:input-sm bg-base-content/10 w-28 join-item border border-base-content/20"
+          placeholder="Search"
         >
           {headersRef[label] || label}
-        </span>
+        </label>
         <input
-          className="form-control p-1"
+          className="input input-xs md:input-sm input-bordered join-item flex-grow"
           autoComplete="off"
           disabled={disabled}
           defaultValue={defaultValue}
@@ -65,15 +65,16 @@ export function FormSelector(props) {
     value,
   } = props;
   return (
-    <div className="input-group">
+    <div className="join text-sm bg-base-content/10 w-full border border-base-content/20">
       <label
-        className="input-group-text col-3 p-1 is-flex justify-content-center"
-        style={{ minWidth: "fit-content" }}
+        htmlFor={name}
+        className="label w-20 flex-none join-item input-sm px-2"
       >
         {headersRef[label] || label}
       </label>
+
       <select
-        className="form-select p-1"
+        className="select join-item select-sm w-20 flex-grow px-1"
         name={name}
         defaultValue={defaultValue}
         readOnly={readOnly}

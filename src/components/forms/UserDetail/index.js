@@ -5,7 +5,7 @@ import { peopleActions } from "../../../actions/StoreActions";
 import { FormInput, FormSelector } from "../../../components/forms/FormInput";
 
 import { ErrorModal, SuccessModal } from "../../warnings";
-import "./index.css";
+import ModalBase from "../../../Modals/ModalBase";
 
 export default function UserDetail(props) {
   const emptyUser = {
@@ -85,61 +85,48 @@ export default function UserDetail(props) {
   }
 
   return (
-    <div className="modal">
-      <form className="bg-light rounded-2 w-auto" onSubmit={handleSubmit}>
-        <div className="container px-3 pb-3">
-          <div className="row justify-content-end mt-2">
-            <button className="btn btn-close float-end" onClick={props.close} />
-          </div>
-          <div className="row">
-            <h4>{`${user === "new" ? "Nuevo" : "Editar"} usuario`}</h4>
-          </div>
-
-          <div className="row">
-            <div className="col">
-              {inputFields.map((e, i) => (
-                <div className="d-flex w-100 mb-1" key={i}>
-                  <FormInput
-                    className={"w-100"}
-                    label={e.label}
-                    name={e.item}
-                    value={newUser[e.item]}
-                    placeholder={e.placeholder}
-                    changeInput={updateNewUser}
-                    type={e.item === "password" ? "password" : undefined}
-                  />
-                </div>
-              ))}
-              {props.charge &&
-                props.plant &&
-                props.access &&
-                selectFields.map((e, i) => (
-                  <div key={i}>
-                    <FormSelector
-                      className={"w-100 mb-1"}
-                      label={e.label}
-                      options={e.array}
-                      valueField={e.valueField || undefined}
-                      captionField={e.captionField || undefined}
-                      name={e.item}
-                      placeholder={props[e.item] || undefined}
-                      value={newUser[e.item]}
-                      onSelect={updateNewUser}
-                    />
-                  </div>
-                ))}
+    <ModalBase
+      title={`${user === "new" ? "Nuevo" : "Editar"} usuario`}
+      open={true}
+      onClose={props.close}
+    >
+      <form className="flex flex-col gap-1 px-2" onSubmit={handleSubmit}>
+        {inputFields.map((e, i) => (
+          <FormInput
+            key={i}
+            label={e.label}
+            name={e.item}
+            value={newUser[e.item]}
+            placeholder={e.placeholder}
+            changeInput={updateNewUser}
+            type={e.item === "password" ? "password" : undefined}
+          />
+        ))}
+        {props.charge &&
+          props.plant &&
+          props.access &&
+          selectFields.map((e, i) => (
+            <div key={i}>
+              <FormSelector
+                className={"w-100 mb-1"}
+                label={e.label}
+                options={e.array}
+                valueField={e.valueField || undefined}
+                captionField={e.captionField || undefined}
+                name={e.item}
+                placeholder={props[e.item] || undefined}
+                value={newUser[e.item]}
+                onSelect={updateNewUser}
+              />
             </div>
-          </div>
-          <div className="row justify-content-center">
-            <button
-              type="submit"
-              className="btn btn-success m-1 w-auto"
-              disabled={JSON.stringify(newUser) === JSON.stringify(user)}
-            >
-              GUARDAR USUARIO
-            </button>
-          </div>
-        </div>
+          ))}
+        <button
+          type="submit"
+          className="btn btn-success btn-sm ml-auto mt-4"
+          disabled={JSON.stringify(newUser) === JSON.stringify(user)}
+        >
+          GUARDAR USUARIO
+        </button>
       </form>
       {peopleResult.success && (
         <SuccessModal
@@ -153,6 +140,6 @@ export default function UserDetail(props) {
           close={() => dispatch(peopleActions.resetResult())}
         />
       )}
-    </div>
+    </ModalBase>
   );
 }

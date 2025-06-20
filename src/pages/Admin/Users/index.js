@@ -6,7 +6,9 @@ import UserDetail from "../../../components/forms/UserDetail";
 
 import { FormSelector } from "../../../components/forms/FormInput";
 import { appConfig } from "../../../config";
-import "./index.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
+// import "./index.css";
 const { headersRef } = appConfig;
 
 export default function AdminUsers() {
@@ -16,6 +18,7 @@ export default function AdminUsers() {
   const dispatch = useDispatch();
   const [userDetail, setUserDetail] = useState(null);
   const [filteredList, setFilteredList] = useState([]);
+  const [nameFilter, setNameFilter] = useState("");
 
   useEffect(() => {
     dispatch(peopleActions.getOptions());
@@ -54,70 +57,78 @@ export default function AdminUsers() {
             if (u[key] !== value) check = false;
           }
         }
+        if (
+          nameFilter &&
+          !u.name.toLowerCase().includes(nameFilter.toLowerCase())
+        )
+          check = false;
         return check;
       })
     );
-  }, [userList, options]);
+  }, [userList, options, nameFilter]);
 
   return (
-    <div className="adminOptionSelected">
-      <div className="container p-4">
-        <div className="row">
-          <div className="col-md-8 py-1">
-            <h4>Lista de Usuarios</h4>
-          </div>
-          <div className="col-md-4">
-            <button
-              className="btn btn-success w-100"
-              onClick={() => setUserDetail("new")}
-            >
-              CREAR USUARIO
-            </button>
-          </div>
+    <div className="page-container">
+      <div className="w-full flex justify-between gap-2">
+        <div className="page-title">Lista de Usuarios</div>
+        <button
+          className="btn btn-sm btn-success"
+          onClick={() => setUserDetail("new")}
+        >
+          <FontAwesomeIcon icon={faPlus} />
+          <FontAwesomeIcon icon={faUser} />
+          CREAR USUARIO
+        </button>
+      </div>
+      <div className="flex gap-2 items-center flex-wrap mb-3">
+        <div className="w-60 flex-grow">
+          <FormSelector
+            label="Planta"
+            options={[...plantList.map((p) => p.name), "SIN ASIGNAR"]}
+            name="plant"
+            onSelect={setUserFilters}
+          />
         </div>
+        <div className="w-60 flex-grow">
+          <FormSelector
+            label="Cargo"
+            options={userOptions.charge}
+            name="charge"
+            onSelect={setUserFilters}
+          />
+        </div>
+        <div className="w-60 flex-grow">
+          <FormSelector
+            label="Acceso"
+            options={userOptions.access}
+            name="access"
+            onSelect={setUserFilters}
+          />
+        </div>
+        <input
+          type="text"
+          className="input input-bordered input-sm"
+          placeholder="Buscar por nombre..."
+          value={nameFilter}
+          onChange={(e) => setNameFilter(e.target.value)}
+        />
         {userOptions && plantList && (
-          <div className="row">
-            <div className="col-lg-3">
-              <FormSelector
-                label="Planta"
-                options={[...plantList.map((p) => p.name), "SIN ASIGNAR"]}
-                name="plant"
-                onSelect={setUserFilters}
+          <div className="form-control flex-none">
+            <label className="label cursor-pointer gap-2">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-primary"
+                name="active"
+                onChange={setUserFilters}
               />
-            </div>
-            <div className="col-lg-3">
-              <FormSelector
-                label="Cargo"
-                options={userOptions.charge}
-                name="charge"
-                onSelect={setUserFilters}
-              />
-            </div>
-            <div className="col-lg-3">
-              <FormSelector
-                label="Acceso"
-                options={userOptions.access}
-                name="access"
-                onSelect={setUserFilters}
-              />
-            </div>
-            <div className="col-lg-3">
-              <div className="d-flex gap-4 align-items-center">
-                <label>
-                  <input
-                    name="active"
-                    type="checkbox"
-                    className="checkFilter"
-                    onChange={setUserFilters}
-                  />
-                  Incluir inactivos
-                </label>
-              </div>
-            </div>
+              <span className="label-text">Incluir inactivos</span>
+            </label>
           </div>
         )}
-        <br />
-        <div className="cardList">
+      </div>
+
+      <div className="flex-grow overflow-y-auto">
+        <div className="flex flex-wrap gap-2">
           {filteredList.map((element, index) => (
             <UserCard
               user={element}
@@ -126,6 +137,7 @@ export default function AdminUsers() {
             />
           ))}
         </div>
+
         {userDetail && (
           <UserDetail
             user={userDetail}
