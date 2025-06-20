@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import { appConfig } from "../../../config";
+import { FilterSelect } from "../DeviceFilters/newFilters";
 const { startingYear } = appConfig.values;
 const currentYear = new Date().getFullYear();
 const years = Array(currentYear - startingYear + 1);
@@ -44,54 +45,36 @@ export default function DateFilter(props) {
   );
 
   return (
-    <div className="container mb-2 col-lg-3">
-      <div className="row">
-        <div className="col">
-          <div className="input-group">
-            <span className="input-group-text py-0 px-1 fw-bold">FECHA</span>
-            <select
-              name="year"
-              className="form-control p-0 pe-3"
-              value={filters.year}
-              onChange={setFilter}
-            >
-              <option value="">Año</option>
-              {years.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
-            <select
-              name="month"
-              className="form-control p-0 pe-3"
-              value={filters.month}
-              disabled={!filters.year}
-              onChange={setFilter}
-            >
-              <option value="">Mes</option>
-              {months.map((m) => (
-                <option key={m} value={m}>
-                  {m + 1}
-                </option>
-              ))}
-            </select>
-            <select
-              name="day"
-              className="form-control p-0 pe-3"
-              value={filters.day}
-              disabled={!filters.month}
-              onChange={setFilter}
-            >
-              <option value="">Día</option>
-              {days.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+    <div className="sm:join text-sm bg-base-content/10 w-full sm:max-w-80">
+      <label htmlFor="date" className="plan-filter-label">
+        Fecha
+      </label>
+      <div className="flex flex-grow">
+        <FilterSelect
+          id="year"
+          value={filters.year}
+          options={years}
+          onSelect={setFilter}
+          noLabel
+        />
+        <FilterSelect
+          id="month"
+          value={filters.month}
+          options={months}
+          onSelect={setFilter}
+          disabled={!filters.year}
+          noLabel
+          placeholder="Mes"
+        />
+        <FilterSelect
+          id="day"
+          value={filters.day}
+          options={days}
+          onSelect={setFilter}
+          disabled={!filters.month}
+          noLabel
+          placeholder="Día"
+        />
       </div>
     </div>
   );

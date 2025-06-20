@@ -7,23 +7,34 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 const { headersRef } = appConfig;
 // const unassigned = "SIN PROGRAMA ASIGNADO";
 
-function FilterSelect({ id, value, options, onSelect }) {
+export function FilterSelect({
+  id,
+  value,
+  options,
+  disabled,
+  onSelect,
+  noLabel,
+  placeholder,
+}) {
   return (
     <div className="join text-sm bg-base-content/10 w-full">
-      <label
-        htmlFor={id}
-        className="label w-20 flex-none join-item input-sm px-2"
-      >
-        {headersRef[id] || id}
-      </label>
+      {!noLabel && (
+        <label
+          htmlFor={id}
+          className="label w-20 flex-none join-item input-sm px-2"
+        >
+          {headersRef[id] || id}
+        </label>
+      )}
       <select
         onChange={onSelect && onSelect}
-        className="select join-item select-sm w-40 flex-grow px-1"
+        className="select join-item select-sm w-20 flex-grow px-1"
         value={value || ""}
         name={id}
         id={id}
+        disabled={disabled}
       >
-        <option value="">Sin Seleccionar</option>
+        <option value="">{placeholder || "Sin Seleccionar"}</option>
         {options &&
           options.map((p, i) => (
             <option key={i} value={p._id || p}>
@@ -35,22 +46,34 @@ function FilterSelect({ id, value, options, onSelect }) {
   );
 }
 
-function FilterInput({ id, value, onChange }) {
+export function FilterInput({
+  id,
+  value,
+  onChange,
+  name,
+  disabled,
+  noLabel,
+  placeholder,
+}) {
   return (
     <div className="join text-sm bg-base-content/10 w-full">
-      <label
-        htmlFor={id}
-        className="label w-20 flex-none join-item input-sm px-2"
-      >
-        {headersRef[id] || id}
-      </label>
+      {!noLabel && (
+        <label
+          htmlFor={id}
+          className="label w-20 flex-none join-item input-sm px-2"
+        >
+          {headersRef[id] || id}
+        </label>
+      )}
       <input
         onChange={onChange && onChange}
-        className="input input-sm join-item flex-grow w-40 px-1"
-        value={value || ""}
+        className="input input-sm join-item flex-grow w-20 px-1"
+        value={value ?? ""}
+        placeholder={placeholder}
         type="text"
         name={id}
         id={id}
+        disabled={disabled}
       />
     </div>
   );

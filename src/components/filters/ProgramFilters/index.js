@@ -4,7 +4,7 @@ import { planActions } from "../../../actions/StoreActions";
 import DateFilter from "../DateFilter";
 import LocationFilter from "../LocationFilter";
 import ProgressFilter from "../ProgressFilter";
-import "./index.css";
+import { FilterSelect } from "../DeviceFilters/newFilters";
 
 export default function ProgramFilters(props) {
   const { plantList } = useSelector((state) => state.plants);
@@ -48,66 +48,47 @@ export default function ProgramFilters(props) {
   }
 
   return (
-    <div className="container">
-      <div className="row">
+    <div className="">
+      <div className="flex flex-col gap-2">
         <DateFilter select={(nf) => updateFilters({ ...filters, date: nf })} />
         <LocationFilter
           select={(nf) => updateFilters({ ...filters, location: nf })}
         />
       </div>
-      <div className="row align-items-center">
-        <div className="col-lg-6">
-          <div className="input-group">
-            <span className="input-group-text py-0 px-1 fw-bold">PROGRAMA</span>
-            <select
-              name="program"
-              className="form-control p-0 pe-3 w-auto"
-              value={filters.program ? filters.program.program : ""}
-              onInput={setFilter}
-            >
-              <option value="">PROGRAMA</option>
-              {programList.map((p, i) => (
-                <option key={i} value={p.name}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-            <select
-              name="responsible"
-              className="form-control p-0 pe-3 w-auto"
-              value={filters.program ? filters.program.responsible : ""}
-              onChange={setFilter}
-            >
-              <option value="">Responsable</option>
-              {responsibles.map((r, i) => (
-                <option key={i} value={r.id}>
-                  {r.name}
-                </option>
-              ))}
-            </select>
-            <select
-              name="supervisor"
-              className="form-control p-0 pe-3 w-auto"
-              value={filters.program ? filters.program.supervisor : ""}
-              onChange={setFilter}
-            >
-              <option value="">Supervisor</option>
-              {supervisors.map((s, i) => (
-                <option key={i} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div className="col-lg-6">
-          <div className="input-group py-auto">
-            <ProgressFilter
-              select={(nf) => updateFilters({ ...filters, progress: nf })}
-            />
-          </div>
+      <div className="flex flex-col items-center gap-2 mt-2">
+        <div className="sm:join text-sm bg-base-content/10 w-full">
+          <label htmlFor="location" className="plan-filter-label">
+            Programa
+          </label>
+          <FilterSelect
+            id="program"
+            value={filters.program?.program || ""}
+            options={programList.map((p) => p.name)}
+            onSelect={setFilter}
+            noLabel
+            placeholder="Programa"
+          />
+          <FilterSelect
+            id="responsible"
+            value={filters.program?.responsible || ""}
+            options={responsibles.map((p) => p.name)}
+            onSelect={setFilter}
+            noLabel
+            placeholder="Responsable"
+          />
+          <FilterSelect
+            id="supervisor"
+            value={filters.program?.supervisor || ""}
+            options={supervisors.map((p) => p.name)}
+            onSelect={setFilter}
+            noLabel
+            placeholder="Supervisor"
+          />
         </div>
       </div>
+      <ProgressFilter
+        select={(nf) => updateFilters({ ...filters, progress: nf })}
+      />
     </div>
   );
 }

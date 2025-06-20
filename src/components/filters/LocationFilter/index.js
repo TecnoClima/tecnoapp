@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { plantActions } from "../../../actions/StoreActions";
+import { FilterInput, FilterSelect } from "../DeviceFilters/newFilters";
 
 export default function LocationFilter(props) {
   const { userData } = useSelector((state) => state.people);
@@ -12,9 +13,7 @@ export default function LocationFilter(props) {
   } = useSelector((state) => state.plants);
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState(
-    userData.plant
-      ? { plant: plantList.find((p) => p.name === userData.plant) }
-      : {}
+    userData.plant ? { plant: userData.plant } : {}
   );
 
   const dispatch = useDispatch();
@@ -30,6 +29,8 @@ export default function LocationFilter(props) {
     }
     setFilters(newFilters);
   }, [plantList, areaList, lineList]);
+
+  useEffect(() => console.log());
 
   /**
    *    This function gets missing data if any list is not there.
@@ -58,8 +59,10 @@ export default function LocationFilter(props) {
 
   function setFilter(e) {
     e.preventDefault();
+    console.log("input");
     const f = { ...filters };
     const { name, value } = e.target;
+    console.log({ name, value });
     if (value) {
       f[name] = value;
     } else {
@@ -72,88 +75,70 @@ export default function LocationFilter(props) {
     props.select && props.select(f);
   }
 
+  // Obtener áreas filtradas por planta seleccionada
+  const filteredAreas = areaList.filter((area) => {
+    if (!filters.plant) return false;
+    const selectedPlant = plantList.find((p) => p.name === filters.plant);
+    return selectedPlant && area.plant === selectedPlant._id;
+  });
+
+  // Obtener líneas filtradas por área seleccionada
+  const filteredLines = lineList.filter((line) => {
+    if (!filters.area) return false;
+    const selectedArea = areaList.find((a) => a.name === filters.area);
+    return selectedArea && line.area._id === selectedArea._id;
+  });
+
   return (
-    <div className="container mb-2 col-lg-9">
-      <div className="row">
-        <div className="col">
-          <div className="input-group">
-            <span className="input-group-text py-0 px-1 fw-bold">
-              UBICACION
-            </span>
-            <select
-              name="plant"
-              className="form-control p-0 pe-3 w-auto"
-              value={filters.plant}
-              onChange={setFilter}
-              disabled={userData.plant}
-            >
-              <option value="">PLANTA</option>
-              {plantList.map((item, i) => (
-                <option key={i} value={item.name}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
-            <select
-              name="area"
-              disabled={!filters.plant || areaList.length === 1}
-              className="form-control p-0 pe-3 w-auto"
-              value={filters.area}
-              onChange={setFilter}
-            >
-              <option value="">Area</option>
-              {areaList
-                ?.filter((a) => {
-                  return filters.plant
-                    ? a.plant ===
-                        plantList.find((p) => p.name === filters.plant)._id
-                    : a;
-                })
-                .map((item, i) => (
-                  <option key={i} value={item.name}>
-                    {item.name}
-                  </option>
-                )) || []}
-            </select>
-            <select
-              name="line"
-              className="form-control p-0 pe-3 w-auto"
-              disabled={!filters.area || lineList.length === 1}
-              value={filters.line}
-              onChange={setFilter}
-            >
-              <option value="">Línea</option>
-              {lineList
-                .filter((item) =>
-                  filters.area
-                    ? item.area._id ===
-                      areaList.find((a) => a.name === filters.area)._id
-                    : item
-                )
-                .map((item, i) => (
-                  <option key={i} value={item.name}>
-                    {item.name}
-                  </option>
-                ))}
-            </select>
-            <input
-              className="form-control p-0 pe-3 w-auto"
-              placeholder="Lugar de Servicio"
-              name="servicePoint"
-              value={filters.servicePoint || ""}
-              disabled={!filters.plant}
-              onChange={setFilter}
-            />
-            <input
-              className="form-control p-0 pe-3 w-auto"
-              placeholder="Equipo"
-              name="device"
-              value={filters.device || ""}
-              disabled={!filters.plant}
-              onChange={setFilter}
-            />
-          </div>
-        </div>
+    <div className="sm:join text-sm bg-base-content/10 w-full">
+      <label htmlFor="location" className="plan-filter-label">
+        Ubicación
+      </label>
+      <div className="flex flex-grow">
+        <FilterSelect
+          id="plant"
+          value={filters.plant}
+          options={plantList.map((p) => p.name)}
+          onSelect={setFilter}
+          noLabel
+          placeholder="Planta"
+        />
+        <FilterSelect
+          id="area"
+          value={filters.area}
+          disabled={!filters.plant}
+          options={filteredAreas.map((a) => a.name)}
+          onSelect={setFilter}
+          noLabel
+          placeholder="Area"
+        />
+        <FilterSelect
+          id="line"
+          value={filters.line}
+          disabled={!filters.area}
+          options={filteredLines.map((l) => l.name)}
+          onSelect={setFilter}
+          noLabel
+          placeholder="Línea"
+        />
+      </div>
+      <div className="flex flex-grow">
+        <FilterInput
+          placeholder="Lugar de Servicio"
+          id="servicePoint"
+          value={filters.servicePoint || ""}
+          disabled={!filters.plant}
+          onChange={setFilter}
+          noLabel
+        />
+        <FilterInput
+          placeholder="Equipo"
+          id="device"
+          value={filters.device || ""}
+          disabled={!filters.plant}
+          onChange={setFilter}
+          noLabel
+        />
       </div>
     </div>
   );

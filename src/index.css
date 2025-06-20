@@ -117,4 +117,7 @@
   .table.no-padding td {
     @apply p-1;
   }
+  .plan-filter-label {
+    @apply label w-20 flex-none join-item input-xs sm:input-sm px-2 font-bold;
+  }
 }
