@@ -84,11 +84,6 @@ export default function UserDetail(props) {
     }
   }
 
-  useEffect(
-    () => console.log("peopleResult", !!peopleResult.success),
-    [peopleResult]
-  );
-
   return (
     <>
       <ModalBase

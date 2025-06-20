@@ -124,4 +124,7 @@
   .plan-filter-label {
     @apply label w-20 flex-none join-item input-xs sm:input-sm px-2 font-bold;
   }
+  .device-info-item {
+    @apply flex items-center gap-2 w-40 flex-grow border border-dotted border-white/20 border-collapse p-1;
+  }
 }

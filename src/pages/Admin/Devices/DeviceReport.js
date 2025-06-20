@@ -25,7 +25,7 @@ export default function DeviceReport({ filters }) {
   return (
     <button
       type="button"
-      className="btn btn-info w-auto "
+      className="btn btn-info btn-sm"
       title={filters.plant ? "Debe seleccionar planta" : "Generar Reporte"}
       disabled={!filters.plant}
       onClick={getReportData}
