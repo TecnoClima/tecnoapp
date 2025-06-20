@@ -110,17 +110,17 @@ export default function PasswordForm({ close, open }) {
             </button>
           </div>
         </form>
-        <ErrorModal
-          message={peopleResult.error}
-          close={() => dispatch(peopleActions.resetResult())}
-          open={peopleResult.error}
-        />
-        <SuccessModal
-          message={"Contraseña actualizada exitosamente"}
-          close={handleCloseSuccess}
-          open={peopleResult.success}
-        />
       </dialog>
+      <ErrorModal
+        message={peopleResult.error}
+        close={() => dispatch(peopleActions.resetResult())}
+        open={peopleResult.error}
+      />
+      <SuccessModal
+        message={"Contraseña actualizada exitosamente"}
+        close={handleCloseSuccess}
+        open={peopleResult.success}
+      />
     </>
   );
 }

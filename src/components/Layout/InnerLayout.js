@@ -199,7 +199,9 @@ export default function InnerLayout({ children }) {
       </div>
       <div className="flex-grow bg-gradient-to-r from-base-100 to-neutral" />
 
-      <PasswordForm open={openPassword} close={() => setOpenPassword(false)} />
+      {openPassword && (
+        <PasswordForm open={true} close={() => setOpenPassword(false)} />
+      )}
     </div>
   );
 }

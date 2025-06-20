@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { peopleActions } from "../../../actions/StoreActions";
 // import { FormInput, FormSelector } from "../../../pages/Admin/Devices";
@@ -84,62 +84,71 @@ export default function UserDetail(props) {
     }
   }
 
+  useEffect(
+    () => console.log("peopleResult", !!peopleResult.success),
+    [peopleResult]
+  );
+
   return (
-    <ModalBase
-      title={`${user === "new" ? "Nuevo" : "Editar"} usuario`}
-      open={true}
-      onClose={props.close}
-    >
-      <form className="flex flex-col gap-1 px-2" onSubmit={handleSubmit}>
-        {inputFields.map((e, i) => (
-          <FormInput
-            key={i}
-            label={e.label}
-            name={e.item}
-            value={newUser[e.item]}
-            placeholder={e.placeholder}
-            changeInput={updateNewUser}
-            type={e.item === "password" ? "password" : undefined}
-          />
-        ))}
-        {props.charge &&
-          props.plant &&
-          props.access &&
-          selectFields.map((e, i) => (
-            <div key={i}>
-              <FormSelector
-                className={"w-100 mb-1"}
-                label={e.label}
-                options={e.array}
-                valueField={e.valueField || undefined}
-                captionField={e.captionField || undefined}
-                name={e.item}
-                placeholder={props[e.item] || undefined}
-                value={newUser[e.item]}
-                onSelect={updateNewUser}
-              />
-            </div>
+    <>
+      <ModalBase
+        title={`${user === "new" ? "Nuevo" : "Editar"} usuario`}
+        open={true}
+        onClose={props.close}
+      >
+        <form className="flex flex-col gap-1 px-2" onSubmit={handleSubmit}>
+          {inputFields.map((e, i) => (
+            <FormInput
+              key={i}
+              label={e.label}
+              name={e.item}
+              value={newUser[e.item]}
+              placeholder={e.placeholder}
+              changeInput={updateNewUser}
+              type={e.item === "password" ? "password" : undefined}
+            />
           ))}
-        <button
-          type="submit"
-          className="btn btn-success btn-sm ml-auto mt-4"
-          disabled={JSON.stringify(newUser) === JSON.stringify(user)}
-        >
-          GUARDAR USUARIO
-        </button>
-      </form>
+          {props.charge &&
+            props.plant &&
+            props.access &&
+            selectFields.map((e, i) => (
+              <div key={i}>
+                <FormSelector
+                  className={"w-100 mb-1"}
+                  label={e.label}
+                  options={e.array}
+                  valueField={e.valueField || undefined}
+                  captionField={e.captionField || undefined}
+                  name={e.item}
+                  placeholder={props[e.item] || undefined}
+                  value={newUser[e.item]}
+                  onSelect={updateNewUser}
+                />
+              </div>
+            ))}
+          <button
+            type="submit"
+            className="btn btn-success btn-sm ml-auto mt-4"
+            disabled={JSON.stringify(newUser) === JSON.stringify(user)}
+          >
+            GUARDAR USUARIO
+          </button>
+        </form>
+      </ModalBase>
       {peopleResult.success && (
         <SuccessModal
           message="Los cambios se han guardado"
+          open={true}
           close={handleCloseSuccess}
         />
       )}
       {peopleResult.error && (
         <ErrorModal
           message={peopleResult.error}
+          open={true}
           close={() => dispatch(peopleActions.resetResult())}
         />
       )}
-    </ModalBase>
+    </>
   );
 }
