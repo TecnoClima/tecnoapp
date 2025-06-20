@@ -21,7 +21,7 @@ function WorkOrderCard({ order }) {
       to={`/ots/detail/${code}`}
       className={`card w-full shadow-md mb-2 border ${
         isClosed
-          ? " border border-success hover:bg-success/20"
+          ? " border border-success/75 hover:bg-success/20"
           : "bg-error/20  border-transparent  hover:border-error"
       }`}
     >
@@ -31,8 +31,10 @@ function WorkOrderCard({ order }) {
             <h2 className="card-title text-sm">
               N° {code}{" "}
               <span
-                className={`badge badge-sm ${
-                  isClosed ? "badge-success" : "badge-error"
+                className={`badge badge-sm  ${
+                  isClosed
+                    ? "badge-success bg-success/50 text-base-content/75"
+                    : "badge-error"
                 }`}
               >
                 {status}
