@@ -23,7 +23,7 @@ export function FormInput(props) {
     <>
       <div className="join w-full">
         <label
-          className="label input-xs md:input-sm bg-base-content/10 w-28 join-item border border-base-content/20"
+          className="label input-xs md:input-sm bg-base-content/10 w-28 join-item border border-base-content/20 min-w-fit"
           placeholder="Search"
         >
           {headersRef[label] || label}
@@ -110,15 +110,12 @@ export function FormTextArea({
 }) {
   // const {label, disabled, defaultValue, changeInput, name, readOnly, placeholder}=props
   return (
-    <div className="input-group">
-      <span
-        className="input-group-text col-3 ps-1 pe-1 is-flex justify-content-center"
-        style={{ minWidth: "fit-content" }}
-      >
+    <div className="join join-vertical md:join-horizontal text-sm bg-base-content/10 w-full border border-base-content/20">
+      <span className="label w-20 flex-none join-item input-sm px-2 min-w-fit">
         {headersRef[label] || label}
       </span>
       <textarea
-        className="form-control"
+        className="textarea join-item flex-grow"
         disabled={disabled}
         defaultValue={defaultValue}
         value={value}

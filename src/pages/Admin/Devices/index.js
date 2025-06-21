@@ -145,7 +145,7 @@ export default function DeviceAdmin() {
         </div>
       </div>
       {/* Filtros modernos */}
-      <div className="flex gap-x-4 items-center flex-wrap mb-3">
+      <div className="flex gap-x-4 md:gap-y-2 items-center flex-wrap mb-3">
         {locOptions.map((field) => (
           <div
             key={field.name}
@@ -306,7 +306,7 @@ export default function DeviceAdmin() {
                     <Link
                       title="Ver Equipo"
                       className="btn btn-xs btn-info"
-                      to={`/devices/${device.code}`}
+                      to={`/equipos/${device.code}`}
                     >
                       <FontAwesomeIcon icon={faEye} />
                     </Link>
@@ -378,7 +378,8 @@ export default function DeviceAdmin() {
           })}
         </div>
       </div>
-      {create && <CreateDevice edit={edit} close={addNewForm} />}
+      {create && <CreateDevice close={addNewForm} />}
+      {edit && <CreateDevice edit={edit} close={() => setEdit(null)} />}
 
       {/* Paginación */}
       <div className="flex justify-center pt-2">

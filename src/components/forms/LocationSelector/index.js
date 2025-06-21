@@ -140,8 +140,8 @@ export default function LocationSelector(props) {
   }
 
   return (
-    <div className="row">
-      <div className={extraClass}>
+    <div className="flex gap-2 flex-wrap w-full">
+      <div className="w-60 flex-grow">
         <FormSelector
           options={plantList}
           label={"plant"}
@@ -153,7 +153,7 @@ export default function LocationSelector(props) {
         />
       </div>
       {limit !== "plant" && (
-        <div className={extraClass}>
+        <div className="w-60 flex-grow">
           <FormSelector
             options={
               areaList?.filter((e) =>
@@ -171,7 +171,7 @@ export default function LocationSelector(props) {
         </div>
       )}
       {!["plant", "area"].includes(limit) && (
-        <div className={extraClass}>
+        <div className="w-60 flex-grow">
           <FormSelector
             options={lineList.filter((e) =>
               selected.area ? e.area._id === selected.area : e

@@ -22,10 +22,8 @@ export default function WarningErrors(props) {
         <div className="modal-box bg-warning text-warning-content p-4 relative">
           <h3 className="font-bold text-lg">¡ATENCIÓN!</h3>
           {warnings.map((warning, index) => (
-            <div className="flex gap-2">
-              <p key={warning} className="py-1">
-                {warning}
-              </p>
+            <div key={warning} className="flex gap-2">
+              <p className="py-1">{warning}</p>
               <button
                 type="button"
                 className="btn btn-success btn-sm px-3"

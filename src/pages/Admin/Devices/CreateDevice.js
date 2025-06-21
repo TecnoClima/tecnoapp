@@ -9,8 +9,11 @@ import {
 import LocationSelector from "../../../components/forms/LocationSelector";
 import { ErrorModal, SuccessModal } from "../../../components/warnings";
 import WarningErrors from "../../../components/warnings/WarningErrors";
+import ModalBase from "../../../Modals/ModalBase";
 import { appConfig } from "../../../config";
-import "./index.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
+
 const { headersRef } = appConfig;
 
 export default function CreateDevice({ edit, close }) {
@@ -138,9 +141,10 @@ export default function CreateDevice({ edit, close }) {
 
   function handleCloseSuccess(e) {
     if (e) e.preventDefault();
-    setDevice(emptyDevice);
+    !edit && setDevice(emptyDevice);
     setServicePoints([]);
     dispatch(deviceActions.resetResult());
+    edit && close();
   }
 
   function handleClose(e) {
@@ -151,36 +155,27 @@ export default function CreateDevice({ edit, close }) {
   }
 
   return (
-    <div className="modal">
-      <div
-        className="container bg-light col-10 px-3"
-        style={{ maxHeight: "100vh", overflowY: "auto" }}
-      >
-        <div className="container">
-          <div className="row justify-content-between pt-3 pb-2">
-            <div className="w-auto">
-              {edit ? (
-                <h4 className="col col-11">
-                  Editar Equipo
-                  <br />
-                  {`[${edit.code}] ${edit.name}`}
-                </h4>
-              ) : (
-                <h4>Crear Nuevo Equipo</h4>
-              )}
+    <>
+      <ModalBase
+        title={
+          edit ? (
+            <div>
+              <div>Editar Equipo</div>
+              <div className="text-sm font-normal opacity-75">
+                {`[${edit.code}] ${edit.name}`}
+              </div>
             </div>
-            <button
-              type="button"
-              className="btn-close col-1"
-              aria-label="Close"
-              style={{ float: "right" }}
-              onClick={handleClose}
-            />
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="container">
+          ) : (
+            "Crear Nuevo Equipo"
+          )
+        }
+        open={true}
+        onClose={handleClose}
+        className="sm:max-w-4xl max-h-[90vh] overflow-y-auto"
+      >
+        <form className="flex flex-col gap-4 p-4" onSubmit={handleSubmit}>
+          {/* Location Selector */}
+          <div className="flex w-full">
             <LocationSelector
               initNames={
                 edit
@@ -192,256 +187,217 @@ export default function CreateDevice({ edit, close }) {
                   : undefined
               }
               limit="line"
-              extraclassName="col-md-4"
               getNames={setLocation}
               getId={selectLine}
             />
-            <div className="row align-items-center mt-2">
-              <div className="col-md-4 mb-2">
-                <FormInput
-                  label="Nombre"
-                  name="name"
-                  placeholder="Nombre o Denominación"
-                  value={device.name}
-                  changeInput={setValue}
-                />
-              </div>
-              <div className="col-md-4 mb-2">
-                <FormInput
-                  label="Fecha Alta"
-                  type="date"
-                  name="regDate"
-                  value={device.regDate}
-                  max={new Date().toISOString().split("T")[0]}
-                  placeholder="Nombre o Denominación"
-                  changeInput={setValue}
-                />
-              </div>
-              <div className="col-md-4 mb-2">
-                <div className="input-group">
-                  <div
-                    className={`input-group-text ${
-                      device.active ? "bg-success text-light" : ""
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      defaultChecked={true}
-                      onChange={(e) =>
-                        setDevice({ ...device, active: e.target.checked })
-                      }
-                    />
-                  </div>
-                  <span
-                    className={`input-group-text flex-grow-1 ${
-                      device.active && `bg-success text-light`
-                    }`}
-                  >
-                    Equipo activo
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="row align-items-center">
-              <div className="col-md-4 mb-2">
-                <FormSelector
-                  label="Tipo"
-                  options={deviceOptions.type}
-                  name="type"
-                  value={device.type}
-                  onSelect={setValue}
-                />
-              </div>
-              <div className="col-md-4 mb-2">
-                <FormInput
-                  label="Potencia"
-                  type="number"
-                  name="power"
-                  min={"0"}
-                  value={device.power}
-                  changeInput={setValue}
-                />
-              </div>
-              <div className="col-md-4 mb-2">
-                <FormSelector
-                  label="Unidad"
-                  name="unit"
-                  options={units}
-                  value={unit}
-                  onSelect={(e) => setUnit(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="row align-items-center">
-              <div className="col-md-4 mb-2">
-                <FormSelector
-                  label="Gas"
-                  name="refrigerant"
-                  options={deviceOptions.refrigerant}
-                  value={device.refrigerant}
-                  onSelect={setValue}
-                />
-              </div>
+          </div>
 
-              <div className="col-md-4 mb-2">
-                <FormInput
-                  label="Cantidad de gas (g)"
-                  type="number"
-                  name="gasAmount"
-                  min={"0"}
-                  value={device.gasAmount}
-                  changeInput={setValue}
-                />
-              </div>
-
-              <div className="col-md-4 mb-2">
-                <FormSelector
-                  label="Servicio"
-                  name="service"
-                  options={deviceOptions.service}
-                  value={device.service}
-                  onSelect={setValue}
-                />
-              </div>
-              <div className="col-md-4 mb-2">
-                <FormSelector
-                  label="Categoría"
-                  name="category"
-                  options={deviceOptions.category}
-                  value={device.category}
-                  onSelect={setValue}
-                />
-              </div>
-              <div className="col-md-4 mb-2">
-                <FormSelector
-                  label="Ambiente"
-                  name="environment"
-                  options={deviceOptions.environment}
-                  value={device.environment}
-                  onSelect={setValue}
-                />
-              </div>
-              <div className="col-md-4 mb-2">
-                <FormSelector
-                  label="Estado"
-                  name="status"
-                  options={deviceOptions.status}
-                  value={device.status}
-                  onSelect={setValue}
-                />
-              </div>
-            </div>
-            <div className="row mb-2">
-              <FormTextArea
-                label="Descripción"
-                name="extraDetails"
-                placeholder="Descripción o detalle a tener en cuenta"
-                changeInput={setValue}
-                textArea={true}
-                value={device.extraDetails}
+          {/* Basic Info Row */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <FormInput
+              label="Nombre"
+              name="name"
+              placeholder="Nombre o Denominación"
+              value={device.name}
+              changeInput={setValue}
+            />
+            <FormInput
+              label="Fecha Alta"
+              type="date"
+              name="regDate"
+              value={device.regDate}
+              max={new Date().toISOString().split("T")[0]}
+              changeInput={setValue}
+            />
+            <div className="flex items-center gap-2 px-2 bg-base-200 rounded-lg">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-sm checkbox-success"
+                defaultChecked={true}
+                onChange={(e) =>
+                  setDevice({ ...device, active: e.target.checked })
+                }
               />
+              <span
+                className={`text-sm ${device.active ? "text-success" : ""}`}
+              >
+                Equipo activo
+              </span>
             </div>
-            <div className="row">
-              <div className="col">
-                <div className="accordion" id="accordionExample">
-                  <div className="accordion-item">
-                    <h2 className="accordion-header" id="headingOne">
-                      <button
-                        className="accordion-button"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseOne"
-                        aria-expanded="true"
-                        aria-controls="collapseOne"
-                      >
-                        Seleccionar Lugares de Servicio
-                      </button>
-                    </h2>
-                    <div
-                      id="collapseOne"
-                      className="accordion-collapse collapse"
-                      aria-labelledby="headingOne"
-                      data-bs-parent="#accordionExample"
-                    >
-                      <div className="accordion-body">
-                        {location && location.line ? (
-                          <div
-                            className="container"
-                            style={{ maxHeight: "45vh", overflowY: "auto" }}
-                          >
-                            <div className="row">
-                              {spList
-                                .filter((sp) => sp.lineId === lineId)
-                                .map((sp, index) => (
-                                  <div className="col-lg-4" key={index}>
-                                    <button
-                                      id={sp._id || sp.id}
-                                      key={index}
-                                      name="servicePoints"
-                                      value={sp.name}
-                                      className={`btn ${
-                                        servicePoints.includes(sp._id || sp.id)
-                                          ? "btn-primary"
-                                          : "btn-secondary"
-                                      } m-1 col-12`}
-                                      onClick={pickSP}
-                                      style={{ fontSize: "90%", height: "90%" }}
-                                    >
-                                      {sp.name}
-                                    </button>
-                                  </div>
-                                ))}
-                            </div>
-                          </div>
-                        ) : (
-                          <h6>Debe seleccionar línea primero</h6>
-                        )}
-                      </div>
-                    </div>
+          </div>
+
+          {/* Device Type and Power Row */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <FormSelector
+              label="Tipo"
+              options={deviceOptions.type}
+              name="type"
+              value={device.type}
+              onSelect={setValue}
+            />
+            <FormInput
+              label="Potencia"
+              type="number"
+              name="power"
+              min={"0"}
+              value={device.power}
+              changeInput={setValue}
+            />
+            <FormSelector
+              label="Unidad"
+              name="unit"
+              options={units}
+              value={unit}
+              onSelect={(e) => setUnit(e.target.value)}
+            />
+          </div>
+
+          {/* Gas and Service Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormSelector
+              label="Gas"
+              name="refrigerant"
+              options={deviceOptions.refrigerant}
+              value={device.refrigerant}
+              onSelect={setValue}
+            />
+            <FormInput
+              label="Carga (gramos)"
+              type="number"
+              name="gasAmount"
+              min={"0"}
+              value={device.gasAmount}
+              changeInput={setValue}
+              placeholder="Cantidad de gas en gramos"
+            />
+          </div>
+
+          {/* Category, Environment, Status Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormSelector
+              label="Servicio"
+              name="service"
+              options={deviceOptions.service}
+              value={device.service}
+              onSelect={setValue}
+            />
+            <FormSelector
+              label="Categoría"
+              name="category"
+              options={deviceOptions.category}
+              value={device.category}
+              onSelect={setValue}
+            />
+            <FormSelector
+              label="Ambiente"
+              name="environment"
+              options={deviceOptions.environment}
+              value={device.environment}
+              onSelect={setValue}
+            />
+            <FormSelector
+              label="Estado"
+              name="status"
+              options={deviceOptions.status}
+              value={device.status}
+              onSelect={setValue}
+            />
+          </div>
+
+          {/* Description */}
+          <div className="w-full">
+            <FormTextArea
+              label="Descripción"
+              name="extraDetails"
+              placeholder="Descripción o detalle a tener en cuenta"
+              changeInput={setValue}
+              textArea={true}
+              value={device.extraDetails}
+            />
+          </div>
+
+          {/* Service Points Accordion */}
+          <div className="collapse collapse-arrow bg-base-200">
+            <input type="checkbox" className="peer" />
+            <div className="collapse-title text-lg font-medium">
+              Seleccionar Lugares de Servicio
+            </div>
+            <div className="collapse-content">
+              {location && location.line ? (
+                <div className="max-h-60 overflow-y-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    {spList
+                      .filter((sp) => sp.lineId === lineId)
+                      .map((sp, index) => (
+                        <button
+                          key={index}
+                          id={sp._id || sp.id}
+                          name="servicePoints"
+                          value={sp.name}
+                          className={`btn btn-sm ${
+                            servicePoints.includes(sp._id || sp.id)
+                              ? "btn-primary"
+                              : "btn-outline"
+                          }`}
+                          onClick={pickSP}
+                        >
+                          {sp.name}
+                        </button>
+                      ))}
                   </div>
                 </div>
-              </div>
-            </div>
-            <div className="row">
-              {errors[0] && (
-                <div
-                  className="alert alert-danger"
-                  role="alert"
-                >{`Debe completar ${errors
-                  .map((e) => headersRef[e])
-                  .join(", ")}`}</div>
+              ) : (
+                <div className="text-center text-warning">
+                  Debe seleccionar línea primero
+                </div>
               )}
             </div>
-            <div className="row justify-content-center pt-2">
-              <button className="btn btn-primary w-auto" type="submit">
-                GUARDAR
-              </button>
+          </div>
+
+          {/* Errors */}
+          {errors[0] && (
+            <div className="alert alert-error">
+              <FontAwesomeIcon icon={faTimes} />
+              <span>
+                Debe completar {errors.map((e) => headersRef[e]).join(", ")}
+              </span>
             </div>
-            {confirm && (
-              <WarningErrors
-                warnings={confirm}
-                proceed={save}
-                close={() => setConfirm(false)}
-              />
-            )}
-            {deviceResult.error && (
-              <ErrorModal
-                message={`No se pudo guardar el equipo. Error: ${deviceResult.error}`}
-                close={() => dispatch(deviceActions.resetResult())}
-              />
-            )}
-            {deviceResult.success && (
-              <SuccessModal
-                message={`Equipo guardado correctamente. El código es ${deviceResult.success.code}.`}
-                link={`/equipos/${deviceResult.success.code}`}
-                close={handleCloseSuccess}
-              />
-            )}
+          )}
+
+          {/* Submit Button */}
+          <div className="flex justify-end pt-4">
+            <button className="btn btn-success btn-sm" type="submit">
+              <FontAwesomeIcon icon={faCheck} />
+              GUARDAR
+            </button>
           </div>
         </form>
-        <br />
-      </div>
-    </div>
+      </ModalBase>
+
+      {/* Modals */}
+      {confirm && (
+        <WarningErrors
+          warnings={confirm}
+          proceed={save}
+          open={true}
+          close={() => setConfirm(false)}
+        />
+      )}
+      {deviceResult.error && (
+        <ErrorModal
+          open={true}
+          message={`No se pudo guardar el equipo. Error: ${deviceResult.error}`}
+          close={() => dispatch(deviceActions.resetResult())}
+        />
+      )}
+      {deviceResult.success && (
+        <SuccessModal
+          open={true}
+          message={`Equipo guardado correctamente. El código es ${deviceResult.success.code}.`}
+          link={`/equipos/${deviceResult.success.code}`}
+          close={handleCloseSuccess}
+        />
+      )}
+    </>
   );
 }
