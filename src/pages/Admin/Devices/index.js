@@ -21,8 +21,8 @@ import {
   faTools,
   faEdit,
   faTrashAlt,
-  faTimes,
   faBackspace,
+  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import Pagination from "../../../components/Paginate/Pagination";
 
@@ -138,7 +138,7 @@ export default function DeviceAdmin() {
             className="btn btn-success btn-sm"
             onClick={addNewForm}
           >
-            <i className="fas fa-plus me-1" />
+            <FontAwesomeIcon icon={faPlus} />
             Agregar Equipo
           </button>
           <DeviceReport filters={filters} />
@@ -328,7 +328,7 @@ export default function DeviceAdmin() {
                     </button>
                   </div>
                 </div>
-                <div className="flex text-sm flex-wrap">
+                <div className="flex text-sm flex-wrap text-base-content/75">
                   <div className="device-info-item">
                     <FontAwesomeIcon icon={faFan} />
                     <div>{device.type}</div>
@@ -366,7 +366,7 @@ export default function DeviceAdmin() {
                   </div>
                   <div className="device-info-item">
                     <FontAwesomeIcon icon={faCalendarAlt} />
-                    <div>{age} años</div>
+                    <div>{`${age} año${age > 1 ? "s" : ""}`}</div>
                   </div>
                   <div className="device-info-item">
                     <FontAwesomeIcon icon={faStar} />

@@ -1,4 +1,4 @@
-export default function DeviceItem({ children, value }) {
+export default function DeviceItem({ children, value = "" }) {
   return (
     <div className="join flex-grow">
       <label
@@ -8,8 +8,9 @@ export default function DeviceItem({ children, value }) {
         {children}
       </label>
       <input
-        className="input input-sm join-item flex-grow w-40"
+        className="input input-sm join-item flex-grow w-40 cursor-default"
         value={value}
+        readOnly
       />
     </div>
   );

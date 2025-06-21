@@ -106,10 +106,6 @@ export default function Device() {
     setYears(years.sort((a, b) => (a < b ? 1 : -1)));
   }, [year]);
 
-  useEffect(() => {
-    console.log("deviceResult", deviceResult);
-  }, [deviceResult]);
-
   function newValues(year, index) {
     let values = [...chartValues];
     if (values.find((value) => value.label === year)) {

@@ -48,9 +48,7 @@ export default function SetFrequency() {
             isFetching || !["Admin", "Supervisor"].includes(userData.access)
           }
         >
-          <option value="" selected>
-            Sin Seleccionar
-          </option>
+          <option value="">Sin Seleccionar</option>
           {frequencies.map(({ weeks, frequency }, i) => (
             <option key={i} value={weeks}>
               {frequency}

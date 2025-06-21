@@ -42,8 +42,8 @@ export default function FollowDevice() {
             type="checkbox"
             value=""
             id="flexCheckDefault"
-            checked={selectedDevice.following}
-            // onChange={handleCheck}
+            checked={selectedDevice.following || false}
+            onChange={() => {}}
           />
         )}
 
