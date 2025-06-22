@@ -7,6 +7,8 @@ import {
 } from "../../../components/warnings/index.js";
 import { appConfig } from "../../../config.js";
 import CreateElement from "./CreateElement.js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const { headersRef } = appConfig;
 
@@ -48,8 +50,8 @@ export default function ElementSection(props) {
   useEffect(() => dispatch(plantActions.resetResult()), [dispatch]);
 
   return (
-    <div className="container-fluid px-0 mb-4">
-      <div className="row">
+    <div className="card bg-base-content/10 flex-col w-full p-2">
+      <div className="flex w-full items-center justify-between">
         {creation && (
           <CreateElement
             close={() => setCreation(false)}
@@ -58,35 +60,36 @@ export default function ElementSection(props) {
             data={data}
           />
         )}
-        <div className="flex align-items-center gap-4 mb-1 w-100">
-          <h5 className="my-0 w-50">{headersRef[item]}</h5>
+        <div className="flex w-full items-center justify-between gap-4">
+          <div className="card-title">{headersRef[item]}</div>
           <button
-            className="btn btn-success w-50"
+            className="btn btn-success btn-sm"
             onClick={() => setCreation(true)}
             disabled={!enableCreation}
           >
+            <FontAwesomeIcon icon={faPlus} />
             CREAR
           </button>
         </div>
       </div>
-      <div className="row">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         {enableCreation &&
           array
             .filter((e) => (data[item] ? e.name === data[item].name : e))
             .map((element, i) => {
               const { name } = element;
               return (
-                <div key={i} className="d-flex">
+                <div key={i} className="w-full join">
                   <button
                     name={item}
                     value={name}
-                    className={`btn ${
+                    className={`btn join-item btn-sm ${
                       item === "servicePoint"
-                        ? "btn-outline-secondary"
+                        ? "btn-outline btn-secondary"
                         : data[item] && data[item].name === name
                         ? "btn-primary"
-                        : "btn-outline-primary"
-                    } w-100 flex flex-grow-1 justify-content-start align-items-center`}
+                        : "btn-outline btn-primary"
+                    } flex w-20 min-h-8 h-full py-1 flex-grow justify-start items-center`}
                     key={"divCuerpo" + name}
                     onClick={(e) => handleSetData(e)}
                   >
@@ -109,14 +112,14 @@ export default function ElementSection(props) {
                   </button>
 
                   <button
-                    className="btn btn-danger m-1 p-1"
+                    className="btn join-item btn-error h-full min-h-0"
                     title="Eliminar"
                     onClick={(e) => handleDeleteData(e, element.code)}
                   >
                     <i className="fas fa-trash-alt" />
                   </button>
                   <button
-                    className="btn btn-info m-1 p-1"
+                    className="btn join-item btn-info btn-sm h-full min-h-0"
                     title="Edit"
                     key={"edit" + element}
                     value={element}
@@ -140,6 +143,7 @@ export default function ElementSection(props) {
       {!editElement && plantResult.error && plantResult.item === item && (
         <ErrorModal
           message={plantResult.error}
+          open={true}
           close={() => dispatch(plantActions.resetResult())}
         />
       )}
@@ -149,6 +153,7 @@ export default function ElementSection(props) {
         deleting && (
           <SuccessModal
             message={plantResult.success}
+            open={true}
             close={() => {
               dispatch(plantActions.resetResult());
               setDeleting(false);

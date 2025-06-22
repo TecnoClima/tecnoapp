@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import * as xlsx from "xlsx/xlsx.mjs";
 import { useSelector } from "react-redux";
 import { appConfig } from "../../../config";
+import ErrorMessage from "../../../components/forms/ErrorMessage";
 const { headersRef } = appConfig;
 
 export default function ExcelPasteToTable({
@@ -125,8 +126,8 @@ export default function ExcelPasteToTable({
   }
 
   return (
-    <div className="flex w-100 flex-column">
-      <div className="d-flex gap-2">
+    <div className="flex w-full flex-col">
+      <div className="flex gap-2">
         <button
           className="btn btn-primary btn-sm mx-auto"
           onClick={handlePaste}
@@ -141,12 +142,12 @@ export default function ExcelPasteToTable({
         </button>
       </div>
       {error && (
-        <div className="alert alert-danger py-1 mt-2 flex-grow-1" role="alert">
+        <div className="alert alert-error py-1 mt-2 flex-grow-1" role="alert">
           <b>ERROR: </b>
           {error}
         </div>
       )}
-      <table className="table">
+      <table className="table no-padding">
         <thead>
           <tr>
             {validFields.map((field) => (
@@ -171,10 +172,10 @@ export default function ExcelPasteToTable({
                     return (
                       <td key={field}>
                         <div
-                          className={`d-flex flex-column ${
+                          className={`flex flex-col ${
                             bool
-                              ? "justify-content-center h-100 my-auto"
-                              : "align-items-start"
+                              ? "justify-center h-full my-auto"
+                              : "items-start"
                           }`}
                         >
                           {bool ? (
@@ -185,26 +186,29 @@ export default function ExcelPasteToTable({
                             />
                           ) : (
                             <input
-                              className={`excelInput
-                            ${
-                              rowError?.used.includes(field) ||
-                              rowError?.repeated.includes(field)
-                                ? "bg-danger text-light"
-                                : ""
-                            }
+                              className={`input input-sm input-bordered ${
+                                rowError?.used.includes(field) ||
+                                rowError?.repeated.includes(field)
+                                  ? "bg-error text-base-content"
+                                  : ""
+                              }
                           `}
                               type="text"
                               name={field}
                               value={row[field]}
-                              onChange={(e) => handleChange(e, rowIndex, field)}
+                              // onChange={(e) => handleChange(e, rowIndex, field)}
+                              readOnly
                             />
                           )}
-
                           {rowError?.used.includes(field) && (
-                            <div className="errorMessage">{`${headersRef[field]}: ${row[field]} ya está en uso`}</div>
+                            <div className="w-full">
+                              <ErrorMessage>{`${headersRef[field]}: ${row[field]} ya está en uso`}</ErrorMessage>
+                            </div>
                           )}
                           {rowError?.repeated.includes(field) && (
-                            <div className="errorMessage">{`Estás repitiendo ${headersRef[field]}`}</div>
+                            <div className="w-full">
+                              <ErrorMessage>{`Estás repitiendo ${headersRef[field]}`}</ErrorMessage>
+                            </div>
                           )}
                         </div>
                       </td>
@@ -212,7 +216,7 @@ export default function ExcelPasteToTable({
                   })}
                   <td>
                     <button
-                      className="btn btn-danger btn-sm"
+                      className="btn btn-error btn-sm"
                       title="Eliminar"
                       value={rowIndex}
                       onClick={deleteRow}

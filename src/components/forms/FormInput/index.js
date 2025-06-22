@@ -1,4 +1,3 @@
-import "./index.css";
 import { appConfig } from "../../../config";
 const { headersRef } = appConfig;
 

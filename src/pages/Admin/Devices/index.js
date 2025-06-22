@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { deviceActions } from "../../../actions/StoreActions";
 import CreateDevice from "./CreateDevice";
-import "./index.css";
 import DeviceReport from "./DeviceReport";
 import { FormSelector } from "../../../components/forms/FormInput";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

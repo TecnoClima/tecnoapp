@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PeoplePicker from "../../pickers/PeoplePicker";
-import "./index.css";
 import AddCylinder from "../AddCylinder";
 import AddTextForm from "../AddText";
 import {
