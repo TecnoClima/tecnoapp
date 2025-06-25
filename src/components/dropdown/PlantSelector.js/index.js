@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { plantActions } from "../../../actions/StoreActions";
 
-export function PlantSelector(props) {
-  const { disabled, onSelect } = props;
-  // const { plant } = useSelector((state) => state.data);
+export function PlantSelector({ disabled, onSelect }) {
   const { plantList, selectedPlant } = useSelector((state) => state.plants);
   const { userData } = useSelector((state) => state.people);
   const [requested, setRequested] = useState(false);

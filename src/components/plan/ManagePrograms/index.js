@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { planActions } from "../../../actions/StoreActions";
 import NewProgram from "../../forms/NewProgram";
 import { ErrorModal, SuccessModal } from "../../warnings";
-import "./index.css";
 
 const ProgramCard = ({ strategy }) => {
   const [edit, setEdit] = useState(false);
@@ -57,6 +56,7 @@ const ProgramCard = ({ strategy }) => {
 export default function ProgramManagement(props) {
   const [create, setCreate] = useState(false);
   const { plant, year } = useSelector((state) => state.data);
+  const { selectedPlant } = useSelector((state) => state.plants);
   const { programList, planResult } = useSelector((state) => state.plan);
   const dispatch = useDispatch();
 
@@ -83,11 +83,13 @@ export default function ProgramManagement(props) {
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {programList.map((element, index) => (
-              <div key={index} className="w-full flex-grow">
-                <ProgramCard strategy={element} />
-              </div>
-            ))}
+            {programList
+              .filter(({ plant }) => plant === selectedPlant.name)
+              .map((element, index) => (
+                <div key={index} className="w-full flex-grow">
+                  <ProgramCard strategy={element} />
+                </div>
+              ))}
           </div>
           {planResult.error && planResult.id && (
             <ErrorModal

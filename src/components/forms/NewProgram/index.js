@@ -124,7 +124,6 @@ export default function NewProgram(props) {
           <div className="flex">
             <div className="w-1/3 flex-grow">
               <PlantSelector
-                value={program.plant}
                 onSelect={(plantName) => setValue("plant", plantName)}
               />
             </div>
@@ -148,7 +147,9 @@ export default function NewProgram(props) {
             key={program.supervisor}
             label="Supervisor"
             value={`${program.supervisor}`}
-            options={supervisors}
+            options={supervisors.filter(
+              ({ plant }) => plant === selectedPlant.name
+            )}
             valueField="idNumber"
             name="supervisor"
             captionField="name"
@@ -157,10 +158,12 @@ export default function NewProgram(props) {
           <div className="h-fit max-h-60 overflow-y-auto">
             <PeoplePicker
               name="Seleccionar Personal"
-              options={workersList.map((w) => ({
-                id: w.idNumber,
-                name: w.name,
-              }))}
+              options={workersList
+                .filter(({ plant }) => plant === selectedPlant.name)
+                .map((w) => ({
+                  id: w.idNumber,
+                  name: w.name,
+                }))}
               update={(idArray) => setProgram({ ...program, people: idArray })}
               idList={program ? program.people : []}
               selectedWorkers={{
