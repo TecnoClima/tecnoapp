@@ -22,13 +22,13 @@ export function FormInput(props) {
     <>
       <div className="join w-full">
         <label
-          className="label input-xs md:input-sm bg-base-content/10 w-28 join-item border border-base-content/20 min-w-fit"
+          className="label input-sm bg-base-content/10 w-28 join-item border border-base-content/20 min-w-fit"
           placeholder="Search"
         >
           {headersRef[label] || label}
         </label>
         <input
-          className="input input-xs md:input-sm input-bordered join-item flex-grow"
+          className="input input-sm input-bordered join-item flex-grow"
           autoComplete="off"
           disabled={disabled}
           defaultValue={defaultValue}

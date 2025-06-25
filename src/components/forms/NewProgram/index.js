@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { peopleActions, planActions } from "../../../actions/StoreActions";
+import { appConfig } from "../../../config";
+import ModalBase from "../../../Modals/ModalBase.js";
 import { PlantSelector } from "../../dropdown/PlantSelector.js";
 import PeoplePicker from "../../pickers/PeoplePicker";
+import { ErrorModal, SuccessModal } from "../../warnings";
 import { FormInput, FormSelector, FormTextArea } from "../FormInput";
 import "./index.css";
-import { appConfig } from "../../../config";
-import { peopleActions, planActions } from "../../../actions/StoreActions";
-import { ErrorModal, SuccessModal } from "../../warnings";
 const { headersRef } = appConfig;
 
 export default function NewProgram(props) {
@@ -113,26 +114,21 @@ export default function NewProgram(props) {
   }
 
   return (
-    <div className="modal">
+    <ModalBase
+      open={true}
+      onClose={close}
+      title={`${program.id ? "Editar" : "Crear"} programa`}
+    >
       {program && (
-        <form
-          onSubmit={handleSubmit}
-          className="container col-lg-6 bg-light bg-form"
-        >
-          <div className="row d-flex mb-2">
-            <h5 className="col mt-2">{`${
-              program.id ? "Editar" : "Crear"
-            } programa`}</h5>
-            <button className="btn btn-close m-2" onClick={close} />
-          </div>
-          <div className="row">
-            <div className="col-sm-6 mb-2">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-1">
+          <div className="flex">
+            <div className="w-1/3 flex-grow">
               <PlantSelector
                 value={program.plant}
                 onSelect={(plantName) => setValue("plant", plantName)}
               />
             </div>
-            <div className="col-sm-6 mb-2">
+            <div className="w-1/3 flex-grow">
               <FormSelector
                 label="Año"
                 name="year"
@@ -142,96 +138,70 @@ export default function NewProgram(props) {
               />
             </div>
           </div>
-          <div className="row">
-            <div className="col-sm-6 mb-2">
-              <FormInput
-                label="Nombre"
-                name="name"
-                value={program.name}
-                changeInput={handleValue}
-              />
-            </div>
-            <div className="col-sm-6 mb-2">
-              <FormSelector
-                key={program.supervisor}
-                label="Supervisor"
-                value={`${program.supervisor}`}
-                options={supervisors}
-                valueField="idNumber"
-                name="supervisor"
-                captionField="name"
-                onSelect={handleValue}
-              />
-            </div>
-          </div>
-          <div className="row mb-2">
-            <div className="input-group">
-              <label
-                className="input-group-text col-3 ps-1 pe-1 is-flex justify-content-center"
-                style={{ minWidth: "fit-content" }}
-              >
-                Personal
-              </label>
-              <div className="form-control p-0 d-grid gap-2">
-                <PeoplePicker
-                  name="Seleccionar..."
-                  options={workersList.map((w) => ({
-                    id: w.idNumber,
-                    name: w.name,
-                  }))}
-                  // options={workersList.map((w) => {
-                  //   w.id = w.idNumber;
-                  //   return w;
-                  // })}
-                  update={(idArray) =>
-                    setProgram({ ...program, people: idArray })
-                  }
-                  idList={program ? program.people : []}
-                  selectedWorkers={{
-                    caption: "Programa(s)",
-                    array: programmedWorkers,
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="row mb-2">
-            <FormTextArea
-              label={"Descripción"}
-              name="description"
-              defaultValue={program.description}
-              changeInput={handleValue}
+          <FormInput
+            label="Nombre"
+            name="name"
+            value={program.name}
+            changeInput={handleValue}
+          />
+          <FormSelector
+            key={program.supervisor}
+            label="Supervisor"
+            value={`${program.supervisor}`}
+            options={supervisors}
+            valueField="idNumber"
+            name="supervisor"
+            captionField="name"
+            onSelect={handleValue}
+          />
+          <div className="h-fit max-h-60 overflow-y-auto">
+            <PeoplePicker
+              name="Seleccionar Personal"
+              options={workersList.map((w) => ({
+                id: w.idNumber,
+                name: w.name,
+              }))}
+              update={(idArray) => setProgram({ ...program, people: idArray })}
+              idList={program ? program.people : []}
+              selectedWorkers={{
+                caption: "Programa(s)",
+                array: programmedWorkers,
+              }}
             />
           </div>
+          <FormTextArea
+            label={"Descripción"}
+            name="description"
+            defaultValue={program.description}
+            changeInput={handleValue}
+          />
           {errors ? (
-            <div className="alert alert-danger" role="alert">
+            <div className="alert alert-error" role="alert">
               {`Debe completar ${errors.join(", ")}.`}
             </div>
           ) : (
-            <div className="row mb-2 d-flex justify-content-center">
-              <div className="col-md-4 d-grid gap-2">
-                <button className="btn btn-success" type="submit">
-                  GUARDAR PROGRAMA
-                </button>
-              </div>
-            </div>
+            <button className="btn btn-success btn-sm ml-auto" type="submit">
+              GUARDAR PROGRAMA
+            </button>
           )}
         </form>
       )}
       {planResult.error && (
         <ErrorModal
           message={`No se pudo guardar el programa. Error: ${planResult.error}`}
+          open={true}
           close={() => dispatch(planActions.resetPlanResult())}
         />
       )}
       {planResult.success && (
         <SuccessModal
           message={"Programa guardado exitosamente!"}
+          open={true}
           close={() => {
             dispatch(planActions.resetPlanResult());
           }}
         />
       )}
-    </div>
+    </ModalBase>
   );
 }

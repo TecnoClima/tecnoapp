@@ -124,8 +124,8 @@ export default function PeoplePicker(props) {
   return (
     <>
       <div className="collapse bg-base-200">
-        <input type="checkbox" className="input input-sm min-h-12 h-12" />
-        <div className="collapse-title font-medium min-h-12 py-2 ">
+        <input type="checkbox" className="input input-sm min-h-10 h-10" />
+        <div className="collapse-title font-medium min-h-10 py-2 ">
           <div className="flex w-full gap-1 flex-wrap h-full items-center">
             {idList[0] && idList[0].name ? (
               idList.map((worker, index) => {
@@ -139,7 +139,7 @@ export default function PeoplePicker(props) {
                 );
               })
             ) : (
-              <div className="card-title text-center">{title}</div>
+              <div className="font-bold text-center">{title}</div>
             )}
           </div>
         </div>
