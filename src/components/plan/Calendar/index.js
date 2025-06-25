@@ -6,9 +6,8 @@ import {
   CalendarLocFilter,
   CalendarPeopleFilter,
 } from "../../filters/CalendarFilter/index.js";
-import NewPaginate from "../../newPaginate/index.js";
+import Pagination from "../../Paginate/Pagination.js";
 import CalendarPicker from "../../pickers/CalendarPicker/index.js";
-import "./index.css";
 
 export function ProgramFilter(props) {
   const [program, setProgram] = useState("");
@@ -30,17 +29,15 @@ export function ProgramFilter(props) {
   }
 
   return (
-    <div className="input-group">
-      <div className="input-group-prepend">
-        <span className="input-group-text" id="inputGroup-sizing-default">
-          Programa
-        </span>
-      </div>
+    <div className="join w-60 flex-grow">
+      <label className="label input-xs md:input-sm bg-base-content/10 join-item border border-base-content/20 min-w-fit">
+        Programa
+      </label>
       <select
         name="supervisor"
         value={program}
         onChange={handleChange}
-        className="form-control"
+        className="select select-bordered select-xs md:select-sm join-item flex-grow"
       >
         <option value="">Todos</option>
         {programList
@@ -73,8 +70,7 @@ export default function PlanCalendar(props) {
     line: "",
     device: "",
   });
-  // const [page, setPage]=useState({first: 0, size:15})
-  const [paginate, setPaginate] = useState({ first: 0, last: 15 });
+  const [page, setPage] = useState({ first: 0, size: 20 });
   const [filteredList, setFilteredList] = useState([]);
   const [dates, setDates] = useState([]);
   const [order, setOrder] = useState({ alpha: 1, date: 1 });
@@ -190,116 +186,120 @@ export default function PlanCalendar(props) {
   }, [filters, calendar, lineList]);
 
   return (
-    <>
-      <div className="container-fluid bg-light pt-1 d-flex h-full flex-column">
-        {plant.name && year ? (
-          <div>
-            <div className="row">
-              <div className="col flex">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setFiltersOn(!filtersOn);
-                  }}
-                  className="btn btn-info py-0"
-                >
-                  Filtros
-                </button>
-                {filtersOn && (
-                  <div
-                    className={filtersOn ? "row" : "hidden h-0"}
-                    style={{ transition: "height .5s" }}
-                  >
-                    <div className="col-lg-3">
-                      <CalendarFilter select={select} />
-                    </div>
-                    <div className="col-lg-auto flex-grow-1">
-                      <ProgramFilter select={select} />
-                      <CalendarPeopleFilter select={select} />
-                    </div>
-                    <div className="col-lg-auto m-0 flex-grow-1">
-                      <CalendarLocFilter select={select} />
-                    </div>
-                  </div>
-                )}
+    <div className="flex flex-col h-full gap-1 pt-1">
+      {plant.name && year ? (
+        <div
+          className="collapse bg-base-content/10"
+          style={{ borderRadius: "0.5rem" }}
+        >
+          <input
+            type="checkbox"
+            className="collapse-toggle"
+            checked={filtersOn}
+            onChange={() => setFiltersOn(!filtersOn)}
+            style={{ display: "none" }}
+          />
+          <div
+            className="collapse-title p-0"
+            style={{ minHeight: 0 }}
+            onClick={() => setFiltersOn(!filtersOn)}
+          >
+            <button
+              className="btn btn-primary py-0 flex w-full btn-sm"
+              type="button"
+            >
+              Filtros
+            </button>
+          </div>
+          <div
+            className={`collapse-content px-2 pb-[.5rem!important] ${
+              filtersOn ? "block" : "hidden"
+            }`}
+            style={{ transition: "height .5s" }}
+          >
+            <div className="flex flex-wrap w-full">
+              <div className="flex flex-wrap">
+                <CalendarFilter select={select} />
+              </div>
+              <div className="flex flex-wrap w-full">
+                <ProgramFilter select={select} />
+                <CalendarPeopleFilter select={select} />
+              </div>
+              <div className="w-full flex-wrap">
+                <CalendarLocFilter select={select} />
               </div>
             </div>
           </div>
-        ) : (
-          <div className="row">
-            <label className="longLabel">Debe seleccionar Planta y Año</label>
-          </div>
-        )}
-        <div className="row" style={{ height: "70vh", overflowY: "auto" }}>
-          <div className="col">
-            <table className="table">
-              <thead className="text-center p-0" style={{ fontSize: "75%" }}>
-                <tr>
-                  <th rowSpan="2" className="p-0">
-                    <button
-                      className="btn btn-outline-secondary m-1 py-0"
-                      onClick={sortByDevice}
-                      style={{ fontSize: "100%" }}
-                    >
-                      <b>Equipos </b>
-                      <i className="fas fa-sort-alpha-down" />
-                    </button>
-                  </th>
-                  <th rowSpan="2" className="p-0">
-                    <button
-                      className="btn btn-outline-secondary m-1 py-0 px-1"
-                      onClick={sortByFirstDate}
-                      style={{ fontSize: "100%" }}
-                    >
-                      <b>Inicio </b>
-                      <i className="fas fa-sort-numeric-down" />
-                    </button>
-                  </th>
-                  <th
-                    colSpan="12"
-                    className="fs-6 py-0"
-                  >{`Calendario ${year}`}</th>
-                </tr>
-                <tr>
-                  {months.map((month, index) => (
-                    <th
-                      className="p-0"
-                      key={index}
-                      id={index}
-                      style={{ fontSize: "90%" }}
-                    >
-                      {month}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filteredList
-                  .slice(paginate.first, paginate.last)
-                  .map((task, index) => (
-                    <CalendarPicker
-                      key={index}
-                      plant={plant}
-                      year={year}
-                      titles={index === 0}
-                      task={task}
-                      yearDates={dates}
-                    />
-                  ))}
-              </tbody>
-            </table>
-          </div>
         </div>
-        <div className="row flex-fill d-flex">
-          <NewPaginate
-            key={filteredList}
-            length={filteredList.length}
-            visible="6"
-            size="15"
-            select={(first, last, size) => setPaginate({ first, last, size })}
-          />
+      ) : (
+        <div className="row">
+          <label className="longLabel">Debe seleccionar Planta y Año</label>
         </div>
+      )}
+      <div className="flex-grow overflow-y-auto h-20">
+        <table className="table">
+          <thead className="text-center sticky top-0 p-0 text-xs bg-base-100">
+            <tr>
+              <th rowSpan="2" className="p-0">
+                <button
+                  className="btn btn-outline-secondary btn-sm m-1 py-0"
+                  onClick={sortByDevice}
+                  style={{ fontSize: "100%" }}
+                >
+                  <b>Equipos </b>
+                  <i className="fas fa-sort-alpha-down" />
+                </button>
+              </th>
+              <th rowSpan="2" className="p-0">
+                <button
+                  className="btn btn-outline-secondary btn-sm m-1 py-0 px-1"
+                  onClick={sortByFirstDate}
+                  style={{ fontSize: "100%" }}
+                >
+                  <b>Inicio </b>
+                  <i className="fas fa-sort-numeric-down" />
+                </button>
+              </th>
+              <th colSpan="12" className="fs-6 py-0">{`Calendario ${year}`}</th>
+            </tr>
+            <tr>
+              {months.map((month, index) => (
+                <th className="p-0" key={index} id={index}>
+                  {month}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {filteredList
+              .slice(page.first, page.first + page.size)
+              .map((task, i) => (
+                <CalendarPicker
+                  key={i}
+                  plant={plant}
+                  year={year}
+                  titles={i === 0}
+                  task={task}
+                  yearDates={dates}
+                />
+              ))}
+          </tbody>
+        </table>
       </div>
-    </>
+
+      <div>
+        <Pagination
+          length={filteredList.length}
+          current={Math.floor(page.first / page.size) + 1}
+          size={page.size}
+          setPage={(value) =>
+            setPage({ ...page, first: (Number(value) - 1) * page.size })
+          }
+          setSize={(value) =>
+            setPage({ ...page, size: Number(value), first: 0 })
+          }
+        />
+      </div>
+    </div>
   );
 }

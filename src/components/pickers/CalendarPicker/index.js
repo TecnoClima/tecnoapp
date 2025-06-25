@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { planActions } from "../../../actions/StoreActions";
 import "./index.css";
@@ -115,10 +114,9 @@ export default function CalendarPicker(props) {
         </div>
       </td>
       <td className="p-0">
-        <div className="d-flex align-items-center" style={{ height: "2rem" }}>
+        <div className="flex items-center">
           <input
-            className="form-control p-0 mx-auto text-center"
-            style={{ width: "3rem", fontSize: "100%" }}
+            className="input input-xs input-bordered text-center w-12"
             type="text"
             placeholder={"dd/mm"}
             value={firstDate}
@@ -130,18 +128,9 @@ export default function CalendarPicker(props) {
         <td
           key={index}
           id={index}
-          className="p-0"
-          style={{
-            borderTop: "none",
-            borderBottom: "none",
-            borderLeft: "1px solid grey",
-            borderRight: "1px solid grey",
-          }}
+          className="p-0 border-l border-r border-base-content/30 bottom-7rder-t-0 border-b-0"
         >
-          <div
-            className="d-flex align-content-center w-100 justify-content-evenly"
-            style={{ height: "2rem" }}
-          >
+          <div className="flex items-center justify-evenly w-full">
             {yearDates
               .filter((date) => new Date(date).getMonth() === index)
               .map((element) => {
@@ -157,14 +146,13 @@ export default function CalendarPicker(props) {
                 return (
                   <button
                     key={weekIndex}
-                    className={`btn p-0 my-auto ${
+                    className={`btn h-4 w-3 p-0 min-h-2 rounded-sm ${
                       stringDates.includes(date)
                         ? orders && orders[0]
                           ? "btn-warning"
                           : "btn-success"
-                        : "btn-outline-success"
+                        : "btn-success btn-outline border-primary/50"
                     }`}
-                    style={{ height: "1rem", width: ".8rem" }}
                     value={weekIndex}
                     onClick={(e) => setAllDates(e)}
                     title={

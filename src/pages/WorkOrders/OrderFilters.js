@@ -1,10 +1,10 @@
-import { datesByYear } from "../../utils/utils";
-import { appConfig } from "../../config";
-import { useSelector } from "react-redux";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimesCircle } from "@fortawesome/free-regular-svg-icons";
 import { faChevronDown, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { appConfig } from "../../config";
+import { datesByYear } from "../../utils/utils";
 const { headersRef } = appConfig;
 
 const timelapses = [
@@ -69,6 +69,7 @@ function DropdowOptions({
   label,
   onDelete,
   className = "",
+  top,
 }) {
   const options = [...new Set(list.map((order) => order[field]))].sort((a, b) =>
     a > b ? 1 : -1
@@ -81,7 +82,11 @@ function DropdowOptions({
 
   return (
     <div className="flex w-1/2 sm:w-1/3 flex-grow items-center">
-      <div className={`dropdown w-1/2 flex-grow ${className}`}>
+      <div
+        className={`dropdown ${
+          top ? "dropdown-top" : ""
+        } w-1/2 flex-grow ${className}`}
+      >
         <div
           tabIndex={0}
           role="button"
@@ -385,6 +390,7 @@ export default function OrdersFilters({
                     );
                   }}
                   onDelete={null}
+                  top
                 />
               </div>
               {timelapseIndex === 0 ? (

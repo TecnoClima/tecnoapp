@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
-import "./App.css";
-import Landing from "./pages/Landing";
-import Panel from "./pages/Panel";
-import Plan from "./pages/Plan";
-import WorkOrders from "./pages/WorkOrders";
 import { useDispatch, useSelector } from "react-redux";
-import AdminPanel from "./pages/Admin/AdminPanel";
-import WorkOrder from "./pages/WorkOrder";
-import Device from "./pages/Device";
-import { peopleActions, planActions } from "./actions/StoreActions";
-import NotFound from "./pages/NotFound";
+import { peopleActions } from "./actions/StoreActions";
+import "./App.css";
 import InnerLayout from "./components/Layout/InnerLayout";
-import AdminUsers from "./pages/Admin/Users";
-import DeviceAdmin from "./pages/Admin/Devices";
-import AdminPlants from "./pages/Admin/Plants";
-import AdminPlan from "./pages/Admin/Plan";
+import AdminPanel from "./pages/Admin/AdminPanel";
 import AdminCylinders from "./pages/Admin/Cylinders";
+import DeviceAdmin from "./pages/Admin/Devices";
 import { LoadExcel } from "./pages/Admin/LoadExcel";
 import { LoadFrequencies } from "./pages/Admin/LoadFrequencies";
+import AdminPlan from "./pages/Admin/Plan";
+import AdminPlants from "./pages/Admin/Plants";
+import AdminUsers from "./pages/Admin/Users";
+import Device from "./pages/Device";
+import Landing from "./pages/Landing";
+import NotFound from "./pages/NotFound";
+import Panel from "./pages/Panel";
+import Plan from "./pages/Plan";
+import WorkOrder from "./pages/WorkOrder";
+import WorkOrders from "./pages/WorkOrders";
 
 function App() {
   const { userData } = useSelector((state) => state.people);
@@ -202,15 +202,24 @@ function App() {
             />
           )}
           {access.isAdmin && (
-            <Route
-              exact
-              path={"/admin/plan"}
-              element={
-                <InnerLayout>
-                  <AdminPlan />
-                </InnerLayout>
-              }
-            />
+            <>
+              <Route
+                path="/admin/plan"
+                element={
+                  <InnerLayout>
+                    <AdminPlan />
+                  </InnerLayout>
+                }
+              />
+              <Route
+                path="/admin/plan/:tab"
+                element={
+                  <InnerLayout>
+                    <AdminPlan />
+                  </InnerLayout>
+                }
+              />
+            </>
           )}
           {access.isAdmin && (
             <Route

@@ -1,7 +1,5 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { appConfig } from "../../../config";
-import { FilterSelect } from "../DeviceFilters/newFilters";
 const { startingYear } = appConfig.values;
 const currentYear = new Date().getFullYear();
 const years = Array(currentYear - startingYear + 1);
@@ -45,37 +43,46 @@ export default function DateFilter(props) {
   );
 
   return (
-    <div className="sm:join text-sm bg-base-content/10 w-full sm:max-w-80">
-      <label htmlFor="date" className="plan-filter-label">
+    <div className="join">
+      <label className="label input-xs md:input-sm bg-base-content/10 w-28 join-item border border-base-content/20 min-w-fit">
         Fecha
       </label>
-      <div className="flex flex-grow">
-        <FilterSelect
-          id="year"
-          value={filters.year}
-          options={years}
-          onSelect={setFilter}
-          noLabel
-        />
-        <FilterSelect
-          id="month"
-          value={filters.month}
-          options={months}
-          onSelect={setFilter}
-          disabled={!filters.year}
-          noLabel
-          placeholder="Mes"
-        />
-        <FilterSelect
-          id="day"
-          value={filters.day}
-          options={days}
-          onSelect={setFilter}
-          disabled={!filters.month}
-          noLabel
-          placeholder="Día"
-        />
-      </div>
+      <select
+        name="year"
+        value={filters.year}
+        onChange={setFilter}
+        className="select select-bordered select-xs md:select-sm join-item"
+      >
+        {years.map((y, i) => (
+          <option key={i}>{y}</option>
+        ))}
+      </select>
+      <select
+        name="month"
+        value={filters.month}
+        onChange={setFilter}
+        disabled={!filters.year}
+        className="select select-bordered select-xs md:select-sm join-item"
+      >
+        <option value="">Mes</option>
+        {months.map((m, i) => (
+          <option key={i} value={m}>
+            {m + 1}
+          </option>
+        ))}
+      </select>
+      <select
+        name="day"
+        value={filters.day}
+        onChange={setFilter}
+        disabled={!filters.month}
+        className="select select-bordered select-xs md:select-sm join-item"
+      >
+        <option value="">Día</option>
+        {days.map((d, i) => (
+          <option key={i}>{d}</option>
+        ))}
+      </select>
     </div>
   );
 }

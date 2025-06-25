@@ -111,18 +111,16 @@ export default function Filters({ list = [], setList }) {
         // Si el filtro es de tipo texto
         if (type === "text") {
           return (
-            <div key={name} className="">
-              <div className="join items-center gap-1 bg-base-content/10">
-                <span className="w-24 label join-item input-sm text-sm px-1">
-                  {label}
-                </span>
-                <input
-                  type="text"
-                  name={name}
-                  onChange={handleChange}
-                  className="input input-sm join-item"
-                />
-              </div>
+            <div key={name} className="join">
+              <label className="label input-xs md:input-sm bg-base-content/10 w-28 join-item border border-base-content/20 min-w-fit">
+                {label}
+              </label>
+              <input
+                type="text"
+                name={name}
+                onChange={handleChange}
+                className="input input-xs md:input-sm input-bordered join-item flex-grow"
+              />
             </div>
           );
         }
@@ -130,38 +128,32 @@ export default function Filters({ list = [], setList }) {
         // Si el filtro es de tipo botones (para ordenar)
         if (type === "buttons") {
           return (
-            <div key={name} className="flex flex-grow">
-              <div className="flex bg-base-content/10 rounded-lg w-full sm:w-fit">
-                <span className="w-24 label join-item input-sm text-sm px-1">
-                  {label}
-                </span>
-                <div className="join items-center flex-grow" role="group">
-                  {/* Botón por cada opción de ordenamiento */}
-                  {data.map(({ caption, value }) => (
-                    <button
-                      key={value}
-                      type="button"
-                      className={`btn btn-sm btn-primary btn-outline px-1 md:px-4 join-item flex-grow ${
-                        orderBy === value ? "active" : ""
-                      }`}
-                      onClick={() => handleSort(value)}
-                    >
-                      <div>
-                        {caption}{" "}
-                        {orderBy === value && (
-                          <i
-                            className={
-                              ascending
-                                ? "fas fa-caret-up"
-                                : "fas fa-caret-down"
-                            }
-                          />
-                        )}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
+            <div key={name} className="join">
+              <label className="label input-xs md:input-sm bg-base-content/10 w-28 join-item border border-base-content/20 min-w-fit">
+                {label}
+              </label>
+              {/* Botón por cada opción de ordenamiento */}
+              {data.map(({ caption, value }) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`btn btn-sm btn-outline join-item ${
+                    orderBy === value ? "btn-active" : ""
+                  }`}
+                  onClick={() => handleSort(value)}
+                >
+                  <div>
+                    {caption}{" "}
+                    {orderBy === value && (
+                      <i
+                        className={
+                          ascending ? "fas fa-caret-up" : "fas fa-caret-down"
+                        }
+                      />
+                    )}
+                  </div>
+                </button>
+              ))}
             </div>
           );
         }

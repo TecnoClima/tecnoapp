@@ -52,6 +52,7 @@ export function FormInput(props) {
 export function FormSelector(props) {
   const {
     label,
+    size,
     defaultValue,
     valueField,
     name,
@@ -63,17 +64,32 @@ export function FormSelector(props) {
     disabled,
     value,
   } = props;
+  const inputClass = {
+    xs: "input-xs",
+    sm: "input-sm",
+    md: "input-md",
+    lg: "input-lg",
+  };
+  const selectClass = {
+    xs: "select-xs",
+    sm: "select-sm",
+    md: "select-md",
+    lg: "select-lg",
+  };
+  const inputSize = inputClass[size] || "input-sm";
+  const selectSize = selectClass[size] || "select-sm";
+
   return (
     <div className="join text-sm bg-base-content/10 w-full border border-base-content/20">
       <label
         htmlFor={name}
-        className="label w-20 flex-none join-item input-sm px-2"
+        className={`label w-20 flex-none ${inputSize} join-item px-2 min-w-fit`}
       >
         {headersRef[label] || label}
       </label>
 
       <select
-        className="select join-item select-sm w-20 flex-grow px-1"
+        className={`select join-item ${selectSize} w-20 flex-grow px-1`}
         name={name}
         defaultValue={defaultValue}
         readOnly={readOnly}
@@ -82,7 +98,9 @@ export function FormSelector(props) {
         onBlur={onBlur}
         onChange={(e) => onSelect && onSelect(e)}
       >
-        <option className="w-auto">Seleccione</option>
+        <option className="w-auto" value="">
+          Seleccione
+        </option>
         {options &&
           options.map((element, index) => (
             <option

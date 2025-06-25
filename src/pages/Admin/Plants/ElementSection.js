@@ -1,3 +1,5 @@
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { plantActions } from "../../../actions/StoreActions";
@@ -7,8 +9,6 @@ import {
 } from "../../../components/warnings/index.js";
 import { appConfig } from "../../../config.js";
 import CreateElement from "./CreateElement.js";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const { headersRef } = appConfig;
 
@@ -60,7 +60,7 @@ export default function ElementSection(props) {
             data={data}
           />
         )}
-        <div className="flex w-full items-center justify-between gap-4">
+        <div className="flex w-full items-center justify-between gap-4 mb-1">
           <div className="card-title">{headersRef[item]}</div>
           <button
             className="btn btn-success btn-sm"

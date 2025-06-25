@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
-import { appConfig } from "../../../config";
-import { useSelector } from "react-redux";
-import ErrorMessage from "../../forms/ErrorMessage";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { deviceActions } from "../../../actions/StoreActions";
+import { appConfig } from "../../../config";
+import ErrorMessage from "../../forms/ErrorMessage";
 const { headersRef } = appConfig;
 // const unassigned = "SIN PROGRAMA ASIGNADO";
 
@@ -17,11 +18,11 @@ export function FilterSelect({
   placeholder,
 }) {
   return (
-    <div className="join text-sm bg-base-content/10 w-full">
+    <div className="join text-sm bg-base-content/10 w-full border border-base-content/20">
       {!noLabel && (
         <label
           htmlFor={id}
-          className="label w-20 flex-none join-item input-sm px-2"
+          className="label w-20 flex-none join-item input-sm px-2 min-w-fit"
         >
           {headersRef[id] || id}
         </label>
@@ -56,18 +57,18 @@ export function FilterInput({
   placeholder,
 }) {
   return (
-    <div className="join text-sm bg-base-content/10 w-full">
+    <div className="join w-full">
       {!noLabel && (
         <label
           htmlFor={id}
-          className="label w-20 flex-none join-item input-sm px-2"
+          className="label input-xs md:input-sm bg-base-content/10 w-28 join-item border border-base-content/20 min-w-fit"
         >
           {headersRef[id] || id}
         </label>
       )}
       <input
         onChange={onChange && onChange}
-        className="input input-sm join-item flex-grow w-20 px-1"
+        className="input input-xs md:input-sm input-bordered join-item flex-grow"
         value={value ?? ""}
         placeholder={placeholder}
         type="text"
@@ -92,8 +93,11 @@ function FilterRangedInput({
 }) {
   return (
     <div className="relative">
-      <div className="join items-center w-full bg-base-content/10">
-        <label htmlFor={id} className="w-20 flex-none join-item input-sm px-2">
+      <div className="join items-center w-full">
+        <label
+          htmlFor={id}
+          className="label input-xs md:input-sm bg-base-content/10 w-28 join-item border border-base-content/20 min-w-fit"
+        >
           {headersRef[id] || id}
         </label>
         <input
@@ -104,7 +108,7 @@ function FilterRangedInput({
           value={min || ""}
           onChange={handleSetFilter}
           name={`${id}Min`}
-          className="input input-sm join-item w-12 flex-grow"
+          className="input input-xs md:input-sm input-bordered join-item w-12 flex-grow"
         />
         <input
           id={`${id}Max`}
@@ -114,9 +118,9 @@ function FilterRangedInput({
           value={max || ""}
           onChange={handleSetFilter}
           name={`${id}Max`}
-          className="input input-sm join-item w-12 flex-grow"
+          className="input input-xs md:input-sm input-bordered join-item w-12 flex-grow"
         />
-        {unitArray?.[0] &&
+        {unitArray?.length > 1 ? (
           unitArray.map((u) => (
             <button
               key={u}
@@ -129,7 +133,14 @@ function FilterRangedInput({
             >
               {u}
             </button>
-          ))}
+          ))
+        ) : unitArray?.[0] ? (
+          <label className="label input-xs md:input-sm bg-base-content/10 join-item min-w-fit">
+            {unitArray[0]}
+          </label>
+        ) : (
+          <></>
+        )}
       </div>
       {errors[id] && <ErrorMessage>{errorMessage}</ErrorMessage>}
     </div>
@@ -141,11 +152,20 @@ export default function DeviceFilters({
   filters,
   setFilters,
   initialFilter,
+  hidePlant,
+  plant,
 }) {
   const { deviceOptions } = useSelector((state) => state.devices);
   const { userData } = useSelector((state) => state.people);
   const [errors, setErrors] = useState({});
   const closeSidebar = useRef(null);
+  const dispatch = useDispatch();
+
+  // get the filters
+  useEffect(() => {
+    if (JSON.stringify(deviceOptions) === "{}" || !deviceOptions)
+      dispatch(deviceActions.allOptions());
+  }, [dispatch, deviceOptions]);
 
   function handleSetRequestFilters(e) {
     e.preventDefault();
@@ -163,7 +183,7 @@ export default function DeviceFilters({
     }
     if (!newRequestFilters.powerMin && !newRequestFilters.powerMax)
       delete newRequestFilters.powerUnit;
-    setFilters(newRequestFilters);
+    setFilters(plant ? { ...newRequestFilters, plant } : newRequestFilters);
   }
 
   useEffect(() => {
@@ -192,9 +212,6 @@ export default function DeviceFilters({
     setFilters(initialFilter);
     onSubmit && onSubmit(initialFilter);
   }
-
-  // useEffect(() => console.log("filters", filters), [filters]);
-  // useEffect(() => console.log(errors), [errors]);
 
   return (
     <>
@@ -231,7 +248,7 @@ export default function DeviceFilters({
                 <FontAwesomeIcon icon={faTimes} className="h-5 mx-1" />
               </button>
             </div>
-            {userData.access === "Admin" && (
+            {userData.access === "Admin" && !hidePlant && (
               <FilterSelect
                 id="plant"
                 value={filters.plant}

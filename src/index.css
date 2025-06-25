@@ -127,4 +127,11 @@
   .device-info-item {
     @apply flex items-center gap-2 w-40 flex-grow border border-dotted border-white/20 border-collapse p-1;
   }
+  .tabs-lifted
+    > .tab:is(.tab-active, [aria-selected="true"]):not(.tab-disabled):not(
+      [disabled]
+    )::before,
+  .tabs-lifted > .tab:is(input:checked):first-child:before {
+    @apply hidden;
+  }
 }

@@ -26,59 +26,63 @@ export default function AdminPlants() {
       <div className="flex w-full items-center justify-between flex-wrap gap-2">
         <div className="page-title">Administración de plantas</div>
       </div>
-      <ElementSection
-        item="plant"
-        array={plantList}
-        data={data}
-        setData={handleSetData}
-        create={plantActions.createPlant}
-        update={plantActions.updatePlant}
-        deleteAction={plantActions.deletePlant}
-        getAction={plantActions.getPlants}
-        enableCreation={true}
-      />
+      <div className="flex flex-col gap-2">
+        <ElementSection
+          item="plant"
+          array={plantList}
+          data={data}
+          setData={handleSetData}
+          create={plantActions.createPlant}
+          update={plantActions.updatePlant}
+          deleteAction={plantActions.deletePlant}
+          getAction={plantActions.getPlants}
+          enableCreation={true}
+        />
 
-      <ElementSection
-        item="area"
-        array={areaList.filter((a) =>
-          data.plant ? a.plant === data.plant._id : a
-        )}
-        data={data}
-        setData={handleSetData}
-        create={plantActions.createArea}
-        update={plantActions.updateArea}
-        deleteAction={plantActions.deleteArea}
-        getAction={plantActions.getAreas}
-        enableCreation={!!data.plant}
-      />
+        <ElementSection
+          item="area"
+          array={areaList.filter((a) =>
+            data.plant ? a.plant === data.plant._id : a
+          )}
+          data={data}
+          setData={handleSetData}
+          create={plantActions.createArea}
+          update={plantActions.updateArea}
+          deleteAction={plantActions.deleteArea}
+          getAction={plantActions.getAreas}
+          enableCreation={!!data.plant}
+        />
 
-      <ElementSection
-        item="line"
-        array={lineList.filter((a) =>
-          data.area ? a.area._id === data.area._id : a
-        )}
-        data={data}
-        setData={handleSetData}
-        create={plantActions.createLine}
-        update={plantActions.updateLine}
-        deleteAction={plantActions.deleteLine}
-        getAction={plantActions.getLines}
-        enableCreation={!!data.area}
-      />
+        <ElementSection
+          item="line"
+          array={lineList.filter((a) =>
+            data.area ? a.area._id === data.area._id : a
+          )}
+          data={data}
+          setData={handleSetData}
+          create={plantActions.createLine}
+          update={plantActions.updateLine}
+          deleteAction={plantActions.deleteLine}
+          getAction={plantActions.getLines}
+          enableCreation={!!data.area}
+        />
 
-      <ElementSection
-        item="servicePoint"
-        array={spList.filter((i) =>
-          data.line ? i.lineId === data.line._id || i.line === data.line._id : i
-        )}
-        data={data}
-        setData={handleSetData}
-        create={plantActions.createSP}
-        update={plantActions.updateSP}
-        deleteAction={plantActions.deleteSP}
-        getAction={plantActions.getSPs}
-        enableCreation={!!data.line}
-      />
+        <ElementSection
+          item="servicePoint"
+          array={spList.filter((i) =>
+            data.line
+              ? i.lineId === data.line._id || i.line === data.line._id
+              : i
+          )}
+          data={data}
+          setData={handleSetData}
+          create={plantActions.createSP}
+          update={plantActions.updateSP}
+          deleteAction={plantActions.deleteSP}
+          getAction={plantActions.getSPs}
+          enableCreation={!!data.line}
+        />
+      </div>
     </div>
   );
 }
