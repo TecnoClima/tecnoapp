@@ -1,13 +1,16 @@
-import * as xlsx from "xlsx/xlsx.mjs";
+import { faCopy } from "@fortawesome/free-regular-svg-icons";
+import { faFileUpload } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import * as xlsx from "xlsx/xlsx.mjs";
 import { deviceActions } from "../../../actions/StoreActions";
+import waiting from "../../../assets/searching.gif";
+import { ErrorModal, SuccessModal } from "../../../components/warnings";
 import { appConfig } from "../../../config";
-import "./index.css";
+import ModalBase from "../../../Modals/ModalBase";
 import { excelDateToJSDate } from "../../../utils/utils";
 import { LoadLocations } from "./form";
-import { ErrorModal, SuccessModal } from "../../../components/warnings";
-import waiting from "../../../assets/searching.gif";
 const { postExcel, allOptions } = deviceActions;
 const { headersRef } = appConfig;
 
@@ -44,6 +47,7 @@ export function LoadExcel() {
   const [deviceList, setDeviceList] = useState(null);
   const [addLocations, setAddLocations] = useState(false);
   const [file, setFile] = useState(null);
+  const [openErrors, setOpenErrors] = useState(false);
   const dispatch = useDispatch();
 
   const [data, setData] = useState({});
@@ -108,7 +112,7 @@ export function LoadExcel() {
 
   useEffect(() => {
     if (!file && data && deviceOptions) return;
-    function checkAndUpload(fileData) {
+    function checkData(fileData) {
       try {
         setErrors(null);
         const workbook = xlsx.read(fileData);
@@ -122,6 +126,7 @@ export function LoadExcel() {
           }
         const errors = [];
         for (let device of rows) {
+          console.log("device", device);
           const { plant, area, line, spCode } = device;
 
           let error = {};
@@ -129,7 +134,7 @@ export function LoadExcel() {
           let ls = [];
           for (let sp of servicePoints) {
             const servicePoint = options.spList.find(
-              (item) => item.name.toUpperCase() === sp.toUpperCase()
+              (item) => item?.name?.toUpperCase() === sp.toUpperCase()
             );
             if (!servicePoint) {
               ls.push({ plant, area, line, code: spCode, servicePoint: sp });
@@ -166,6 +171,7 @@ export function LoadExcel() {
           } else {
             device.servicePoints = servicePoints;
           }
+          console.log("keys", keys);
           for (let key of keys) {
             if (!["code", "spCode"].includes(key)) {
               const { examples } = data[key];
@@ -210,6 +216,7 @@ export function LoadExcel() {
             errors.push({ device: device.name, ...error });
         }
         if (errors.find((e) => e.ls)) setAddLocations(true);
+        console.log("errors", errors);
         if (errors.length) {
           setErrors(errors);
         } else {
@@ -220,7 +227,7 @@ export function LoadExcel() {
         // alert("No se pudo procesar archivo: " + e.message);
       }
     }
-    checkAndUpload(file);
+    checkData(file);
   }, [file, data, deviceOptions, options]);
 
   function filterLocation(field, value) {
@@ -301,112 +308,113 @@ export function LoadExcel() {
 
   function closeLoadLocations(loaded) {
     inputRef.current.value = null;
+    setFile(null);
     setAddLocations(false);
+    setErrors(null);
     loaded && dispatch(allOptions());
   }
 
+  useEffect(() => {
+    if (deviceResult.errors?.[0]) setOpenErrors(true);
+  }, [deviceResult.errors]);
+
+  useEffect(() => console.log("errors", errors), [errors]);
+
   return (
-    <div className="adminOptionSelected p-4">
-      <div className="w-100 flex flex-column">
-        <h3>Cargar datos desde archivo excel</h3>
-        <div className="w-100 overflow-auto">
-          <table
-            className="table h-25"
-            style={{
-              fontSize: "70%",
-            }}
-          >
-            <thead>
-              <tr>
-                {Object.keys(data).map((field, index) => (
-                  <td key={index} className="text-center fw-bold">
-                    {headersRef[field]}
-                  </td>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="h-100">
-              <tr>
-                {Object.keys(data).map((field, index) => (
-                  <td key={index}>
-                    <div className="h-100 w-100 d-flex align-items-center justify-content-center text-center">
-                      {data[field].subtitle}
-                    </div>
-                  </td>
-                ))}
-              </tr>
-              <tr className="h-100">
-                {Object.keys(data).map((field, index) => (
-                  <td
-                    key={index}
-                    className="border border-1 border-secondary px-2"
-                  >
-                    <div
-                      style={{
-                        maxHeight: "25vh",
-                        overflowY: "auto",
-                        overflowX: "hidden",
-                      }}
-                    >
-                      {data[field].examples &&
-                        data[field].examples.sort().map((value, index) => {
-                          const selected = filters[field] === value;
-                          return (
-                            <div
-                              key={index}
-                              className={
-                                "d-flex align-items-center " +
-                                (selected ? "bg-primary text-white" : "")
-                              }
-                              style={{
-                                cursor: "pointer",
-                                borderTop: "1px dotted black",
-                                borderBottom: "1px dotted black",
-                              }}
+    <div className="page-container">
+      <div className="flex w-full justify-between flex-wrap">
+        <div className="page-title">Cargar datos desde archivo excel</div>
+      </div>
+      <div className="w-full overflow-auto">
+        <table className="table no-padding text-xs">
+          <thead className="sticky top-0 bg-base-100">
+            <tr>
+              {Object.keys(data).map((field, index) => (
+                <td key={index} className="text-center font-bold">
+                  {headersRef[field]}
+                </td>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="sticky top-4 bg-base-100">
+              {Object.keys(data).map((field, index) => (
+                <td key={index}>
+                  <div className="h-full w-full flex items-center justify-center text-center">
+                    {data[field].subtitle}
+                  </div>
+                </td>
+              ))}
+            </tr>
+            <tr>
+              {Object.keys(data).map((field, index) => (
+                <td
+                  key={index}
+                  className="border border-base-content/25 px-2 align-top"
+                >
+                  <div className="flex flex-col h-96 min-h-0 overflow-x-hidden overflow-y-auto">
+                    {data[field].examples &&
+                      data[field].examples.sort().map((value, index) => {
+                        const selected = filters[field] === value;
+                        return (
+                          <div
+                            key={index}
+                            className={`
+                              flex items-center cursor-pointer hover:bg-primary/25
+                              ${selected ? "bg-primary" : ""}
+                            `}
+                            style={{
+                              cursor: "pointer",
+                              borderTop: "1px dotted black",
+                              borderBottom: "1px dotted black",
+                            }}
+                          >
+                            <button
+                              title="Copiar al portapapeles"
+                              className="bg-transparent"
+                              value={value}
+                              onClick={copyToClipboard}
                             >
-                              <button
-                                title="Copiar al portapapeles"
-                                className="border-0 bg-transparent"
-                                value={value}
-                                onClick={copyToClipboard}
-                              >
-                                <i
-                                  className={`far fa-copy " ${
-                                    selected ? "text-white" : ""
-                                  }`}
-                                />
-                              </button>
-                              <span
-                                onClick={() => filterLocation(field, value)}
-                              >
-                                {value}
-                              </span>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                              <FontAwesomeIcon
+                                icon={faCopy}
+                                className={
+                                  selected
+                                    ? "text-base-content mr-1"
+                                    : "text-base-content/75 mr-1"
+                                }
+                              />
+                            </button>
+                            <span
+                              className="text-base-content/75"
+                              onClick={() => filterLocation(field, value)}
+                            >
+                              {value}
+                            </span>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div className="w-full flex flex-col mt-4">
         {uploading && (
-          <div
-            className="w-25 flex flex-column text-center align-self-center"
-            style={{ minWidth: "10rem" }}
-          >
+          <div className="w-1/4 min-w-40 flex flex-col m-auto text-center">
             <img className="" src={waiting} alt="ventilador girando" />
             <b>Cargando Equipos</b>
           </div>
         )}
         {!uploading && (
-          <div>
-            <div className="d-flex my-3">
+          <div className="flex flex-col items-center w-fit ">
+            <div className="flex gap-2">
               <form
                 onSubmit={handleSubmit}
                 method="POST"
                 encType="multipart/form-data"
+                className="flex gap-2 items-center"
               >
                 <input
                   type="file"
@@ -414,18 +422,19 @@ export function LoadExcel() {
                   ref={inputRef}
                   onChange={changeFile}
                   onClick={() => setErrors(null)}
+                  className="file-input file-input-sm min-w-fit file-input-bordered file-input-primary w-full max-w-xs"
                 />
+
                 <button
-                  className="btn btn-outline-warning mx-2"
+                  className="btn btn-warning btn-outline btn-sm"
                   type="submit"
                   disabled={!(deviceList && deviceList[0])}
                 >
-                  <i className="fas fa-file-upload me-2" />
-                  Subir
+                  <FontAwesomeIcon icon={faFileUpload} /> Subir
                 </button>
               </form>
               <button
-                className="btn btn-outline-info"
+                className="btn btn-info btn-outline btn-sm"
                 onClick={() =>
                   buildXLSX(Object.keys(data).map((key) => headersRef[key]))
                 }
@@ -434,7 +443,7 @@ export function LoadExcel() {
               </button>
             </div>
             {deviceList && !errors && (
-              <div className="alert alert-success">
+              <div className="alert py-2 mt-2 alert-success w-fit opacity-75">
                 Click en [<i className="fas fa-file-upload me-2" />
                 Subir] para cargar los equipos
               </div>
@@ -443,34 +452,50 @@ export function LoadExcel() {
         )}
 
         {errors && (
-          <div className="alert-danger h-50 overflow-auto">
-            Ooops! Hubo algunos errores... Hay que corregir lo siguiente para
-            poder subir el archivo
-            {errors.map((error, index) => (
-              <div key={index} className="p-2">
-                <b>Equipo: {error.device}</b>
-                {Object.keys(error)
-                  .filter((key) => !["device", "ls"].includes(key))
-                  .map((key, index) => (
-                    <div key={index} style={{ fontSize: "70%" }}>
-                      {headersRef[key]}: <i>{error[key]}</i>
-                    </div>
-                  ))}
-              </div>
-            ))}
-          </div>
+          <ModalBase
+            open={true}
+            title="Ooops!"
+            className="bg-error"
+            onClose={() => {
+              inputRef.current.value = "";
+              setErrors(null);
+            }}
+          >
+            Hubo algunos errores... Hay que corregir lo siguiente para poder
+            subir el archivo
+            <div className="max-h-48 overflow-y-auto">
+              {errors.map((error, index) => (
+                <div key={index} className="p-2">
+                  <b>Equipo: {error.device}</b>
+                  <ul className="list-disc pl-8">
+                    {Object.keys(error)
+                      .filter((key) => !["device", "ls"].includes(key))
+                      .map((key, index) => (
+                        <li key={index}>
+                          {headersRef[key]}: {error[key]}
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </ModalBase>
         )}
         {deviceResult.errors && deviceResult.errors[0] && (
-          <div className="alert alert-danger h-50 overflow-auto" role="alert">
-            <div className="fw-bold">
-              Se encontraron los siguientes errores:
+          <ModalBase
+            open={openErrors}
+            title="Se encontraron los siguientes errores:"
+            className="flex flex-col bg-error text-error-content"
+            onClose={() => setOpenErrors(false)}
+          >
+            <div className="h-3/4 min-h-0 overflow-y-auto">
+              <ul className="list-disc pl-4">
+                {deviceResult.errors.map((item) => (
+                  <li>{item.error}</li>
+                ))}
+              </ul>
             </div>
-            <ul>
-              {deviceResult.errors.map((item) => (
-                <li>{item.error}</li>
-              ))}
-            </ul>
-          </div>
+          </ModalBase>
         )}
       </div>
       {addLocations && (
