@@ -115,7 +115,7 @@
     @apply input input-bordered input-sm text-base-content px-1 sm:px-3 focus-visible:outline-none;
   }
   .page-container {
-    @apply flex flex-col h-full min-h-0 py-1 p-0 sm:p-3;
+    @apply flex flex-col h-full min-h-0 py-1 px-2 sm:p-3;
   }
   .table.no-padding th,
   .table.no-padding td {

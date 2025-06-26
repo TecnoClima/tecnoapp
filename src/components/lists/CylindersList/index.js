@@ -1,10 +1,10 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { cylinderActions } from "../../../actions/StoreActions";
 import NewCylinder from "../../forms/NewCylinder";
 
-import "./index.css";
+import { faPencil } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function CylindersList({ cylinders, workers, statuses }) {
   const { refrigerants } = useSelector((state) => state.adminCylinders);
@@ -35,8 +35,8 @@ export default function CylindersList({ cylinders, workers, statuses }) {
         />
       )}
 
-      <table className="table table-striped" style={{ textAlign: "center" }}>
-        <thead>
+      <table className="table no-padding text-center">
+        <thead className="sticky bg-base-100 top-0">
           <tr>
             <th scope="col">Código</th>
             <th scope="col">Asignado</th>
@@ -53,8 +53,17 @@ export default function CylindersList({ cylinders, workers, statuses }) {
             cylinders.map((element, index) => {
               const { user } = element;
               return (
-                <tr key={index}>
+                <tr
+                  key={index}
+                  className="relative group hover:bg-base-content/5 cursor-pointer"
+                  onClick={() => handleEditCylinder(element.id)}
+                >
                   <td>
+                    <FontAwesomeIcon
+                      icon={faPencil}
+                      className="absolute top-1/2 -translate-y-1/2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    />
+
                     <b>{element.code}</b>
                   </td>
                   {/* <td>{element.user? workers.find(e=>e.id===element.user).name : 'STOCK'}</td> */}
@@ -77,9 +86,9 @@ export default function CylindersList({ cylinders, workers, statuses }) {
                   <td>{element.initialStock}</td>
                   <td>{element.currentStock}</td>
                   <td>{element.refrigerant}</td>
-                  <td>
+                  <td className="text-start">
                     <button
-                      className="btn btn-danger"
+                      className="btn btn-error btn-outline btn-sm btn-square"
                       title="Eliminar"
                       onClick={() =>
                         dispatch(cylinderActions.delete(element.id))
@@ -88,15 +97,6 @@ export default function CylindersList({ cylinders, workers, statuses }) {
                       value={element.id}
                     >
                       <i className="fas fa-trash-alt" />
-                    </button>
-                    <button
-                      className="btn btn-info"
-                      title="Modificar"
-                      value={element._id}
-                      style={{ margin: "0 .2rem" }}
-                      onClick={() => handleEditCylinder(element.id)}
-                    >
-                      <i className="fas fa-pencil-alt" />
                     </button>
                   </td>
                 </tr>

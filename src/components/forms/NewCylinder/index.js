@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import "./index.css";
-import { FormInput, FormSelector } from "../FormInput";
 import { cylinderActions } from "../../../actions/StoreActions.js";
 import { appConfig } from "../../../config";
+import ModalBase from "../../../Modals/ModalBase.js";
+import { FormInput, FormSelector } from "../FormInput";
 const { cylinderStatuses } = appConfig;
 
 const NewCylinder = ({ cylinder, onClose, statuses }) => {
@@ -77,110 +76,100 @@ const NewCylinder = ({ cylinder, onClose, statuses }) => {
   }, [cylinderResult, dispatch]);
 
   return (
-    <div className="modal">
+    <ModalBase
+      open={true}
+      title={inputCylinder.id ? "Editar Garrafa" : "Agregar Nueva "}
+      Garrafa
+      onClose={handleClose}
+    >
       <form
         onSubmit={(e) => handleSubmitCylinder(e)}
         id="addCylinder"
-        className="form bg-light p-3 container w-auto"
-        style={{ alignItems: "center" }}
+        className="flex flex-col gap-1"
       >
-        <div className="row justify-content-between">
-          <div className="col">
-            <h5>{inputCylinder.id ? "Editar " : "Agregar Nueva "} Garrafa</h5>
+        <FormInput
+          label="Código"
+          changeInput={(e) => handleChange(e)}
+          name="code"
+          defaultValue={inputCylinder.code}
+          placeholder="Ingrese el código..."
+        />
+
+        <FormSelector
+          label="Freon"
+          name="refrigerant"
+          options={refrigerants}
+          valueField="id"
+          defaultValue={inputCylinder.refrigerant}
+          captionField="refrigerante"
+          disabled={!inputCylinder.code}
+          onSelect={(e) => handleChange(e)}
+        />
+
+        <FormInput
+          label="Peso Inicial (kg)"
+          name="initialStock"
+          defaultValue={inputCylinder.initialStock}
+          type="number"
+          min="0"
+          max="16"
+          step=".1"
+          placeholder="Peso [kg]"
+          disabled={!inputCylinder.refrigerant}
+          changeInput={(e) => handleChange(e)}
+        />
+
+        {inputCylinder.user && !inputCylinder.user.active && (
+          <div className="errorMessage">
+            El usuario asignado no se encuentra activo
           </div>
-          <div className="col-auto">
-            <button className="btn btn-close" onClick={() => handleClose()} />
+        )}
+        <FormSelector
+          label="Destino"
+          name="assignedTo"
+          valueField="idNumber"
+          captionField="name"
+          value={inputCylinder.assignedTo}
+          disabled={!inputCylinder.initialStock}
+          options={workersList}
+          onSelect={handleChange}
+        />
+        <div className="join text-sm bg-base-content/10 w-full border border-base-content/20">
+          <div
+            className={`label w-20 input-sm flex-none join-item px-2 min-w-fit`}
+          >
+            Estado
           </div>
+          {cylinderStatuses
+            .filter(
+              (s) => s.name !== (inputCylinder.assignedTo ? "Nueva" : "En uso")
+            )
+            .map((s, i) => (
+              <button
+                key={i}
+                className={`btn join-item btn-sm w-20 flex-grow ${
+                  inputCylinder.status === s.name
+                    ? s.class.selected
+                    : s.class.unselected
+                }`}
+                name="status"
+                value={s.name}
+                onClick={handleChange}
+              >
+                {s.name}
+              </button>
+            ))}
         </div>
-        <div className="row">
-          <div className="col-12 d-flex flex-column gap-1">
-            <FormInput
-              label="Código"
-              changeInput={(e) => handleChange(e)}
-              name="code"
-              defaultValue={inputCylinder.code}
-              placeholder="Ingrese el código..."
-            />
 
-            <FormSelector
-              label="Freon"
-              name="refrigerant"
-              options={refrigerants}
-              valueField="id"
-              defaultValue={inputCylinder.refrigerant}
-              captionField="refrigerante"
-              disabled={!inputCylinder.code}
-              onSelect={(e) => handleChange(e)}
-            />
-
-            <FormInput
-              label="Peso Inicial (kg)"
-              name="initialStock"
-              defaultValue={inputCylinder.initialStock}
-              type="number"
-              min="0"
-              max="16"
-              step=".1"
-              placeholder="Peso [kg]"
-              disabled={!inputCylinder.refrigerant}
-              changeInput={(e) => handleChange(e)}
-            />
-
-            {inputCylinder.user && !inputCylinder.user.active && (
-              <div className="errorMessage">
-                El usuario asignado no se encuentra activo
-              </div>
-            )}
-            <FormSelector
-              label="Destino"
-              name="assignedTo"
-              valueField="idNumber"
-              captionField="name"
-              value={inputCylinder.assignedTo}
-              disabled={!inputCylinder.initialStock}
-              options={workersList}
-              onSelect={handleChange}
-            />
-
-            <div className="input-group">
-              <div className="input-group-prepend">
-                <span className="input-group-text">Estado</span>
-              </div>
-              {cylinderStatuses
-                .filter(
-                  (s) =>
-                    s.name !== (inputCylinder.assignedTo ? "Nueva" : "En uso")
-                )
-                .map((s, i) => (
-                  <button
-                    key={i}
-                    className={`btn ${
-                      inputCylinder.status === s.name
-                        ? s.class.selected
-                        : s.class.unselected
-                    }`}
-                    name="status"
-                    value={s.name}
-                    onClick={handleChange}
-                  >
-                    {s.name}
-                  </button>
-                ))}
-            </div>
-
-            {!cylinderResult.success && (
-              <div className="formField">
-                <button
-                  className="btn btn-success"
-                  type="submit"
-                  disabled={!inputCylinder.status}
-                >
-                  GUARDAR GARRAFA
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+        {!cylinderResult.success && (
+          <button
+            className="btn btn-success btn-sm ml-auto mt-4"
+            type="submit"
+            disabled={!inputCylinder.status}
+          >
+            GUARDAR GARRAFA
+          </button>
+        )}
 
         {alarm && (
           <div className="alert alert-danger" role="alert">
@@ -208,7 +197,7 @@ const NewCylinder = ({ cylinder, onClose, statuses }) => {
           </div>
         )}
       </form>
-    </div>
+    </ModalBase>
   );
 };
 
