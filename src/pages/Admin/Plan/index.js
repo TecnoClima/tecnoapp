@@ -37,10 +37,10 @@ export default function AdminPlan() {
   )?.component;
 
   useEffect(() => {
-    if (!tab) {
+    if (!Component) {
       navigate(routes[0].path);
     }
-  }, [tab, navigate]);
+  }, [Component, navigate]);
 
   return (
     <div className="page-container">

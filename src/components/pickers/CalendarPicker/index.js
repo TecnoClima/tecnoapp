@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { planActions } from "../../../actions/StoreActions";
-import "./index.css";
 
 export default function CalendarPicker(props) {
   const { year, task, yearDates } = props;

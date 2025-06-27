@@ -1,8 +1,3 @@
-import React, { useState } from "react";
-import logo from "../../assets/icons/logoTecnoclima.png";
-import { Link, NavLink, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
   faCalendarAlt,
@@ -12,6 +7,11 @@ import {
   faSignOutAlt,
   faTools,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import logo from "../../assets/icons/logoTecnoclima.png";
 import PasswordForm from "../../Modals/Password";
 import MenuOptions from "../MenuOptions";
 
@@ -126,16 +126,11 @@ export default function InnerLayout({ children }) {
               <div className="text-sm text-center font-semibold">
                 Gestión de Mantenimiento
               </div>
-              <div className="h-8">
-                {mode && (
-                  <div
-                    className="badge badge-pill badge-danger"
-                    style={{ backgroundColor: "darkred" }}
-                  >
-                    modo {mode}
-                  </div>
-                )}
-              </div>
+              {mode && (
+                <div className="badge badge-pill badge-primary mx-auto py-2">
+                  modo {mode}
+                </div>
+              )}
               <ul className="menu text-base-content gap-2">
                 {routes.map(({ section, url, icon }, index) => (
                   <li key={index}>
@@ -183,7 +178,7 @@ export default function InnerLayout({ children }) {
                   Cambiar Contraseña
                 </button>
               </ul>
-              <div className="divider mt-0 mb-2 pb-0"></div>
+              <div className="divider mt-0 mb-2 pb-0" />
               <div className="px-2">
                 <button
                   className="btn btn-sm btn-ghost w-full justify-start"

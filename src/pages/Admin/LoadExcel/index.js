@@ -455,7 +455,7 @@ export function LoadExcel() {
           <ModalBase
             open={true}
             title="Ooops!"
-            className="bg-error"
+            className="bg-error text-error-content"
             onClose={() => {
               inputRef.current.value = "";
               setErrors(null);
