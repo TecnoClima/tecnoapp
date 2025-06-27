@@ -4,10 +4,10 @@ import { peopleActions, plantActions } from "../../../actions/StoreActions";
 import UserCard from "../../../components/Cards/UserCards/UserCard";
 import UserDetail from "../../../components/forms/UserDetail";
 
+import { faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FormSelector } from "../../../components/forms/FormInput";
 import { appConfig } from "../../../config";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
 // import "./index.css";
 const { headersRef } = appConfig;
 
@@ -59,7 +59,8 @@ export default function AdminUsers() {
         }
         if (
           nameFilter &&
-          !u.name.toLowerCase().includes(nameFilter.toLowerCase())
+          !u.name.toLowerCase().includes(nameFilter.toLowerCase()) &&
+          !u.username.toLowerCase().includes(nameFilter.toLowerCase())
         )
           check = false;
         return check;

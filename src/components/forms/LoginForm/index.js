@@ -70,7 +70,11 @@ export default function LoginForm() {
         </form>
       </div>
       {peopleResult.error && (
-        <ErrorModal message={peopleResult.error} close={handleClose} />
+        <ErrorModal
+          open={true}
+          message={peopleResult.error}
+          close={handleClose}
+        />
       )}
     </>
   );

@@ -1,29 +1,28 @@
-import { useCallback, useEffect } from "react";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { deviceActions, workOrderActions } from "../../actions/StoreActions";
-import { appConfig } from "../../config";
-import DeviceList from "../../components/Devices/DeviceList";
-import InterventionList from "../../components/lists/InterventionList";
-import AddIntervention from "../../components/forms/InterventionForm";
-import WOProgress from "../../components/progress/WOProgresBar";
-import { ErrorModal, SuccessModal } from "../../components/warnings";
-import WarningErrors from "../../components/warnings/WarningErrors";
-import ForPlan from "../../components/workOrder/ForPlan";
-import { useNavigate, useParams } from "react-router-dom";
-import WorkerSelector from "../../components/workOrder/WorkerSelector";
-import FollowDevice from "../../components/DevicePage/FollowDevice";
-import LoadOrdersFromExcel from "../../components/workOrder/UploadFromExcel";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMapMarkerAlt,
   faSearch,
   faSyncAlt,
   faTable,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { deviceActions, workOrderActions } from "../../actions/StoreActions";
+import FollowDevice from "../../components/DevicePage/FollowDevice";
+import DeviceList from "../../components/Devices/DeviceList";
+import AddIntervention from "../../components/forms/InterventionForm";
+import InterventionList from "../../components/lists/InterventionList";
+import WOProgress from "../../components/progress/WOProgresBar";
+import { ErrorModal, SuccessModal } from "../../components/warnings";
+import WarningErrors from "../../components/warnings/WarningErrors";
+import ForPlan from "../../components/workOrder/ForPlan";
 import OrderField from "../../components/workOrder/OrderFields";
+import LoadOrdersFromExcel from "../../components/workOrder/UploadFromExcel";
+import WorkerSelector from "../../components/workOrder/WorkerSelector";
 import WorkOrderCard from "../../components/workOrder/WorkOrderCard";
 import WorkOrderObservations from "../../components/workOrder/WorkOrderObservations";
+import { appConfig } from "../../config";
 
 const { headersRef } = appConfig;
 
