@@ -45,6 +45,21 @@ function App() {
     [access]
   );
 
+  useEffect(() => {
+    console.log(
+      "%c🚀 Aplicación web desarrollada por Leo Monay 🚀",
+      "color: #00ff00; font-size: 20px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); background: linear-gradient(45deg, #ff6b6b, #4ecdc4); padding: 10px; border-radius: 10px;"
+    );
+    console.log(
+      "%c💼 Visita mi portfolio: https://leomonay.github.io/",
+      "color: #ffffff; font-size: 16px; font-weight: bold; background: linear-gradient(45deg, #667eea, #764ba2); padding: 8px; border-radius: 8px; margin-top: 5px;"
+    );
+    console.log(
+      "%c🔗 GitHub: https://github.com/leomonay",
+      "color: #ffffff; font-size: 14px; background: #333; padding: 6px; border-radius: 6px; margin-top: 3px;"
+    );
+  }, []);
+
   if (loading) return <div className="waiting"></div>;
   if (!loading)
     return (

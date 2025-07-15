@@ -48,7 +48,19 @@ export default function LandingLayout({ children }) {
       >
         <div className="w-[max(100vh,100vw)] h-[max(100vh,100vw)] flex-none rounded-full bg-radial-gradient from-base-300 to-neutral"></div>
       </div>
-      <div className="container h-full mx-auto">{children}</div>
+      <div className="container h-full mx-auto">
+        {children}
+
+        {/* <a
+          href="https://leomonay.github.io/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute bottom-2 right-2 opacity-20 text-xs md:hover:opacity-100 transition-opacity duration-500"
+        >
+          App desarrollada por Leo Monay{" "}
+          <FontAwesomeIcon icon={faExternalLinkAlt} />
+        </a> */}
+      </div>
     </div>
   );
 }

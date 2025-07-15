@@ -1,23 +1,23 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
+import * as XLSX from "xlsx/xlsx.mjs";
 import {
   peopleActions,
   plantActions,
   workOrderActions,
 } from "../../actions/StoreActions";
 import { orderFields } from "../../constants/OrderData";
-import * as XLSX from "xlsx/xlsx.mjs";
-import ExcelTableViewer from "./ExcelTableViewer";
 import { SuccessModal } from "../warnings";
-import { Navigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ExcelTableViewer from "./ExcelTableViewer";
 // import { faFileExcel } from "@fortawesome/free-solid-svg-icons";
-import ModalBase from "../../Modals/ModalBase";
 import { faFileAlt, faFileExcel } from "@fortawesome/free-regular-svg-icons";
 import {
   faFileDownload,
   faFileUpload,
 } from "@fortawesome/free-solid-svg-icons";
+import ModalBase from "../../Modals/ModalBase";
 
 const options = {
   CLASE: "class",
@@ -332,7 +332,7 @@ export default function LoadOrdersFromExcel() {
                   <b>Todas las órdenes se cargan con el estado "Abierta"</b>.
                 </li>
                 <li>
-                  <span className="text-danger fw-bold">IMPORTANTE:</span> Los
+                  <span className="text-error fw-bold">IMPORTANTE:</span> Los
                   datos que presenten errores en el chequeo previo a la carga se
                   verán en rojo{" "}
                   <span className="error-data">con este formato</span>. Al dejar
@@ -350,12 +350,21 @@ export default function LoadOrdersFromExcel() {
             errorChecks={errorChecks}
             validateRow={validateRow}
             setApproved={setApproved}
-            deseableFields={
-              ['LUGAR_SERVICIO','OT_PLANTA']
-            }
-            requiredFields={
-              ['EQUIPO','CLASE','TIPO','SOLICITANTE','TELEFONO','SUPERVISOR','EMISION','HORA_EMISION','DESCRIPCION','CAUSA','RESPONSABLE','FECHA_PLAN']
-            }
+            deseableFields={["LUGAR_SERVICIO", "OT_PLANTA"]}
+            requiredFields={[
+              "EQUIPO",
+              "CLASE",
+              "TIPO",
+              "SOLICITANTE",
+              "TELEFONO",
+              "SUPERVISOR",
+              "EMISION",
+              "HORA_EMISION",
+              "DESCRIPCION",
+              "CAUSA",
+              "RESPONSABLE",
+              "FECHA_PLAN",
+            ]}
           />
         )}
         {approved && (
