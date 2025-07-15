@@ -1,9 +1,9 @@
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
+import TextInput from "../forms/FormFields";
 import Pagination from "../Paginate/Pagination";
 import TaskItem from "./TaskItem";
-import TextInput from "../forms/FormFields";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 function CollapseTask({ list, title, className, listName, defaultChecked }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,7 +22,7 @@ function CollapseTask({ list, title, className, listName, defaultChecked }) {
           Object.keys(object)
             .filter((key) => key !== "id")
             .find((key) =>
-              `${object[key].name || object[key]}`
+              `${object[key]?.name || object[key]}`
                 .toLowerCase()
                 .includes(searchKey.toLowerCase())
             )
