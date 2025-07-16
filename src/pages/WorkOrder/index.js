@@ -344,9 +344,10 @@ export default function WorkOrder() {
       )}
       {deviceTable && (
         <ModalBase
+          title="Lista de equipos"
           open={true}
           onClose={() => setDeviceTable(false)}
-          className="sm:w-[90vw] sm:max-w-full"
+          className="xl:max-w-[90%]"
         >
           <div className="flex flex-col overflow-y-auto h-[90%]">
             <DeviceList close={() => setDeviceTable(false)} />
