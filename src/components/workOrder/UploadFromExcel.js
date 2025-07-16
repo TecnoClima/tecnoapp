@@ -363,7 +363,7 @@ export default function LoadOrdersFromExcel() {
               "DESCRIPCION",
               "CAUSA",
               "RESPONSABLE",
-              "FECHA_PLAN",
+              // "FECHA_PLAN",
             ]}
           />
         )}

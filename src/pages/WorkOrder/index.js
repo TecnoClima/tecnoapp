@@ -23,6 +23,7 @@ import WorkerSelector from "../../components/workOrder/WorkerSelector";
 import WorkOrderCard from "../../components/workOrder/WorkOrderCard";
 import WorkOrderObservations from "../../components/workOrder/WorkOrderObservations";
 import { appConfig } from "../../config";
+import ModalBase from "../../Modals/ModalBase";
 
 const { headersRef } = appConfig;
 
@@ -296,6 +297,8 @@ export default function WorkOrder() {
 
   const isClosed = order.status === "Cerrada";
 
+  useEffect(() => console.log("deviceTable", deviceTable), [deviceTable]);
+
   return (
     <div className="page-container">
       {warnings[0] && (
@@ -306,8 +309,8 @@ export default function WorkOrder() {
         />
       )}
       {errors[0] && (
-        <div className="modal">
-          <div className="alert alert-danger d-flex flex-column">
+        <ModalBase open={true}>
+          <div className="alert alert-error flex flex-col">
             <b>Algo no salió bien...</b>
             <ul>
               {errors.map((e, i) => (
@@ -315,7 +318,7 @@ export default function WorkOrder() {
               ))}
             </ul>
             <button
-              className="btn btn-danger align-self-center w-auto"
+              className="btn btn-error mx-auto w-fit"
               onClick={(e) => {
                 e.preventDefault();
                 setErrors([]);
@@ -324,7 +327,7 @@ export default function WorkOrder() {
               Entendido
             </button>
           </div>
-        </div>
+        </ModalBase>
       )}
       {orderResult.error && (
         <ErrorModal
@@ -340,26 +343,15 @@ export default function WorkOrder() {
         />
       )}
       {deviceTable && (
-        <div className="modal">
-          <div
-            className="container bg-light m-2"
-            style={{ height: "90%", overflowY: "auto" }}
-          >
-            <div className="row">
-              <div className="col d-flex justify-content-end">
-                <button
-                  className="btn btn-close"
-                  onClick={() => setDeviceTable(false)}
-                />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col">
-                <DeviceList close={() => setDeviceTable(false)} />
-              </div>
-            </div>
+        <ModalBase
+          open={true}
+          onClose={() => setDeviceTable(false)}
+          className="sm:w-[90vw] sm:max-w-full"
+        >
+          <div className="flex flex-col overflow-y-auto h-[90%]">
+            <DeviceList close={() => setDeviceTable(false)} />
           </div>
-        </div>
+        </ModalBase>
       )}
 
       <div className="flex flex-col min-h-0 pb-4 flex-grow">
@@ -410,7 +402,7 @@ export default function WorkOrder() {
             )}
           </div>
         </div>
-        <div className="flex flex-col md:grid md:grid-cols-2 2xl:grid-cols-3 flex-grow gap-4 mb-4 md:min-h-0">
+        <div className="flex flex-col md:grid md:grid-cols-2 md:grid-rows-[auto,1fr] 2xl:grid-cols-3 flex-grow gap-4 mb-4 md:min-h-0">
           <WorkOrderCard title="DATOS DEL EQUIPO">
             <div className="join my-1md:my-2">
               {!device.name && (
@@ -465,7 +457,7 @@ export default function WorkOrder() {
               )}
             </div>
             <div
-              className={`flex-grow flex flex-col justify-between pt-2 ${
+              className={`flex-grow flex flex-col justify-evenly pt-2 ${
                 device.name ? "" : "opacity-50"
               }`}
             >
@@ -555,7 +547,7 @@ export default function WorkOrder() {
             }
             value={order.description}
           />
-          <div className="flex xl:col-span-3 min-h-0 overflow-y-auto">
+          <div className="flex xl:col-span-3 min-h-0 overflow-y-auto flex-grow">
             <InterventionList
               interventions={interventions}
               permissions={permissions}
