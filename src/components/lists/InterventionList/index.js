@@ -1,13 +1,13 @@
 import { useState } from "react";
 // import { useSelector } from 'react-redux'
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddIntervention from "../../forms/InterventionForm";
 import WorkOrderCard from "../../workOrder/WorkOrderCard";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import InterventionCard from "./interventionCard";
 
 export default function InterventionList(props) {
-  const { onDelete, openAdd, permissions, interventions } = props;
+  const { onDelete, openAdd, permissions, interventions, required } = props;
   const [edit, setEdit] = useState(false);
 
   function handleDelete(e, id) {
@@ -19,6 +19,7 @@ export default function InterventionList(props) {
     <>
       <WorkOrderCard
         title="INTERVENCIONES"
+        required={required}
         className="h-full min-h-0 overflow-y-auto"
         headerButton={
           <button

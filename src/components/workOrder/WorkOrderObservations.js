@@ -1,7 +1,12 @@
 import { useState } from "react";
 import WorkOrderCard from "./WorkOrderCard";
 
-export default function WorkOrderObservations({ value, user, onSubmit }) {
+export default function WorkOrderObservations({
+  value,
+  user,
+  onSubmit,
+  required,
+}) {
   const [text, setText] = useState("");
   const today = new Date();
 
@@ -17,7 +22,7 @@ export default function WorkOrderObservations({ value, user, onSubmit }) {
   }
 
   return (
-    <WorkOrderCard title="OBSERVACIONES">
+    <WorkOrderCard title="OBSERVACIONES" required={required}>
       <textarea
         className="textarea textarea-bordered min-h-40 flex-grow"
         value={value}

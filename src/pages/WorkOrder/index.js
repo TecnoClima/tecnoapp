@@ -72,7 +72,6 @@ export default function WorkOrder() {
   const dispatch = useDispatch();
   //openers//
   const [deviceTable, setDeviceTable] = useState(false);
-  const [editDesc, setEditDesc] = useState(false);
   const [interventionForm, setInterventionForm] = useState(false);
   const navigate = useNavigate();
 
@@ -121,7 +120,7 @@ export default function WorkOrder() {
     delete editOrder.device;
     setInterventions(orderDetail.interventions);
     delete editOrder.interventions;
-    setMinProgress(orderDetail.completed);
+    setMinProgress(orderDetail.completed || 0);
     setForPlan(!!editOrder.taskDate);
     setOrder(editOrder);
   }, [orderDetail, dispatch, order.taskDate]);
@@ -133,6 +132,7 @@ export default function WorkOrder() {
     for (let key of ["supervisor", "class", "issue", "solicitor"]) {
       if (!order[key]) check = false;
     }
+
     if (!order.description && !interventions[0]) check = false;
     setAllowSaving(check);
   }, [interventions, device, order]);
@@ -213,7 +213,10 @@ export default function WorkOrder() {
     e.preventDefault();
     let w = [];
     let errorsFound = [];
-    if (forPlan === undefined)
+    if (
+      (device?.taskDates?.length > 0 || !!orderDetail?.taskDates?.length > 0) &&
+      forPlan === undefined
+    )
       errorsFound.push("Debe indicar si la orden es de plan o no");
     if (forPlan && !order.taskDate)
       errorsFound.push("Debe indicar la fecha del plan que cubre la orden");
@@ -290,14 +293,7 @@ export default function WorkOrder() {
   }
   useEffect(() => orderResult && setSaving(false), [orderResult]);
 
-  // useEffect(
-  //   () => console.log("selectedDevice", selectedDevice),
-  //   [selectedDevice]
-  // );
-
   const isClosed = order.status === "Cerrada";
-
-  useEffect(() => console.log("deviceTable", deviceTable), [deviceTable]);
 
   return (
     <div className="page-container">
@@ -335,8 +331,9 @@ export default function WorkOrder() {
           close={() => dispatch(workOrderActions.resetOrderResult())}
         />
       )}
-      {orderResult.success && orderCode && (
+      {orderResult.success && (
         <SuccessModal
+          open={true}
           message={`La orden de trabajo N° ${orderResult.success} fue guardada exitosamente.`}
           link={orderCode ? null : `/ots/detail/${orderResult.success}`}
           close={handleSuccess}
@@ -490,8 +487,10 @@ export default function WorkOrder() {
                   field="Supervisor"
                   name="supervisor"
                   options={workOrderOptions.supervisor || []}
+                  displayEmpty
                   value={order.supervisor}
                   onInput={handleInputOrderData}
+                  required
                 />
                 <OrderField
                   field="OT Planta"
@@ -504,20 +503,25 @@ export default function WorkOrder() {
                   value={order.class}
                   name="class"
                   options={workOrderOptions.class}
+                  displayEmpty
                   onInput={handleInputOrderData}
+                  required
                 />
                 <OrderField
                   field="Problema"
                   options={workOrderOptions.issue}
+                  displayEmpty
                   value={order.issue}
                   name="issue"
                   onInput={handleInputOrderData}
+                  required
                 />
                 <OrderField
                   field="Solicitante"
                   value={order.solicitor}
                   name="solicitor"
                   onInput={handleInputOrderData}
+                  required
                 />
                 <OrderField
                   field="Teléfono"
@@ -530,6 +534,7 @@ export default function WorkOrder() {
                   name="servicePoint"
                   value={order.servicePoint}
                   options={selectedDevice.servicePoints}
+                  displayEmpty
                   onInput={handleInputOrderData}
                 />
               </>
@@ -537,6 +542,7 @@ export default function WorkOrder() {
           </WorkOrderCard>
 
           <WorkOrderObservations
+            required={!allowSaving}
             user={userData.user}
             onSubmit={(text) =>
               setOrder({
@@ -550,6 +556,7 @@ export default function WorkOrder() {
           />
           <div className="flex xl:col-span-3 min-h-0 overflow-y-auto flex-grow">
             <InterventionList
+              required={!allowSaving}
               interventions={interventions}
               permissions={permissions}
               openAdd={() => setInterventionForm(true)}
