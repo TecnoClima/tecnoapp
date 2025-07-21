@@ -33,15 +33,7 @@ export default function InterventionList(props) {
       >
         <div className="flex flex-col min-h-0 overflow-y-auto gap-1">
           {interventions?.[0] ? (
-            [
-              ...interventions,
-              ...interventions,
-              ...interventions,
-              ...interventions,
-              ...interventions,
-              ...interventions,
-              ...interventions,
-            ].map((item, index) => (
+            interventions.map((item, index) => (
               <InterventionCard
                 key={index}
                 item={item}
