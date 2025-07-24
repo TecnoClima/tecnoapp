@@ -29,6 +29,7 @@ export default function OrderField({
           name={name}
           className="select select-xs md:select-sm select-bordered join-item flex-grow"
           onChange={onInput}
+          value={value}
         >
           {displayEmpty && <option value="">Seleccionar...</option>}
           {options.map((o) => (
