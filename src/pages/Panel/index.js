@@ -49,11 +49,35 @@ export default function Panel() {
         : new Date(today.setDate(today.getDate() - (today.getDay() - 1)));
     let nextMonday = new Date(lastMonday);
     nextMonday.setDate(lastMonday.getDate() + 7);
+    const codes = [...new Set(plan.map((element) => element.code))];
+
     //set pendants, currents and netx tasks
+    const pendantCodes = codes.filter((code) => {
+      // select code tasks
+      const codeTasks = plan.filter((date) => date.code === code);
+      const mostRecentDone = codeTasks
+        .filter((d) => d.completed === 100)
+        .sort((d1, d2) => new Date(d1.date) - new Date(d2.date))
+        .reverse()[0];
+
+      if (!mostRecentDone) {
+        return true;
+      }
+      const hasReallyPendant = codeTasks.find(
+        (date) =>
+          new Date(date.date) < new Date() &&
+          new Date(date.date) > new Date(mostRecentDone.date) &&
+          date.completed < 100
+      );
+      return !!hasReallyPendant;
+    });
+
     setPendant(
       plan.filter(
         (element) =>
-          new Date(element.date) < new Date() && element.completed < 100
+          pendantCodes.includes(element.code) &&
+          new Date(element.date) < new Date() &&
+          element.completed < 100
       )
     );
     setCurrent(
