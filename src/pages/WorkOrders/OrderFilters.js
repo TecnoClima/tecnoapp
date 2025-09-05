@@ -288,8 +288,8 @@ export default function OrdersFilters({
 
       {true && (
         <div
-          className={`flex w-full flex-col sm:flex-row gap-2 overflow-hidden transition-[height] duration-300 ${
-            displayFilters ? "h-[9rem] min-h-fit" : "h-0"
+          className={`flex w-full flex-col sm:flex-row gap-2 transition-[height] duration-300 ${
+            displayFilters ? "h-[9rem] min-h-fit" : "h-0 overflow-hidden"
           }`}
         >
           <div className="flex flex-col gap-1 flex-grow w-full sm:w-1/2 justify-between">
