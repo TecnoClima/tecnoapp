@@ -355,7 +355,7 @@ export default function WorkOrder() {
         </ModalBase>
       )}
 
-      <div className="flex flex-col min-h-0 pb-4 flex-grow">
+      <div className="flex flex-col min-h-0 flex-grow">
         <div className="page-title ">
           {orderCode ? (
             <div>

@@ -124,7 +124,11 @@ export default function PeoplePicker(props) {
   return (
     <>
       <div className="collapse bg-base-200">
-        <input type="checkbox" className="input input-sm min-h-10 h-full" />
+        <input
+          type="checkbox"
+          className="input input-sm min-h-10 h-full"
+          disabled={disabled}
+        />
         <div className="collapse-title font-medium min-h-10 py-2 ">
           <div className="flex w-full gap-1 flex-wrap h-full items-center">
             {idList[0] && idList[0].name ? (

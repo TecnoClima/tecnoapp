@@ -180,6 +180,15 @@ export default function AddIntervention(props) {
     });
   }
 
+  const errorDate =
+    !intervention.date || !intervention.time
+      ? "Indicar Fecha Inicio con fecha y hora"
+      : (intervention.endDate && !intervention.endTime) ||
+        (intervention.endTime && !intervention.endDate)
+      ? "Fecha Fin se indica con fecha y hora"
+      : null;
+  const displayPeoplePicker = intervention.date && !errorDate;
+
   return (
     <ModalBase
       title={`${intervention.id ? "EDITAR" : "AGREGAR"} INTERVENCIÓN`}
@@ -187,47 +196,52 @@ export default function AddIntervention(props) {
       onClose={close}
       className="flex flex-col h-full"
     >
-      <div className="flex w-full gap-4 justify-between flex-wrap">
-        <DateAndTime
-          className="flex-grow"
-          label="Fecha Inicio"
-          name="date"
-          value={intervention.date}
-          time={intervention.time}
-          timeName="time"
-          onChange={handleChange}
-          max={today}
-          maxTime={time}
-        />
+      <div>
+        <div className="relative flex w-full gap-4 justify-between flex-wrap">
+          <DateAndTime
+            className="flex-grow"
+            label="Fecha Inicio"
+            name="date"
+            value={intervention.date}
+            time={intervention.time}
+            timeName="time"
+            handleChange={handleChange}
+            max={today}
+            maxTime={time}
+          />
 
-        <DateAndTime
-          className="flex-grow"
-          label="Fecha Fin"
-          name="date"
-          value={intervention.endDate}
-          disabled={!intervention.date}
-          time={intervention.endTime}
-          timeName="time"
-          onChange={handleChange}
-          max={today}
-          maxTime={time}
-        />
+          <DateAndTime
+            className="flex-grow"
+            label="Fecha Fin"
+            name="endDate"
+            value={intervention.endDate}
+            disabled={!intervention.date}
+            time={intervention.endTime}
+            timeName="endTime"
+            handleChange={handleChange}
+            max={today}
+            maxTime={time}
+          />
+        </div>
+        {errorDate && <ErrorMessage>{errorDate}</ErrorMessage>}
       </div>
-      <div className="my-2 text-center">
-        <PeoplePicker
-          name="Intervinientes"
-          options={list}
-          disabled={
-            !intervention.time ||
-            (intervention.id && userData.access !== "Admin")
-          }
-          idList={intervention.workers || []}
-          update={(idArray) => handlePeople(idArray)}
-        />
-        {(!intervention.workers || intervention.workers.length < 2) && (
-          <ErrorMessage>Debe ingresar al menos 2 personas.</ErrorMessage>
-        )}
-      </div>
+      {displayPeoplePicker && (
+        <div className="my-2 text-center">
+          <PeoplePicker
+            name="Intervinientes"
+            options={list}
+            disabled={
+              !intervention.time ||
+              (intervention.id && userData.access !== "Admin")
+            }
+            idList={intervention.workers || []}
+            update={(idArray) => handlePeople(idArray)}
+          />
+          {(!intervention.workers || intervention.workers.length < 2) && (
+            <ErrorMessage>Debe ingresar al menos 2 personas.</ErrorMessage>
+          )}
+        </div>
+      )}
       {intervention.workers?.[0] && (
         <div className="mb-4">
           <b>Tarea Realizada</b>
@@ -235,7 +249,7 @@ export default function AddIntervention(props) {
             className="textarea w-full bg-primary/10"
             disabled={!intervention.workers || !intervention.workers[0]}
             value={intervention.task}
-            onBlur={(e) =>
+            onChange={(e) =>
               setIntervention({ ...intervention, task: e.target.value })
             }
           />
