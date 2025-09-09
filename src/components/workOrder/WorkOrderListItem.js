@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import ClassBadge from "../../components/Badges/ClassBadge";
+import { StatusBadge } from "../Badges/StatusBadge";
 
 export default function WorkOrderListItem({
   order,
@@ -21,7 +22,10 @@ export default function WorkOrderListItem({
           <p className="mx-auto">{order.code}</p>
         </div>
         <div className="pt-1 w-80 flex-grow ">
-          <ClassBadge cls={order.class} />
+          <div className="flex w-full">
+            <ClassBadge cls={order.class} />
+            <StatusBadge className="text-xs" order={order} />
+          </div>
           <div className="flex gap-3 py-1 px-2">
             <p>
               <b>{`[${order.devCode}]`}</b> <span>{order.devName}</span>
@@ -45,8 +49,8 @@ export default function WorkOrderListItem({
           <div className="text-xs bg-neutral/50 px-1 ">Supervisa:</div>
           <div className="px-1">{order.supervisor}</div>
         </div>
-        <div className="p-1 text-sm w-60 flex-grow">
-          <div>{order.description}</div>
+        <div className="text-sm w-60 flex-grow">
+          {order.description && <div className="p-1">{order.description}</div>}
         </div>
       </Link>
       {isAdmin && (

@@ -24,6 +24,8 @@ import WorkOrderCard from "../../components/workOrder/WorkOrderCard";
 import WorkOrderObservations from "../../components/workOrder/WorkOrderObservations";
 import { appConfig } from "../../config";
 import ModalBase from "../../Modals/ModalBase";
+import { StatusBadge } from "../../components/Badges/StatusBadge";
+import { Info } from "../../components/Badges/Info";
 
 const { headersRef } = appConfig;
 
@@ -294,6 +296,7 @@ export default function WorkOrder() {
   useEffect(() => orderResult && setSaving(false), [orderResult]);
 
   const isClosed = order.status === "Cerrada";
+  const toClose = order.completed === 99 && !isClosed;
 
   return (
     <div className="page-container">
@@ -358,13 +361,8 @@ export default function WorkOrder() {
             <div>
               <div className="flex gap-6 items-center">
                 {"Orden de trabajo N° " + orderCode}
-                <div
-                  className={`badge ${
-                    isClosed ? "badge-success" : "badge-error"
-                  }`}
-                >
-                  {order.status}
-                </div>
+
+                <StatusBadge order={order} />
               </div>
               <div className="text-sm font-normal">
                 {"Creada por " +
@@ -576,7 +574,18 @@ export default function WorkOrder() {
           <WorkOrderCard className="w-full">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex items-center gap-2 flex-grow">
-                <div className="card-title"> Avance</div>
+                <div className="card-title">
+                  <div>Avance</div>
+                  {/* <Info
+                    text={
+                      <>
+                        <span className="font-bold">Cuidado:</span> una orden
+                        está al 99% cuando sólo falta cerrarla.
+                      </>
+                    }
+                    className="bottom-0 left-0 mb-6"
+                  /> */}
+                </div>
                 <WOProgress
                   errorCond={
                     order.interventions && order.interventions.length > 0
