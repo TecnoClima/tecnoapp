@@ -47,6 +47,7 @@ export default function InnerLayout({ children }) {
   // Opciones de administración (idénticas a AdminPanel)
   const adminOptions = [
     { caption: "Usuarios", url: "/admin/usuarios" },
+    { caption: "Monitoreo", url: "/admin/monitoreo" },
     { caption: "Equipos", url: "/admin/equipos" },
     { caption: "Plantas", url: "/admin/plantas" },
     { caption: "Plan", url: "/admin/plan" },

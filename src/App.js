@@ -15,6 +15,7 @@ import AdminPlants from "./pages/Admin/Plants";
 import AdminUsers from "./pages/Admin/Users";
 import Device from "./pages/Device";
 import Landing from "./pages/Landing";
+import Monitoring from "./pages/Monitoring";
 import NotFound from "./pages/NotFound";
 import Panel from "./pages/Panel";
 import Plan from "./pages/Plan";
@@ -243,6 +244,17 @@ function App() {
               element={
                 <InnerLayout>
                   <AdminCylinders />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/monitoreo"}
+              element={
+                <InnerLayout>
+                  <Monitoring />
                 </InnerLayout>
               }
             />
