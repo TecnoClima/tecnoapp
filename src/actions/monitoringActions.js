@@ -3,7 +3,6 @@ const baseURL = "http://tecnoclima.dyndns.org:4000/server/ajax";
 // op=versensor
 
 export function monitorAction(data) {
-  console.log("monitorActionData", data);
   fetch(`${baseURL}/${data.endpoint}`, {
     method: data.method,
     headers: {
@@ -30,4 +29,10 @@ const postAction = (endpoint, body, callback) =>
 export const monitorActions = {
   list: (callback) =>
     postAction("/control.php?op=listar", { id: "10" }, callback),
+  deviceDetail: (body, callback) =>
+    postAction(
+      "control.php?op=VerEstadoSensores",
+      { ...body, usuario: "10" },
+      callback
+    ),
 };

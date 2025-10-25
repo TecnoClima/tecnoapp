@@ -1,13 +1,7 @@
-import {
-  faChevronRight,
-  faExclamationTriangle,
-  faMapMarkerAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useMemo, useState } from "react";
 import { monitorActions } from "../../actions/monitoringActions";
-import ternium from "../../assets/icons/ternium.jpg";
 import FilterInput from "../../components/Monitoring/FilterInput";
+import MonitorLine from "../../components/Monitoring/MonitorLine";
 
 export default function Monitoring() {
   const [data, setData] = useState([]);
@@ -76,82 +70,9 @@ export default function Monitoring() {
       />
       <div className="flex w-full flex-col gap-2 pb-4">
         {paginatedData[0] &&
-          paginatedData.map(
-            ({
-              imagen,
-              area,
-              sector,
-              nombre,
-              servicio,
-              sensores,
-              alertaEquipo,
-              empresa,
-              equipo,
-            }) => (
-              <div
-                className="flex flex-wrap items-center border border-base-content/20 hover:border-base-content/50 rounded-box w-full p-4 gap-4 "
-                key={equipo}
-              >
-                <div className="flex flex-col gap-2 w-80 flex-grow">
-                  <div className="flex items-center gap-4">
-                    <button className="flex items-center">
-                      <FontAwesomeIcon
-                        icon={faExclamationTriangle}
-                        className="text-2xl text-warning"
-                      />
-                    </button>
-                    <img
-                      src={ternium}
-                      alt={imagen.split(".")[0]}
-                      className="w-32 h-fit"
-                    />
-                  </div>
-                  <div className="flex flex-wrap w-full gap-y-1 gap-x-2 max-w-xl">
-                    <div className="w-60 flex-grow bg-base-content/10 p-1 rounded-md">
-                      <div className="flex gap-2 items-center text-xs">
-                        <FontAwesomeIcon icon={faMapMarkerAlt} />
-                        <div>{area.toUpperCase()}</div>
-                        <FontAwesomeIcon icon={faChevronRight} />
-                        <div>{sector.toUpperCase()}</div>
-                      </div>
-                      <div className="font-bold px-2 text-lg">{equipo}</div>
-                    </div>
-                    <div className="w-60 flex-grow bg-base-content/10 p-1 rounded-md">
-                      <div className="flex gap-2 items-center text-xs">
-                        Servicio
-                      </div>
-                      {nombre}
-                    </div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] w-80 flex-grow gap-2">
-                  {sensores.map(
-                    ({
-                      color,
-                      nombre,
-                      registrador,
-                      relacion,
-                      sensor_id,
-                      tipo,
-                      valorTemp,
-                    }) => (
-                      <button
-                        className="join w-full flex-grow text-sm"
-                        key={nombre}
-                      >
-                        <div className="flex bg-primary/20 w-3/5 join-item text-sm px-2 items-center">
-                          {nombre}
-                        </div>
-                        <div className="flex items-center bg-base-content/20 w-2/5 join-item text-sm px-2 h-6">
-                          {valorTemp}
-                        </div>
-                      </button>
-                    )
-                  )}
-                </div>
-              </div>
-            )
-          )}
+          paginatedData.map((item) => (
+            <MonitorLine key={item.equipo} {...item} />
+          ))}
       </div>
     </div>
   );
