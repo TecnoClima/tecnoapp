@@ -1,20 +1,31 @@
-import { useCallback, useEffect } from "react";
-import { useState } from "react";
+import {
+  faMapMarkerAlt,
+  faSearch,
+  faSyncAlt,
+  faTable,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { deviceActions, workOrderActions } from "../../actions/StoreActions";
-import { appConfig } from "../../config";
-import DeviceList from "../../components/lists/DeviceList";
-import AddTextForm from "../../components/forms/AddText";
-import InterventionList from "../../components/lists/InterventionList";
+import FollowDevice from "../../components/DevicePage/FollowDevice";
+import DeviceList from "../../components/Devices/DeviceList";
 import AddIntervention from "../../components/forms/InterventionForm";
+import InterventionList from "../../components/lists/InterventionList";
 import WOProgress from "../../components/progress/WOProgresBar";
 import { ErrorModal, SuccessModal } from "../../components/warnings";
 import WarningErrors from "../../components/warnings/WarningErrors";
-import ForPlan from "./ForPlan";
-import { useNavigate, useParams } from "react-router-dom";
-import WorkerSelector from "./WorkerSelector";
-import FollowDevice from "../Device/FollowDevice";
-import LoadOrdersFromExcel from "./UploadFromExcel";
+import ForPlan from "../../components/workOrder/ForPlan";
+import OrderField from "../../components/workOrder/OrderFields";
+import LoadOrdersFromExcel from "../../components/workOrder/UploadFromExcel";
+import WorkerSelector from "../../components/workOrder/WorkerSelector";
+import WorkOrderCard from "../../components/workOrder/WorkOrderCard";
+import WorkOrderObservations from "../../components/workOrder/WorkOrderObservations";
+import { appConfig } from "../../config";
+import ModalBase from "../../Modals/ModalBase";
+import { StatusBadge } from "../../components/Badges/StatusBadge";
+import { Info } from "../../components/Badges/Info";
 
 const { headersRef } = appConfig;
 
@@ -63,7 +74,6 @@ export default function WorkOrder() {
   const dispatch = useDispatch();
   //openers//
   const [deviceTable, setDeviceTable] = useState(false);
-  const [editDesc, setEditDesc] = useState(false);
   const [interventionForm, setInterventionForm] = useState(false);
   const navigate = useNavigate();
 
@@ -124,6 +134,7 @@ export default function WorkOrder() {
     for (let key of ["supervisor", "class", "issue", "solicitor"]) {
       if (!order[key]) check = false;
     }
+
     if (!order.description && !interventions[0]) check = false;
     setAllowSaving(check);
   }, [interventions, device, order]);
@@ -204,7 +215,10 @@ export default function WorkOrder() {
     e.preventDefault();
     let w = [];
     let errorsFound = [];
-    if (forPlan === undefined)
+    if (
+      (device?.taskDates?.length > 0 || !!orderDetail?.taskDates?.length > 0) &&
+      forPlan === undefined
+    )
       errorsFound.push("Debe indicar si la orden es de plan o no");
     if (forPlan && !order.taskDate)
       errorsFound.push("Debe indicar la fecha del plan que cubre la orden");
@@ -281,8 +295,11 @@ export default function WorkOrder() {
   }
   useEffect(() => orderResult && setSaving(false), [orderResult]);
 
+  const isClosed = order.status === "Cerrada";
+  const toClose = order.completed === 99 && !isClosed;
+
   return (
-    <div className="w-100">
+    <div className="page-container">
       {warnings[0] && (
         <WarningErrors
           warnings={warnings}
@@ -291,8 +308,8 @@ export default function WorkOrder() {
         />
       )}
       {errors[0] && (
-        <div className="modal">
-          <div className="alert alert-danger d-flex flex-column">
+        <ModalBase open={true}>
+          <div className="alert alert-error flex flex-col">
             <b>Algo no salió bien...</b>
             <ul>
               {errors.map((e, i) => (
@@ -300,7 +317,7 @@ export default function WorkOrder() {
               ))}
             </ul>
             <button
-              className="btn btn-danger align-self-center w-auto"
+              className="btn btn-error mx-auto w-fit"
               onClick={(e) => {
                 e.preventDefault();
                 setErrors([]);
@@ -309,7 +326,7 @@ export default function WorkOrder() {
               Entendido
             </button>
           </div>
-        </div>
+        </ModalBase>
       )}
       {orderResult.error && (
         <ErrorModal
@@ -317,293 +334,230 @@ export default function WorkOrder() {
           close={() => dispatch(workOrderActions.resetOrderResult())}
         />
       )}
-      {orderResult.success && orderCode && (
+      {orderResult.success && (
         <SuccessModal
+          open={true}
           message={`La orden de trabajo N° ${orderResult.success} fue guardada exitosamente.`}
           link={orderCode ? null : `/ots/detail/${orderResult.success}`}
           close={handleSuccess}
         />
       )}
       {deviceTable && (
-        <div className="modal">
-          <div
-            className="container bg-light m-2"
-            style={{ height: "90%", overflowY: "auto" }}
-          >
-            <div className="row">
-              <div className="col d-flex justify-content-end">
-                <button
-                  className="btn btn-close"
-                  onClick={() => setDeviceTable(false)}
-                />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col">
-                <DeviceList close={() => setDeviceTable(false)} />
-              </div>
-            </div>
+        <ModalBase
+          title="Lista de equipos"
+          open={true}
+          onClose={() => setDeviceTable(false)}
+          className="xl:max-w-[90%]"
+        >
+          <div className="flex flex-col overflow-y-auto h-[90%]">
+            <DeviceList close={() => setDeviceTable(false)} />
           </div>
-        </div>
+        </ModalBase>
       )}
 
-      <div className="container d-flex flex-column align-items h-100">
-        <div className="row pt-2">
-          <div>
-            {orderCode ? (
-              <div className="row pt-2 align-items-end">
-                <div className="col-md-auto">
-                  <div className="d-flex gap-2">
-                    <h5>{"Orden de trabajo N° " + orderCode}</h5>{" "}
-                    <h5
-                      className={
-                        order.status === "Cerrada"
-                          ? "text-success"
-                          : "text-danger"
-                      }
-                    >
-                      [{order.status}]
-                    </h5>
-                  </div>
-                </div>
-                <div className="col-md-auto">
-                  <h6>
-                    {"Creada por " +
-                      order.user +
-                      " el " +
-                      new Date(order.regDate).toLocaleDateString()}
-                  </h6>{" "}
-                </div>
+      <div className="flex flex-col min-h-0 flex-grow">
+        <div className="page-title ">
+          {orderCode ? (
+            <div>
+              <div className="flex gap-6 items-center">
+                {"Orden de trabajo N° " + orderCode}
+
+                <StatusBadge order={order} />
               </div>
-            ) : (
-              <div className="col-md-auto">
-                <h5>"Nueva Orden de Trabajo"</h5>
+              <div className="text-sm font-normal">
+                {"Creada por " +
+                  order.user +
+                  " el " +
+                  new Date(order.regDate).toLocaleDateString()}
               </div>
-            )}
-            <div className="row justify-content-between">
-              <div className="col-md-6">
-                <WorkerSelector
-                  key={order.code}
-                  label={"Responsable"}
-                  defaultValue={order.responsible}
-                  permissions={permissions}
-                  action={(value) =>
-                    handleInputOrderData({ name: "responsible", value })
-                  }
-                />
-              </div>
-              {!order.code && (permissions.admin || permissions.supervisor) && (
-                <div className="col-md-auto">
-                  <LoadOrdersFromExcel />
-                </div>
+            </div>
+          ) : (
+            <div className="flex w-full justify-between">
+              <div>Nueva Orden de Trabajo</div>
+              {(permissions.admin || permissions.supervisor) && (
+                <LoadOrdersFromExcel />
               )}
             </div>
-          </div>
-        </div>
-        <div className="row py-2">
-          {(!!selectedDevice?.taskDates?.length ||
-            !!orderDetail?.taskDates?.length) && (
-            <ForPlan select={handleForPlan} order={orderDetail || order} />
           )}
         </div>
-        <div className="row py-2">
-          {/* device data */}
-          <div className="col-lg-4">
-            <div className="accordion" id="accordionExample">
-              <div className="accordion-item border-0">
-                <button
-                  className="btn btn-secondary w-100"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseOne"
-                  aria-expanded="true"
-                  aria-controls="collapseOne"
-                >
-                  Equipo
-                </button>
-                <div
-                  id="collapseOne"
-                  className="accordion-collapse collapse show"
-                  aria-labelledby="headingOne"
-                  data-bs-parent="#accordionExample"
-                >
-                  <div className="accordion-body p-0">
-                    <div className="input-group">
-                      <span className="input-group-text" id="basic-addon3">
-                        Código
-                      </span>
-                      <input
-                        type="text"
-                        value={device.code}
-                        className="form-control"
-                        id="basic-url"
-                        aria-describedby="basic-addon3"
-                        onChange={handleInputCode}
-                        readOnly={
-                          !(
-                            permissions.author ||
-                            permissions.admin ||
-                            permissions.supervisor
-                          )
-                        }
-                      />
-                      {!device.name && (
-                        <button
-                          className="btn btn-info col-2"
-                          style={{ zIndex: 0 }}
-                          onClick={handleSearch}
-                          disabled={!device.code}
-                        >
-                          <i className="fas fa-search" />
-                        </button>
-                      )}
-                      {device.name && (
-                        <button
-                          className="btn btn-danger col-4"
-                          style={{ zIndex: 0 }}
-                          onClick={handleDeleteCode}
-                          disabled={!device.name}
-                        >
-                          <i className="fas fa-backspace pe-1" />
-                        </button>
-                      )}
-                      {!device.name && (
-                        <button
-                          className="btn btn-outline-info col-3 px-1 flex-shrink-1"
-                          style={{ zIndex: 0 }}
-                          onClick={handleOpenList}
-                          disabled={device.name}
-                        >
-                          LISTA
-                          <i className="fas fa-table ms-1" />
-                        </button>
-                      )}
-                    </div>
-                    {Object.keys(device)
-                      .filter((k) => k !== "code")
-                      .map((k, i) => (
-                        <div className="input-group" key={i}>
-                          <span className="input-group-text" id="basic-addon3">
-                            {k === "location" ? (
-                              <i className="fas fa-map-marker-alt" />
-                            ) : (
-                              <div>{headersRef[k]}</div>
-                            )}
-                          </span>
-                          <input
-                            className={`form-control ${
-                              device.name ? "bg-white" : ""
-                            }`}
-                            id={"device-" + k}
-                            type="text"
-                            value={device[k] || ""}
-                            aria-describedby="basic-addon3"
-                            readOnly
-                          />
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* order data */}
-          <div className="col-lg-4">
-            <div className="btn btn-secondary w-100">Orden de trabajo</div>
-            {[
-              "supervisor",
-              "clientWO",
-              "class",
-              "issue",
-              "solicitor",
-              "phone",
-              "servicePoint",
-            ].map((k, i) => {
-              const options =
-                k === "servicePoint"
-                  ? selectedDevice.servicePoints || []
-                  : workOrderOptions[k] || [];
-              return (
-                <div className="input-group" key={i}>
-                  <span className="input-group-text" id="basic-addon3">
-                    {headersRef[k]}
-                  </span>
-                  {["supervisor", "class", "issue", "servicePoint"].includes(
-                    k
-                  ) ? (
-                    <select
-                      className="form-control"
-                      id={"order-" + k}
-                      name={k}
-                      value={order[k]}
-                      onChange={handleInputOrderData}
-                      disabled={!device.name}
-                    >
-                      <option value="">Sin Especificar</option>
-                      {options
-                        .filter((item) =>
-                          item.plant
-                            ? device.location.startsWith(item.plant)
-                            : true
-                        )
-                        .map((s, i) => (
-                          <option key={i} value={s.id || s}>
-                            {s.name || s}
-                          </option>
-                        ))}
-                    </select>
-                  ) : (
-                    <input
-                      type="text"
-                      name={k}
-                      value={order[k] || ""}
-                      className="form-control"
-                      id={"order-" + k}
-                      aria-describedby="basic-addon3"
-                      disabled={!device.name}
-                      onChange={handleInputOrderData}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          {/* order description & comments */}
-          <div className="col-lg-4 d-flex flex-column">
-            <div className="btn btn-secondary w-100">Observaciones</div>
-            <textarea
-              className="form-control bg-light flex-grow-1"
-              style={{ minHeight: "15vh" }}
-              value={order.description}
-              readOnly
-            />
-            <button className="btn btn-info" onClick={() => setEditDesc(true)}>
-              <i className="fas fa-comment-dots me-1" />
-              Agregar comentario
-            </button>
-            {editDesc && (
-              <AddTextForm
-                user={userData.user}
-                select={(text) =>
-                  setOrder({
-                    ...order,
-                    description: order.description
-                      ? "-" + [order.description, text].join("\n-")
-                      : text,
-                  })
-                }
-                close={() => setEditDesc(false)}
-              />
+        <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between sm:items-end gap-4 -mt-3 mb-1">
+          <WorkerSelector
+            key={order.code}
+            label={"Responsable"}
+            defaultValue={order.responsible}
+            permissions={permissions}
+            action={(value) =>
+              handleInputOrderData({ name: "responsible", value })
+            }
+          />
+
+          <div className="flex sm:w-1/3 flex-grow">
+            {(!!selectedDevice?.taskDates?.length ||
+              !!orderDetail?.taskDates?.length) && (
+              <ForPlan select={handleForPlan} order={orderDetail || order} />
             )}
           </div>
         </div>
-        {/* Interventions */}
-        <div className="row py-2 flex-grow-1">
-          <div className="col">
-            <div className="btn btn-secondary w-100">Intervenciones</div>
+        <div className="flex flex-col md:grid md:grid-cols-2 md:grid-rows-[auto,1fr] 2xl:grid-cols-3 flex-grow gap-4 mb-4 md:min-h-0">
+          <WorkOrderCard title="DATOS DEL EQUIPO">
+            <div className="join my-1md:my-2">
+              {!device.name && (
+                <>
+                  <input
+                    className="flex flex-grow input-sm join-item bg-base-100 border-2 border-info"
+                    type="text"
+                    value={device.code}
+                    onChange={handleInputCode}
+                    readOnly={
+                      !(
+                        permissions.author ||
+                        permissions.admin ||
+                        permissions.supervisor
+                      )
+                    }
+                  />
+                  <button
+                    className="btn btn-sm btn-info join-item"
+                    style={{ zIndex: 0 }}
+                    onClick={handleSearch}
+                    disabled={!device.code}
+                  >
+                    <FontAwesomeIcon icon={faSearch} />
+                  </button>
+                  <button
+                    className="btn btn-sm btn-primary join-item"
+                    onClick={handleOpenList}
+                    disabled={device.name}
+                  >
+                    LISTA
+                    <FontAwesomeIcon icon={faTable} />
+                  </button>
+                </>
+              )}
+              {device.name && (
+                <>
+                  <div className="flex items-center flex-grow px-1 join-item cursor-default  bg-base-100 border-2 border-primary text-ellipsis overflow-hidden rounded-l-md">
+                    <p>
+                      <b>[{device.code}]</b> {device.name}
+                    </p>
+                  </div>
+
+                  <button
+                    className="btn btn-sm h-full btn-error join-item"
+                    title="cambiar Equipo"
+                    onClick={handleDeleteCode}
+                  >
+                    <FontAwesomeIcon icon={faSyncAlt} />
+                  </button>
+                </>
+              )}
+            </div>
+            <div
+              className={`flex-grow flex flex-col justify-evenly pt-2 ${
+                device.name ? "" : "opacity-50"
+              }`}
+            >
+              <p>
+                <b>
+                  <FontAwesomeIcon icon={faMapMarkerAlt} /> {device.location}
+                </b>
+              </p>
+              <p>
+                <b>Tipo:</b> {device.type}{" "}
+                {device.gasAmount && `(${device.gasAmount})`}
+              </p>
+              <p>
+                <b>Categoría:</b> {device.category}
+              </p>
+              <p>
+                <b>Servicio:</b> {device.service}
+              </p>
+              <p>
+                <b>Ambiente:</b> {device.environment}
+              </p>
+            </div>
+          </WorkOrderCard>
+
+          <WorkOrderCard title="DETALLES DE LA ORDEN">
+            {order && (
+              <>
+                <OrderField
+                  field="Supervisor"
+                  name="supervisor"
+                  options={workOrderOptions.supervisor || []}
+                  displayEmpty
+                  value={order.supervisor}
+                  onInput={handleInputOrderData}
+                  required
+                />
+                <OrderField
+                  field="OT Planta"
+                  name="clientWO"
+                  value={order.clientWO}
+                  onInput={handleInputOrderData}
+                />
+                <OrderField
+                  field="Clase"
+                  value={order.class}
+                  name="class"
+                  options={workOrderOptions.class}
+                  displayEmpty
+                  onInput={handleInputOrderData}
+                  required
+                />
+                <OrderField
+                  field="Problema"
+                  options={workOrderOptions.issue}
+                  displayEmpty
+                  value={order.issue}
+                  name="issue"
+                  onInput={handleInputOrderData}
+                  required
+                />
+                <OrderField
+                  field="Solicitante"
+                  value={order.solicitor}
+                  name="solicitor"
+                  onInput={handleInputOrderData}
+                  required
+                />
+                <OrderField
+                  field="Teléfono"
+                  value={order.phone}
+                  name="phone"
+                  onInput={handleInputOrderData}
+                />
+                <OrderField
+                  field="Lugar Servicio"
+                  name="servicePoint"
+                  value={order.servicePoint}
+                  options={selectedDevice.servicePoints}
+                  displayEmpty
+                  onInput={handleInputOrderData}
+                />
+              </>
+            )}
+          </WorkOrderCard>
+
+          <WorkOrderObservations
+            required={!allowSaving}
+            user={userData.user}
+            onSubmit={(text) =>
+              setOrder({
+                ...order,
+                description: order.description
+                  ? [order.description, text].join("\n- ")
+                  : text,
+              })
+            }
+            value={order.description}
+          />
+          <div className="flex xl:col-span-3 min-h-0 overflow-y-auto flex-grow">
             <InterventionList
+              required={!allowSaving}
               interventions={interventions}
               permissions={permissions}
+              openAdd={() => setInterventionForm(true)}
               onDelete={(id) => {
                 permissions.admin && interventions[id].id
                   ? alert(
@@ -613,65 +567,76 @@ export default function WorkOrder() {
                       interventions.filter((i, index) => index !== id)
                     );
               }}
-              openAdd={() => setInterventionForm(true)}
             />
-            {interventionForm && (
-              <AddIntervention
-                select={handleNewIntervention}
-                close={() => setInterventionForm(false)}
-              />
-            )}
           </div>
         </div>
-        {/* work order progress */}
-        <div className="row py-2 h-25">
-          <div className="col-sm-6">
-            <div className="btn btn-secondary w-100"> Avance de OT</div>
-            <div className="py-4">
-              <WOProgress
-                errorCond={
-                  order.interventions && order.interventions.length > 0
-                }
-                value={order.completed || 0}
-                min={minProgress}
-                max="99"
-                disabled={false}
-                select={handleInputOrderData}
-              />
+        <div className="mt-auto">
+          <WorkOrderCard className="w-full">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex items-center gap-2 flex-grow">
+                <div className="card-title">
+                  <div>Avance</div>
+                  {/* <Info
+                    text={
+                      <>
+                        <span className="font-bold">Cuidado:</span> una orden
+                        está al 99% cuando sólo falta cerrarla.
+                      </>
+                    }
+                    className="bottom-0 left-0 mb-6"
+                  /> */}
+                </div>
+                <WOProgress
+                  errorCond={
+                    order.interventions && order.interventions.length > 0
+                  }
+                  value={order.completed || 0}
+                  min={minProgress}
+                  max="99"
+                  disabled={false}
+                  select={handleInputOrderData}
+                />
+              </div>
+              <div className="flex gap-2 md:gap-4 flex-wrap-reverse">
+                {Object.values(permissions).includes(true) && (
+                  <button
+                    className="btn btn-sm btn-info flex-grow md:flex-grow-0"
+                    onClick={handleCheck}
+                    disabled={!allowSaving || saving}
+                  >
+                    <i className="fas fa-save" /> Guardar
+                  </button>
+                )}
+                {(permissions.author || permissions.worker) && (
+                  <button
+                    className="btn btn-sm btn-success flex-grow  md:flex-grow-0"
+                    disabled={!allowSaving || saving}
+                    onClick={handleAskToClose}
+                  >
+                    <i className="fas fa-lock" /> Solicitar Cierre
+                  </button>
+                )}
+                {(permissions.admin || permissions.supervisor) && (
+                  <>
+                    <button
+                      className="btn btn-sm btn-success flex-grow  md:flex-grow-0"
+                      disabled={!allowSaving || saving}
+                      onClick={handleCloseOrder}
+                    >
+                      <i className="fas fa-lock" /> CERRAR OT
+                    </button>
+                    {device.name && <FollowDevice />}
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="col-sm-6 d-flex align-items-start flex-wrap gap-1">
-            {Object.values(permissions).includes(true) && (
-              <button
-                className="btn btn-info flex-grow-1"
-                onClick={handleCheck}
-                disabled={!allowSaving || saving}
-              >
-                <i className="fas fa-save" /> Guardar
-              </button>
-            )}
-            {(permissions.author || permissions.worker) && (
-              <button
-                className="btn btn-success flex-grow-1"
-                disabled={!allowSaving || saving}
-                onClick={handleAskToClose}
-              >
-                <i className="fas fa-lock" /> Solicitar Cierre
-              </button>
-            )}
-            {(permissions.admin || permissions.supervisor) && (
-              <>
-                <button
-                  className="btn btn-success  flex-grow-1"
-                  disabled={!allowSaving || saving}
-                  onClick={handleCloseOrder}
-                >
-                  <i className="fas fa-lock" /> CERRAR OT
-                </button>
-                {device.name && <FollowDevice />}
-              </>
-            )}
-          </div>
+          </WorkOrderCard>
+          {interventionForm && (
+            <AddIntervention
+              select={handleNewIntervention}
+              close={() => setInterventionForm(false)}
+            />
+          )}
         </div>
       </div>
     </div>

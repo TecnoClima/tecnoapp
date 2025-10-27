@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { plantActions } from "../../../actions/StoreActions";
-// import { FormSelector } from "../../forms/FormInput";
-import "./index.css";
 
-export function PlantSelector(props) {
-  const { disabled, onSelect } = props;
-  // const { plant } = useSelector((state) => state.data);
+export function PlantSelector({ disabled, onSelect }) {
   const { plantList, selectedPlant } = useSelector((state) => state.plants);
   const { userData } = useSelector((state) => state.people);
   const [requested, setRequested] = useState(false);
@@ -41,15 +37,12 @@ export function PlantSelector(props) {
   }
 
   return (
-    <div className="input-group">
-      <label
-        className="input-group-text col-3 p-1 is-flex justify-content-center"
-        style={{ minWidth: "fit-content" }}
-      >
+    <div className="join text-sm bg-base-content/10 w-full border border-base-content/20">
+      <label className="label w-20 flex-none join-item input-sm px-2">
         Planta
       </label>
       <select
-        className="form-select p-1"
+        className="select join-item select-sm w-20 flex-grow px-1"
         name="plant"
         value={selectedPlant.name}
         disabled={disabled}

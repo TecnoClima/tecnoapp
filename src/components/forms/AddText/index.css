@@ -1,21 +1,18 @@
-.addTextForm{
-    height: 10rem;
-    width: 90%;
-    max-width: 30rem;
-    height: 15rem;
-    background-color: silver;
-    border:2px outset grey;
-    box-shadow: 0 0 .5rem black;
-    align-content: center;
+.addTextForm {
+  height: 10rem;
+  width: 90%;
+  max-width: 30rem;
+  height: 15rem;
+  background-color: silver;
+  border: 2px outset grey;
+  box-shadow: 0 0 0.5rem black;
+  align-content: center;
 }
-.addTextInput{
-    width: 90%;
-    height: 9rem;
-    margin: .2rem 5%
+.addTextInput {
+  width: 90%;
+  height: 9rem;
+  margin: 0.2rem 5%;
 }
-.flex{
-    display: flex;
-}
-.centerH{
-    justify-content: center;
+.centerH {
+  justify-content: center;
 }

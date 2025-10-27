@@ -179,133 +179,155 @@ export default function DeviceFilters(props) {
   }
 
   return (
-    <>
-      <button
-        className="btn btn-primary btn-sm"
-        type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#offcanvasExample"
-        aria-controls="offcanvasExample"
-      >
-        Filtrar Equipos
-      </button>
+    <div className="drawer drawer-end z-10 w-fit">
+      <input
+        id="device-filters-drawer"
+        type="checkbox"
+        className="drawer-toggle"
+      />
+      <div className="drawer-content">
+        <label
+          htmlFor="device-filters-drawer"
+          className="btn btn-primary btn-sm drawer-button"
+        >
+          Filtrar Equipos
+        </label>
+      </div>
+      <div className="drawer-side">
+        <label
+          htmlFor="device-filters-drawer"
+          className="drawer-overlay"
+        ></label>
+        <div className="menu p-4 w-80 min-h-full bg-base-200 text-base-content flex flex-col gap-2">
+          <div className="flex justify-between items-center">
+            <h5 className="text-lg font-bold">Filtros de equipo</h5>
+            <label
+              htmlFor="device-filters-drawer"
+              className="btn btn-sm btn-circle btn-ghost"
+            >
+              ✕
+            </label>
+          </div>
 
-      <div
-        className="offcanvas offcanvas-start"
-        tabIndex="-1"
-        id="offcanvasExample"
-        aria-labelledby="offcanvasExampleLabel"
-      >
-        <div className="offcanvas-header">
-          <h5 className="offcanvas-title" id="offcanvasExampleLabel">
-            Filtros de equipo
-          </h5>
-          <button
-            type="button"
-            className="btn-close text-reset"
-            data-bs-dismiss="offcanvas"
-            aria-label="Close"
-          />
-        </div>
-        <div className="offcanvas-body">
           {Object.keys(filters)
             .filter((k) => !hiddenFields.includes(k))
-            .map((k, i) => (
-              <div className="input-group mb-1" key={i}>
-                <div className="input-group-prepend">
-                  <span
-                    className="input-group-text"
-                    id="inputGroup-sizing-default"
-                  >
-                    {headersRef[k]}
-                  </span>
-                </div>
-                {Object.keys(options).includes(k) ? (
-                  <select
-                    value={filters[k]}
-                    type="text"
-                    name={k}
-                    className="form-control"
-                    aria-label="Default"
-                    aria-describedby="inputGroup-sizing-default"
-                    onChange={handleFilter}
-                  >
-                    <option value="">Todas las opciones</option>
-                    {options[k].map((o, i) => (
-                      <option key={i} value={o}>
-                        {o}
-                      </option>
-                    ))}
-                  </select>
-                ) : Object.keys(filters[k]).includes("max") ? (
-                  ["min", "max"].map((name, i) => (
-                    <input
-                      key={i}
-                      type="number"
-                      min="0"
-                      name={name}
-                      className="form-control"
-                      placeholder={name}
-                      aria-label="Default"
-                      value={filters[k][name]}
-                      aria-describedby="inputGroup-sizing-default"
-                      onChange={(e) => handleFilter(e, k)}
-                    />
-                  ))
-                ) : (
-                  <input
-                    type="text"
-                    name={k}
-                    value={filters[k]}
-                    className="form-control"
-                    aria-label="Default"
-                    aria-describedby="inputGroup-sizing-default"
-                    onChange={handleFilter}
-                  />
-                )}
-                {k === "power" &&
-                  ["frig", "TR"].map((unit) => (
-                    <button
-                      key={unit}
-                      className={`btn ${
-                        filters.power.unit === unit
-                          ? "btn-primary"
-                          : "btn-outline-primary"
-                      }`}
-                      onClick={handleUnits}
-                      value={unit}
-                    >
-                      {unit}
-                    </button>
-                  ))}
+            .map((k) => {
+              const isSelect = Object.keys(options).includes(k);
+              const isRanged =
+                !isSelect && Object.keys(filters[k]).includes("max");
 
-                {(Object.keys(filters[k]).includes("max")
-                  ? filters[k].min || filters[k].max
-                  : filters[k]) && (
-                  <button
-                    type="button"
-                    className="btn btn-outline-danger col-1 px-0"
-                    onClick={(e) => handleDelete(e, k)}
+              if (isSelect) {
+                return (
+                  <div
+                    className="join text-sm bg-base-content/10 w-full border border-base-content/20"
+                    key={k}
                   >
-                    <i className="fas fa-backspace" />
-                  </button>
-                )}
-              </div>
-            ))}
-          <button
-            className="btn btn-danger"
-            onClick={handleReset}
-            disabled={
-              !Object.keys(filters).find(
-                (k) =>
-                  JSON.stringify(filters[k]) !== JSON.stringify(emptyfilters[k])
-              )
-            }
-          >
-            Resetar Filtros
-          </button>
+                    <label className="label w-28 flex-none input-sm join-item px-2 min-w-fit">
+                      {headersRef[k]}
+                    </label>
+                    <select
+                      value={filters[k]}
+                      name={k}
+                      onChange={handleFilter}
+                      className="select join-item select-sm flex-grow px-1"
+                    >
+                      <option value="">Todas</option>
+                      {options[k] &&
+                        options[k].map((o, i) => (
+                          <option key={i} value={o}>
+                            {o}
+                          </option>
+                        ))}
+                    </select>
+                    <button
+                      className="btn btn-sm join-item btn-ghost"
+                      onClick={(e) => handleDelete(e, k)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                );
+              } else if (isRanged) {
+                return (
+                  <div className="join w-full" key={k}>
+                    <label className="label input-xs md:input-sm bg-base-content/10 w-28 join-item border border-base-content/20 min-w-fit">
+                      {headersRef[k]}
+                    </label>
+                    {["min", "max"].map((name) => (
+                      <input
+                        key={name}
+                        type="number"
+                        min="0"
+                        name={name}
+                        className="input input-xs md:input-sm input-bordered join-item flex-grow"
+                        placeholder={name}
+                        value={filters[k][name]}
+                        onChange={(e) => handleFilter(e, k)}
+                      />
+                    ))}
+                    {k === "power" &&
+                      ["frig", "TR"].map((unit) => (
+                        <button
+                          key={unit}
+                          className={`btn btn-sm join-item ${
+                            filters.power.unit === unit
+                              ? "btn-primary"
+                              : "btn-ghost"
+                          }`}
+                          onClick={handleUnits}
+                          value={unit}
+                        >
+                          {unit}
+                        </button>
+                      ))}
+                    <button
+                      className="btn btn-sm join-item btn-ghost"
+                      onClick={(e) => handleDelete(e, k)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                );
+              } else {
+                return (
+                  <div className="join w-full" key={k}>
+                    <label className="label input-xs md:input-sm bg-base-content/10 w-28 join-item border border-base-content/20 min-w-fit">
+                      {headersRef[k]}
+                    </label>
+                    <input
+                      value={filters[k]}
+                      type="text"
+                      name={k}
+                      className="input input-xs md:input-sm input-bordered join-item flex-grow"
+                      onChange={handleFilter}
+                    />
+                    <button
+                      className="btn btn-sm join-item btn-ghost"
+                      onClick={(e) => handleDelete(e, k)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                );
+              }
+            })}
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={handleReset}
+              className="btn btn-secondary btn-sm"
+              disabled={
+                !Object.keys(filters).find(
+                  (k) =>
+                    JSON.stringify(filters[k]) !==
+                    JSON.stringify(emptyfilters[k])
+                )
+              }
+            >
+              Limpiar Filtros
+            </button>
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import Paginate from "../../components/Paginate";
-import "./index.css";
+import Pagination from "../../components/Paginate/Pagination";
 import { planActions } from "../../actions/StoreActions";
 import ProgramFilters from "../../components/filters/ProgramFilters";
 import { ErrorModal } from "../../components/warnings";
+import PlanCard from "../../components/plan/PlanCard";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Plan() {
   const { plan, planResult } = useSelector((state) => state.plan);
@@ -17,15 +19,8 @@ export default function Plan() {
   const [supervisors, setSupervisors] = useState([]);
   const [responsibles, setResponsibles] = useState([]);
   const [page, setPage] = useState({ first: 0, size: 10 });
+  const [showFilters, setShowFilters] = useState(true);
   const dispatch = useDispatch();
-
-  function classCompleted(percent) {
-    const value = Number(percent);
-    if (value === 0) return "pendantTask";
-    if (value < 70) return "coursedTask";
-    if (value <= 99) return "doneTask";
-    if (value === 100) return "completedTask";
-  }
 
   useEffect(() => {
     if (loading) return;
@@ -37,50 +32,82 @@ export default function Plan() {
   }, [loading, plan, year, plant, userData, dispatch]);
 
   function updateFilter(filters) {
-    setFilteredList(
-      plan.filter((date) => {
-        let check = true;
-        if (filters.date) {
-          const { year, month, day } = filters.date;
-          if (year)
-            if (new Date(date.date).getFullYear() !== year) check = false;
-          if (month)
-            if (new Date(date.date).getFullYear() !== month) check = false;
-          if (day) if (new Date(date.date).getFullYear() !== day) check = false;
+    const filteredData = plan.filter((date) => {
+      let check = true;
+      if (filters.date) {
+        const { year, month, day } = filters.date;
+        const dateObj = new Date(date.date);
+
+        if (year) {
+          if (dateObj.getFullYear() !== Number(year)) check = false;
         }
-        if (filters.location) {
-          const { plant, area, line, device } = filters.location;
-          if (plant) if (date.plant !== plant) check = false;
-          if (area) if (date.area !== area) check = false;
-          if (line) if (date.line !== line) check = false;
-          if (device)
-            if (!date.device.includes(device) && !date.code.includes(device))
-              check = false;
+        if (month && check) {
+          if (dateObj.getMonth() !== Number(month - 1)) check = false;
         }
-        if (filters.program) {
-          const { program, responsible, supervisor } = filters.program;
-          if (program) if (date.strategy !== program) check = false;
-          if (responsible) {
-            if (
-              date.responsible &&
-              date.responsible.id !== Number(responsible)
-            ) {
-              check = false;
-            }
-          }
-          if (supervisor) {
-            if (date.supervisor && date.supervisor.id !== Number(supervisor)) {
-              check = false;
-            }
+        if (day && check) {
+          if (dateObj.getDate() !== Number(day)) check = false;
+        }
+      }
+      if (filters.location) {
+        const { plant, area, line, device, servicePoint } = filters.location;
+        if (plant) if (date.plant !== plant) check = false;
+        if (area) if (date.area !== area) check = false;
+        if (line) if (date.line !== line) check = false;
+
+        // Filtrado por texto para servicePoint (observations)
+        if (servicePoint && check) {
+          const observations = date.observations || "";
+          if (
+            !observations.toLowerCase().includes(servicePoint.toLowerCase())
+          ) {
+            check = false;
           }
         }
-        if (filters.progress) {
-          const { min, max } = filters.progress;
-          if (date.completed > max || date.completed < min) check = false;
+
+        // Filtrado por texto para device (device y code)
+        if (device && check) {
+          const deviceName = date.device || "";
+          const deviceCode = date.code || "";
+          if (
+            !deviceName.toLowerCase().includes(device.toLowerCase()) &&
+            !deviceCode.toLowerCase().includes(device.toLowerCase())
+          ) {
+            check = false;
+          }
         }
-        return check;
-      })
-    );
+      }
+      if (filters.program) {
+        const { program, responsible, supervisor } = filters.program;
+        if (program) if (date.strategy !== program) check = false;
+        if (responsible) {
+          if (date.responsible && date.responsible.id !== Number(responsible)) {
+            check = false;
+          }
+        }
+        if (supervisor) {
+          if (date.supervisor && date.supervisor.id !== Number(supervisor)) {
+            check = false;
+          }
+        }
+      }
+      if (filters.progress) {
+        const { min, max } = filters.progress;
+        if (date.completed > max || date.completed < min) check = false;
+      }
+      return check;
+    });
+
+    setFilteredList(filteredData);
+
+    // Ajustar la página actual si es necesario
+    const totalPages = Math.ceil(filteredData.length / page.size);
+    const currentPageNumber = Math.floor(page.first / page.size) + 1;
+
+    if (totalPages > 0 && currentPageNumber > totalPages) {
+      // Si la página actual es mayor que el total de páginas, ir a la última página disponible
+      const newFirst = (totalPages - 1) * page.size;
+      setPage({ ...page, first: newFirst });
+    }
   }
 
   useEffect(() => {
@@ -105,9 +132,23 @@ export default function Plan() {
   useEffect(() => setFilteredList(plan), [plan]);
 
   return (
-    <div className="container-fluid">
-      <div className="row">
-        <div className="col">
+    <div className="page-container">
+      <div className="page-title mb-[0!important]">{`PLAN DE MANTENIMIENTO ${year}`}</div>
+      <div className="my-2 px-2 py-0 bg-base-200/50 rounded-box">
+        <div
+          className="flex justify-between items-center cursor-pointer"
+          onClick={() => setShowFilters((s) => !s)}
+        >
+          <h3 className="font-bold text-base">Filtros</h3>
+          <button className="btn btn-ghost btn-sm">
+            <FontAwesomeIcon icon={showFilters ? faChevronUp : faChevronDown} />
+          </button>
+        </div>
+        <div
+          className={`transition-all duration-300 ease-in-out overflow-hidden ${
+            showFilters ? "max-h-screen mt-2" : "max-h-0"
+          }`}
+        >
           <ProgramFilters
             responsibles={responsibles}
             supervisors={supervisors}
@@ -115,69 +156,25 @@ export default function Plan() {
           />
         </div>
       </div>
-      <div className="row">
-        <div className="col">
-          <div className="title">{`PLAN DE MANTENIMIENTO ${year}`}</div>
-          <div className="planContainer my-2">
-            {filteredList[0]
-              ? filteredList
-                  .slice(page.first, page.first + page.size)
-                  .map((date, index) => (
-                    <div
-                      key={index}
-                      className={`planRow ${classCompleted(date.completed)}`}
-                    >
-                      <div className="planDate">
-                        {new Date(date.date).toLocaleDateString().split(" ")[0]}
-                      </div>
-                      <div className="planCard planDeviceCard">
-                        <div>
-                          <b>{`[${date.code}] ${date.device}`}</b>
-                        </div>
-                        <div className="subTitle">
-                          {`${date.plant} > ${date.area} > ${date.line}`}
-                        </div>
-                      </div>
-                      <div className="planCard planPeopleCard">
-                        {userData.access !== "Worker" && date.responsible && (
-                          <div>
-                            <b>{`Responsable: `}</b>
-                            {date.responsible.name}
-                          </div>
-                        )}
-                        <div>
-                          <b>{`Supervisor: `}</b>
-                          {date.supervisor.name}
-                        </div>
-                      </div>
-                      <div className="planCard planTaskCard">
-                        <b>{"Observaciones "}</b>
-                        {date.observations}
-                      </div>
-                      <div
-                        className={`planCard percentTask bg${classCompleted(
-                          date.completed
-                        )}`}
-                      >
-                        <b>{"Avance "}</b>
-                        {`${date.completed}%`}
-                      </div>
-                    </div>
-                  ))
-              : "No hay elementos que coincidan con ese criterio de búsqueda"}
-          </div>
-          <Paginate
-            pages={Math.ceil(filteredList.length / page.size)}
-            length="10"
-            min="5"
-            step="5"
-            defaultValue={page.size}
-            select={(value) =>
-              setPage({ ...page, first: (Number(value) - 1) * page.size })
-            }
-            size={(value) => setPage({ ...page, size: Number(value) })}
-          />{" "}
-        </div>
+      <div className="flex flex-col min-h-0 gap-1 h-screen overflow-y-scroll">
+        {filteredList[0]
+          ? filteredList
+              .slice(page.first, page.first + page.size)
+              .map((date, index) => <PlanCard date={date} key={index} />)
+          : "No hay elementos que coincidan con ese criterio de búsqueda"}
+      </div>
+      <div className="flex justify-center pt-2">
+        <Pagination
+          length={filteredList.length}
+          current={Math.floor(page.first / page.size) + 1}
+          size={page.size}
+          setPage={(value) =>
+            setPage({ ...page, first: (Number(value) - 1) * page.size })
+          }
+          setSize={(value) =>
+            setPage({ ...page, size: Number(value), first: 0 })
+          }
+        />
       </div>
       {planResult.error && (
         <ErrorModal

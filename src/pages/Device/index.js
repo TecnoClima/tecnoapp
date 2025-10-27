@@ -2,16 +2,31 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { deviceActions } from "../../actions/StoreActions";
-import { FormInput } from "../../components/forms/FormInput";
-import DeviceList from "../../components/lists/DeviceList";
+import DeviceList from "../../components/Devices/DeviceList";
 import { Chart } from "../../components/Chart";
-import "./index.css";
-import FollowDevice from "./FollowDevice";
-import SetFrequency from "./Frequency";
+import FollowDevice from "../../components/DevicePage/FollowDevice";
+import SetFrequency from "../../components/DevicePage/Frequency";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBolt,
+  faCalendarAlt,
+  faExclamationTriangle,
+  faFan,
+  faGlobe,
+  faMapMarkerAlt,
+  faStar,
+  faTable,
+  faToolbox,
+  faTools,
+} from "@fortawesome/free-solid-svg-icons";
+import WorkOrderCard from "../../components/workOrder/WorkOrderCard";
+import DeviceItem from "../../components/DevicePage/DeviceItem";
+import { faSnowflake } from "@fortawesome/free-regular-svg-icons";
+import Loading from "../../components/Loading";
 
 export default function Device() {
   const { userData } = useSelector((state) => state.people);
-  const { selectedDevice, deviceHistory } = useSelector(
+  const { selectedDevice, deviceHistory, deviceResult } = useSelector(
     (state) => state.devices
   );
   const { year } = useSelector((state) => state.data);
@@ -127,189 +142,172 @@ export default function Device() {
   }, []);
 
   return (
-    <div className="pageBackground">
+    <>
       {!code ? (
         <DeviceList plant={userData.plant} />
       ) : (
-        <div className="container">
-          <div className="row justify-content-between flex-wrap-reverse gap-2 mt-3">
-            <div className="col col-sm-auto px-0">
-              <SetFrequency />
+        <div className="page-container mx-2">
+          {deviceResult.error ? (
+            <div className="page-title text-center">
+              <FontAwesomeIcon icon={faExclamationTriangle} className="mr-2" />
+              El código proporcionado no corresponde a un equipo registrado en
+              la base de datos
             </div>
-            <Link
-              to="/ots/new"
-              onClick={(e) => dispatch(deviceActions.getDetail(code))}
-              className="btn btn-success col-sm-auto"
-            >
-              <i className="fas fa-toolbox" /> Nueva Orden
-            </Link>
-          </div>
-          <div className="row py-3">
-            <div className="col-auto">
-              <h4>{`[${device.code}] ${device.name}`}</h4>
-            </div>
-            {device && (
-              <div className="col-auto ms-auto">
-                <FollowDevice device={device} />
+          ) : deviceResult.success ? (
+            <>
+              <div className="page-title">{`[${device.code}] ${device.name}`}</div>
+              <div className="flex w-full justify-between flex-wrap-reverse gap-2 -mt-3">
+                <SetFrequency />
+
+                <div className="flex gap-2 sm:ml-auto">
+                  {device && <FollowDevice device={device} />}
+                  <Link
+                    to="/ots/new"
+                    onClick={(e) => dispatch(deviceActions.getDetail(code))}
+                    className="btn btn-sm btn-success"
+                  >
+                    <FontAwesomeIcon icon={faToolbox} />
+                    Nueva Orden
+                  </Link>
+                </div>
               </div>
-            )}
-          </div>
-          <div className="row mb-3">
-            <div className="col-md-6">
-              {device.code && (
-                <div className="container px-0">
-                  <div className="row">
-                    <h5>DATOS DEL EQUIPO</h5>
-                  </div>
-                  <FormInput
-                    key={device.plant}
-                    label={
-                      <div>
-                        <i className="fas fa-map-marker-alt" />
-                      </div>
-                    }
+              <div className="flex w-full flex-wrap gap-2">
+                <WorkOrderCard className="w-full flex flex-col gap-1 mt-2 md:w-80 md:flex-grow">
+                  <DeviceItem
                     value={`${device.plant} > ${device.area} > ${device.line}`}
-                    readOnly={true}
-                  />
-                  <FormInput label="Tipo" value={device.type} readOnly={true} />
-                  <FormInput
-                    key={device.power}
-                    label="Potencia"
-                    defaultValue={
+                  >
+                    <FontAwesomeIcon icon={faMapMarkerAlt} />
+                  </DeviceItem>
+                  <DeviceItem value={device.type}>
+                    <FontAwesomeIcon icon={faFan} />
+                  </DeviceItem>
+                  <DeviceItem
+                    value={
                       device.power >= 9000
                         ? `${Math.floor(device.power / 3000)} TnRef`
                         : `${device.power} Frigorías`
                     }
-                    readOnly={true}
-                  />
-                  <FormInput
-                    label="Gas"
+                  >
+                    <FontAwesomeIcon icon={faBolt} />
+                  </DeviceItem>
+
+                  <DeviceItem
                     value={`${device.refrigerant} ${
                       device.gasAmount ? `(${device.gasAmount}g)` : ""
                     }`}
-                    readOnly={true}
-                  />
-                  <FormInput
-                    label="Servicio"
-                    value={device.service}
-                    readOnly={true}
-                  />
-                  <FormInput
-                    label="Categoría"
-                    value={device.category}
-                    readOnly={true}
-                  />
-                  <FormInput
-                    label="Ambiente"
-                    value={device.environment}
-                    readOnly={true}
-                  />
-                  <FormInput
-                    key={device.age}
-                    label="Antigüedad"
-                    value={`${device.age ? `${device.age} años ` : ""} ${
-                      device.regDate ? `(${device.regDate.split("T")[0]})` : ""
-                    }`}
-                    readOnly={true}
-                  />
-                  <FormInput
-                    label="Estado"
-                    value={device.status}
-                    readOnly={true}
-                  />
-                </div>
-              )}
-            </div>
-            <div className="col-md-6">
-              <div className="container px-0">
-                <h5>HISTORIAL DE RECLAMOS</h5>
-                <div className="d-flex">
-                  {years.map((year, index) => (
-                    <button
-                      key={chartValues + index}
-                      className={`yearBox ${
-                        chartValues.find((value) => value.label === year)
-                          ? "activeYearBox"
-                          : ""
-                      }`}
-                      style={{ "--main-color": colors[index] }}
-                      onClick={handleClickYear}
-                      id={index}
-                      value={year}
-                    >
-                      {year}
-                    </button>
-                  ))}
-                </div>
-                <div className="row">
-                  <Chart values={chartValues} labels={labels} />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="row overflow-x-auto">
-            <h5>HISTORIAL DE INTERVENCIONES</h5>
-            <table className="table table-hover" style={{ fontSize: "80%" }}>
-              <thead>
-                <tr>
-                  <th scope="col">Fecha</th>
-                  <th scope="col">Intervinientes</th>
-                  <th scope="col">Descripción</th>
-                  <th
-                    scope="col"
-                    style={{ minWidth: "4rem" }}
-                    className="text-center"
                   >
-                    Uso de gas
-                  </th>
-                  <th scope="col" className="text-center">
-                    Orden de Trabajo
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {interventions[0] &&
-                  interventions.map((intervention, index) => {
-                    return (
-                      <tr key={index}>
-                        <th style={{ minWidth: "5rem" }}>
-                          {intervention.date.toLocaleDateString()}
-                        </th>
-                        <td>
-                          {intervention.workers
-                            .map((worker) => worker.name)
-                            .join(", ")}
-                        </td>
-                        <td>{intervention.tasks}</td>
-                        <td>
-                          {intervention.gas.map(
-                            (usage) =>
-                              `garrafa ${usage.cylinder}: ${usage.consumption} kg`
-                          )}
-                        </td>
-                        <td>
-                          <div className="d-flex w-100 justify-content-center align-items-center">
-                            {enableLinks ? (
-                              <Link
-                                title="ver OT"
-                                className="btn btn-outline-primary"
-                                to={`/ots/detail/${intervention.order}`}
-                              >
-                                {intervention.order}
-                              </Link>
-                            ) : (
-                              <b>{intervention.order}</b>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
-          </div>
+                    <FontAwesomeIcon icon={faSnowflake} />
+                  </DeviceItem>
+                  <DeviceItem value={device.service}>
+                    <FontAwesomeIcon icon={faTools} />
+                  </DeviceItem>
+
+                  <DeviceItem value={device.category}>
+                    <FontAwesomeIcon icon={faTable} />
+                  </DeviceItem>
+                  <DeviceItem value={device.environment}>
+                    <FontAwesomeIcon icon={faGlobe} />
+                  </DeviceItem>
+                  <DeviceItem value={`${device.age} años`}>
+                    <FontAwesomeIcon icon={faCalendarAlt} />
+                  </DeviceItem>
+                  <DeviceItem value={device.status}>
+                    <FontAwesomeIcon icon={faStar} />
+                  </DeviceItem>
+                </WorkOrderCard>
+                <WorkOrderCard
+                  title="Historial de Reclamos"
+                  className="w-full flex flex-col gap-1 mt-2 md:w-80 md:flex-grow"
+                >
+                  <div className="flex gap-2">
+                    {years.map((year, index) => (
+                      <button
+                        key={chartValues + index}
+                        className={`yearBox ${
+                          chartValues.find((value) => value.label === year)
+                            ? "activeYearBox"
+                            : ""
+                        }`}
+                        style={{ "--main-color": colors[index] }}
+                        onClick={handleClickYear}
+                        id={index}
+                        value={year}
+                      >
+                        {year}
+                      </button>
+                    ))}
+                  </div>
+                  <Chart values={chartValues} labels={labels} />
+                </WorkOrderCard>
+              </div>
+              <div className="mt-4">
+                <div className="card-title my-4">
+                  Historial de intervenciones
+                </div>
+                <table className="table no-padding" style={{ fontSize: "80%" }}>
+                  <thead>
+                    <tr>
+                      <th scope="col">Fecha</th>
+                      <th scope="col">Intervinientes</th>
+                      <th scope="col">Descripción</th>
+                      <th scope="col" className="text-center min-w-16">
+                        Uso de gas
+                      </th>
+                      <th scope="col" className="text-center">
+                        Orden de Trabajo
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {interventions[0] &&
+                      interventions.map((intervention, index) => {
+                        return (
+                          <tr key={index}>
+                            <th className="min-w-20">
+                              {intervention.date.toLocaleDateString()}
+                            </th>
+                            <td>
+                              {intervention.workers
+                                .map((worker) => worker.name)
+                                .join(", ")}
+                            </td>
+                            <td>{intervention.tasks}</td>
+                            <td>
+                              {intervention.gas.map(
+                                (usage) =>
+                                  `garrafa ${usage.cylinder}: ${usage.consumption} kg`
+                              )}
+                            </td>
+                            <td>
+                              <div className="flex w-full justify-center items-center">
+                                {enableLinks ? (
+                                  <Link
+                                    title="Ver OT"
+                                    className="btn btn-sm btn-secondary btn-outline "
+                                    to={`/ots/detail/${intervention.order}`}
+                                  >
+                                    {intervention.order}
+                                  </Link>
+                                ) : (
+                                  <b>{intervention.order}</b>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          ) : (
+            <div className="page-title text-center pt-10">
+              <Loading className="mr-2" />
+              Buscando...
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </>
   );
 }

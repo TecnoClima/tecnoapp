@@ -1,18 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
+import { useDispatch, useSelector } from "react-redux";
+import { peopleActions } from "./actions/StoreActions";
 import "./App.css";
+import InnerLayout from "./components/Layout/InnerLayout";
+import AdminPanel from "./pages/Admin/AdminPanel";
+import AdminCylinders from "./pages/Admin/Cylinders";
+import DeviceAdmin from "./pages/Admin/Devices";
+import { LoadExcel } from "./pages/Admin/LoadExcel";
+import { LoadFrequencies } from "./pages/Admin/LoadFrequencies";
+import AdminPlan from "./pages/Admin/Plan";
+import AdminPlants from "./pages/Admin/Plants";
+import AdminUsers from "./pages/Admin/Users";
+import Device from "./pages/Device";
 import Landing from "./pages/Landing";
-import Layout from "./layout/index";
+import Monitoring from "./pages/Monitoring";
+import NotFound from "./pages/NotFound";
 import Panel from "./pages/Panel";
 import Plan from "./pages/Plan";
-import WorkOrders from "./pages/WorkOrders";
-import { useDispatch, useSelector } from "react-redux";
-import AdminPanel from "./pages/Admin/AdminPanel";
 import WorkOrder from "./pages/WorkOrder";
-import Device from "./pages/Device";
-import { peopleActions, planActions } from "./actions/StoreActions";
-import NotFound from "./pages/NotFound";
+import WorkOrders from "./pages/WorkOrders";
 
 function App() {
   const { userData } = useSelector((state) => state.people);
@@ -38,6 +46,21 @@ function App() {
     [access]
   );
 
+  useEffect(() => {
+    console.log(
+      "%c🚀 Aplicación web desarrollada por Leo Monay 🚀",
+      "color: #00ff00; font-size: 20px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); background: linear-gradient(45deg, #ff6b6b, #4ecdc4); padding: 10px; border-radius: 10px;"
+    );
+    console.log(
+      "%c💼 Visita mi portfolio: https://leomonay.github.io/",
+      "color: #ffffff; font-size: 16px; font-weight: bold; background: linear-gradient(45deg, #667eea, #764ba2); padding: 8px; border-radius: 8px; margin-top: 5px;"
+    );
+    console.log(
+      "%c🔗 GitHub: https://github.com/leomonay",
+      "color: #ffffff; font-size: 14px; background: #333; padding: 6px; border-radius: 6px; margin-top: 3px;"
+    );
+  }, []);
+
   if (loading) return <div className="waiting"></div>;
   if (!loading)
     return (
@@ -49,9 +72,9 @@ function App() {
               exact
               path={"/panel"}
               element={
-                <Layout>
+                <InnerLayout>
                   <Panel />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -60,9 +83,9 @@ function App() {
               exact
               path={"/ots"}
               element={
-                <Layout>
+                <InnerLayout>
                   <WorkOrders />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -71,9 +94,9 @@ function App() {
               exact
               path={"/ots/new"}
               element={
-                <Layout>
+                <InnerLayout>
                   <WorkOrder />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -82,9 +105,9 @@ function App() {
               exact
               path={"/ots/detail/:orderCode"}
               element={
-                <Layout>
+                <InnerLayout>
                   <WorkOrder />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -93,9 +116,9 @@ function App() {
               exact
               path={"/equipos"}
               element={
-                <Layout>
+                <InnerLayout>
                   <Device />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -104,9 +127,9 @@ function App() {
               exact
               path={"/equipos/:code"}
               element={
-                <Layout>
+                <InnerLayout>
                   <Device />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -115,9 +138,9 @@ function App() {
               exact
               path={"/ots/edit/:otCode"}
               element={
-                <Layout>
+                <InnerLayout>
                   <WorkOrder />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -125,9 +148,9 @@ function App() {
             exact
             path={"/plan"}
             element={
-              <Layout>
+              <InnerLayout>
                 <Plan />
-              </Layout>
+              </InnerLayout>
             }
           />
           {access.isAdmin && (
@@ -135,9 +158,9 @@ function App() {
               exact
               path={"/admin"}
               element={
-                <Layout>
+                <InnerLayout>
                   <AdminPanel />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -146,9 +169,9 @@ function App() {
               exact
               path={"/admin/:selected"}
               element={
-                <Layout>
+                <InnerLayout>
                   <AdminPanel />
-                </Layout>
+                </InnerLayout>
               }
             />
           )}
@@ -156,11 +179,108 @@ function App() {
             exact
             path={"/plan"}
             element={
-              <Layout>
+              <InnerLayout>
                 <Plan />
-              </Layout>
+              </InnerLayout>
             }
           />
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/usuarios"}
+              element={
+                <InnerLayout>
+                  <AdminUsers />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/equipos"}
+              element={
+                <InnerLayout>
+                  <DeviceAdmin />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/plantas"}
+              element={
+                <InnerLayout>
+                  <AdminPlants />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <>
+              <Route
+                path="/admin/plan"
+                element={
+                  <InnerLayout>
+                    <AdminPlan />
+                  </InnerLayout>
+                }
+              />
+              <Route
+                path="/admin/plan/:tab"
+                element={
+                  <InnerLayout>
+                    <AdminPlan />
+                  </InnerLayout>
+                }
+              />
+            </>
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/garrafas"}
+              element={
+                <InnerLayout>
+                  <AdminCylinders />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/monitoreo"}
+              element={
+                <InnerLayout>
+                  <Monitoring />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/carga_excel"}
+              element={
+                <InnerLayout>
+                  <LoadExcel />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/carga_frecuencias"}
+              element={
+                <InnerLayout>
+                  <LoadFrequencies />
+                </InnerLayout>
+              }
+            />
+          )}
           <Route exact path="*" element={<NotFound />} />
         </Routes>
       </Router>

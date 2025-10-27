@@ -1,62 +1,58 @@
 import { Link } from "react-router-dom";
 
-export const ErrorModal = (props) => {
-  const { message, close } = props;
+export const ErrorModal = ({ message, close, open }) => {
   function handleClose(e) {
     e.preventDefault();
     close();
   }
   return (
-    <div className="modal" style={{ zIndex: "none" }}>
-      <form className="alert alert-danger" onSubmit={handleClose} role="alert">
-        <div className="container">
-          <div className="row" style={{ alignItems: "center" }}>
-            <div className="col-12">
-              <h3 style={{ textAlign: "center" }}>ERROR</h3>
-              <h5 style={{ textAlign: "center" }}>{message}</h5>
-            </div>
-          </div>
-          <div className="row" style={{ alignItems: "center" }}>
-            Si no logra resolverlo, dé aviso al administrador.
-          </div>
-          <div className="row" style={{ alignItems: "center" }}>
-            <button className="btn btn-danger" type="submit">
-              Cerrar
+    <dialog id="error-modal" className="modal w-full h-full" open={open}>
+      <div className="modal-box bg-error text-error-content p-4 relative">
+        <h3 className="font-bold text-lg">Ocurrió un error</h3>
+        <p className="py-1">{message}</p>
+        <div className="modal-action mt-2">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button
+              className="btn btn-sm btn-error bg-neutral/50 text-base-content border-none"
+              onClick={handleClose}
+            >
+              Entendido
             </button>
-          </div>
+          </form>
         </div>
-      </form>
-    </div>
+      </div>
+    </dialog>
   );
 };
 
-export const SuccessModal = ({ message, link, close }) => {
+export const SuccessModal = ({ message, link, close, open }) => {
   function handleClose(e) {
     e.preventDefault();
     close();
   }
   return (
-    <div className="modal" style={{ zIndex: "none" }}>
-      <form className="alert alert-success" onSubmit={handleClose} role="alert">
-        <div className="container">
-          <div className="row" style={{ alignItems: "center" }}>
-            <div className="col-12">
-              <h3 style={{ textAlign: "center" }}>¡ÉXITO!</h3>
-              <h5 style={{ textAlign: "center" }}>{message}</h5>
-            </div>
-          </div>
-          {link && (
-            <div className="row" style={{ alignItems: "center" }}>
-              <Link to={link}>Click aquí para acceder</Link>.
-            </div>
-          )}
-          <div className="row" style={{ alignItems: "center" }}>
-            <button className="btn btn-success" type="submit">
-              Aceptar
+    <dialog id="success-modal" className="modal w-full h-full" open={open}>
+      <div className="modal-box bg-success text-success-content p-4 relative">
+        <h3 className="font-bold text-lg">¡Éxito!</h3>
+        <p className="py-1">{message}</p>
+        {link && (
+          <Link to={link} className="py-1 underline">
+            Click aquí para acceder
+          </Link>
+        )}
+        <div className="modal-action mt-2">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button
+              className="btn btn-sm btn-success bg-neutral/50 text-base-content border-none"
+              onClick={handleClose}
+            >
+              Entendido
             </button>
-          </div>
+          </form>
         </div>
-      </form>
-    </div>
+      </div>
+    </dialog>
   );
 };

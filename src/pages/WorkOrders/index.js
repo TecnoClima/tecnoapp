@@ -7,17 +7,25 @@ import {
   resetDetail,
   setDetail,
 } from "../../actions/workOrderActions";
-import Paginate from "../../components/Paginate";
 import WarningErrors from "../../components/warnings/WarningErrors";
 import {
   deviceActions,
   planActions,
   workOrderActions,
 } from "../../actions/StoreActions";
-import "./index.css";
-import { ErrorModal } from "../../components/warnings";
+import { ErrorModal, SuccessModal } from "../../components/warnings";
 import { getHour, getShortDate } from "../../utils/utils";
 import OrdersFilters from "./OrderFilters";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBell,
+  faChevronRight,
+  faTable,
+  faToolbox,
+} from "@fortawesome/free-solid-svg-icons";
+import Pagination from "../../components/Paginate/Pagination";
+import ClassBadge from "../../components/Badges/ClassBadge";
+import WorkOrderListItem from "../../components/workOrder/WorkOrderListItem";
 
 //Método para editar intervención
 //Asignar garrafas a personal
@@ -36,7 +44,7 @@ export const FormSelector = ({
   return (
     <div
       className={`input-group mb-3 required  ${
-        result && !result[item] && `border border-2 border-danger`
+        result && !result[item] && `border-2 border-error`
       }`}
     >
       <span className="input-group-text" id="inputGroup-sizing-default">
@@ -91,16 +99,20 @@ export default function WorkOrders() {
   const [filters, setFilters] = useState({});
   const [warning, setWarning] = useState(false);
   const [yearList, setYearList] = useState(year);
-
-  const [page, setPage] = useState({ first: 0, size: 10 });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [size, setSize] = useState(10);
+  function handleSelectPage(value) {
+    setCurrentPage(Number(value));
+  }
 
   const dispatch = useDispatch();
 
   const [isAdmin] = useState(userData.access === "Admin");
 
   function handleWarning(e) {
+    e.stopPropagation();
     e.preventDefault();
-    setWarning(Number(e.target.id));
+    setWarning(Number(e.currentTarget.id));
   }
 
   useEffect(() => dispatch(resetDetail()), [dispatch]);
@@ -201,131 +213,99 @@ export default function WorkOrders() {
   }, [filters]);
 
   return (
-    <div className="container d-flex flex-column px-0">
-      <div className="row d-flex justify-content-end mt-2 mb-2">
-        <div className="col-md-3 d-grid gap-2">
-          <Link
-            to="/ots/new"
-            onClick={() => dispatch(deviceActions.resetDevice())}
-            className="btn btn-success ps-0 pe-0"
-          >
-            <i className="fas fa-toolbox" /> Nueva Orden
-          </Link>
-        </div>
-        <div className="col-md-3 d-grid gap-2">
-          <Link
-            to="/ots/new"
-            onClick={handleNewReclaim}
-            className="btn btn-warning ps-0 pe-0"
-          >
-            <i className="fas fa-bell" /> Nuevo Reclamo
-          </Link>
-        </div>
-        {userData.access === "Admin" && (
-          <div className="col-md-3 d-grid gap-2">
-            <button onClick={handleReport} className="btn btn-info ps-0 pe-0">
-              <i className="fas fa-table" /> Generar Reporte
-            </button>
-          </div>
-        )}
-      </div>
+    <>
+      {warning && (
+        <WarningErrors
+          warnings={[
+            `¿Desea eliminar la OT ${warning}, con todas las intervenciones asociadas y los consumos de gas?`,
+          ]}
+          proceed={() => dispatch(deleteOrder(warning))}
+          close={() => setWarning(false)}
+        />
+      )}
 
-      <OrdersFilters
-        {...{ filters, setFilters, setFilteredList, filteredList }}
+      <ErrorModal
+        message={orderResult.error}
+        open={orderResult.error}
+        close={() => dispatch(workOrderActions.resetOrderResult())}
       />
 
-      {workOrderList ? (
-        <div className="wOList">
-          <div className="title">Listado de OT</div>
-          <Paginate
-            length={Math.min(7, filteredList.length)}
-            pages={filteredList.length / page.size}
-            select={(pg) => {
-              setPage({ ...page, first: page.size * pg });
-            }}
-            size={(value) => setPage({ ...page, size: value })}
-          />
-          <table className="table table-striped miniTable">
-            <thead>
-              <tr>
-                <th scope="col">OT N°</th>
-                <th scope="col">Clase</th>
-                <th scope="col">Equipo</th>
-                <th scope="col">Linea</th>
-                <th scope="col">Solicitada</th>
-                <th scope="col">Supervisor</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Cierre</th>
-                <th scope="col">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredList
-                .slice(page.first, page.first + page.size)
-                .map((order) => (
-                  <tr key={order.code}>
-                    <th scope="row">{order.code}</th>
-                    <td>{order.class}</td>
-                    <td>
-                      <b>{`[${order.devCode}]`}</b> <div>{order.devName}</div>
-                    </td>
-                    <td>{order.line}</td>
-                    <td>
-                      <div>{new Date(order.date).toLocaleDateString()}</div>
-                      <div>{order.solicitor}</div>
-                    </td>
-                    <td>{order.supervisor}</td>
-                    <td>{order.description}</td>
-                    <td>
-                      {order.close
-                        ? new Date(order.close).toLocaleDateString()
-                        : "Pendiente"}
-                    </td>
-                    <td>
-                      <div className="d-flex">
-                        <Link
-                          className="btn btn-info"
-                          title="Detalle"
-                          to={`/ots/detail/${order.code}`}
-                          onClick={() => dispatch(planActions.selectTask({}))}
-                        >
-                          <i className="fas fa-search-plus" />
-                        </Link>
-                        {isAdmin && (
-                          <button
-                            className="btn btn-danger"
-                            title="Eliminar"
-                            id={order.code}
-                            onClick={handleWarning}
-                          >
-                            <i className="fas fa-trash-alt" id={order.code} />
-                          </button>
-                        )}
-                      </div>
-                      {warning && (
-                        <WarningErrors
-                          warnings={[
-                            `¿Desea eliminar la OT ${order.code}, con todas las intervenciones asociadas y los consumos de gas?`,
-                          ]}
-                          proceed={() => dispatch(deleteOrder(warning))}
-                          close={() => setWarning(false)}
-                        />
-                      )}
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
+      <SuccessModal
+        message={orderResult.success}
+        open={orderResult.success}
+        close={() => dispatch(workOrderActions.resetOrderResult())}
+      />
+      <div className="page-container">
+        <div className="flex w-full justify-between items-center flex-wrap">
+          <div className="page-title">Listado de Órdenes de trabajo</div>
+          <div className="flex gap-2 flex-wrap mb-4">
+            <Link
+              to="/ots/new"
+              onClick={() => dispatch(deviceActions.resetDevice())}
+              className="btn btn-sm btn-success flex-grow"
+            >
+              <FontAwesomeIcon icon={faToolbox} />
+              <span>Nueva Orden</span>
+            </Link>
+            <Link
+              to="/ots/new"
+              onClick={handleNewReclaim}
+              className="btn btn-sm btn-warning flex-grow"
+            >
+              <FontAwesomeIcon icon={faBell} />
+              Nuevo Reclamo
+            </Link>
+            {userData.access === "Admin" && (
+              <button
+                onClick={handleReport}
+                className="btn btn-sm btn-info flex-grow"
+              >
+                <FontAwesomeIcon icon={faTable} />
+                Generar Reporte
+              </button>
+            )}
+          </div>
         </div>
-      ) : (
-        <div className="waiting" />
-      )}
-      {orderResult.error && (
-        <ErrorModal
-          message={orderResult.error}
-          close={() => dispatch(workOrderActions.resetOrderResult())}
-        ></ErrorModal>
-      )}
-    </div>
+
+        <OrdersFilters
+          {...{ filters, setFilters, setFilteredList, filteredList }}
+        />
+
+        {workOrderList ? (
+          <div className="mt-2">
+            <div className="flex justify-center">
+              <Pagination
+                length={filteredList.length}
+                current={currentPage}
+                setPage={handleSelectPage}
+                size={size}
+              />
+            </div>
+            <div className="flex flex-col gap-2 py-4">
+              <div className="hidden xl:flex w-full flex-grow flex-row p-1 font-bold text-sm">
+                <div className="w-20 font-bold">Código</div>
+                <div className="w-80 flex-grow ">Clase/equipo </div>
+                <div className="w-60 flex-grow">Solicitante/Supervisor</div>
+                <div className="w-60 flex-grow">Descripción</div>
+                {isAdmin && <div className="w-11">Eliminar</div>}
+              </div>
+              {filteredList
+                .slice((currentPage - 1) * size, currentPage * size)
+                .map((order) => (
+                  <WorkOrderListItem
+                    key={order.code}
+                    order={order}
+                    onClick={() => dispatch(planActions.selectTask({}))}
+                    handleWarning={handleWarning}
+                    isAdmin={isAdmin}
+                  />
+                ))}
+            </div>
+          </div>
+        ) : (
+          <div className="waiting" />
+        )}
+      </div>
+    </>
   );
 }

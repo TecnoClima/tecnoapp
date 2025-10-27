@@ -1,6 +1,8 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { faLocationDot, faSave } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
 import { appConfig } from "../../../config";
+import { FormSelector, FormTextArea } from "../../forms/FormInput";
 const { frequencies } = appConfig;
 
 export default function PlanDevice(props) {
@@ -18,7 +20,10 @@ export default function PlanDevice(props) {
 
   useEffect(
     () =>
-      setSave(!(JSON.stringify(startProgram) === JSON.stringify(newProgram))),
+      setSave(
+        newProgram?.name &&
+          !(JSON.stringify(startProgram) === JSON.stringify(newProgram))
+      ),
     [startProgram, newProgram]
   );
 
@@ -29,7 +34,7 @@ export default function PlanDevice(props) {
 
   function handleProperty(key, value) {
     let program = { ...newProgram };
-    if (value === "") {
+    if (!value) {
       delete program[key];
     } else {
       if (!program) program = {};
@@ -38,13 +43,14 @@ export default function PlanDevice(props) {
     setNewProgram(program);
   }
 
-  function handleProgram(value) {
+  function handleProgram(e) {
+    const { value } = e.currentTarget;
     const program = programs.find((program) => program.name === value);
-    setProgram(program);
+    setProgram({ ...program });
     setNewProgram(
       value === ""
         ? {}
-        : { name: value, year: program.year, plant: program.plant }
+        : { name: value, year: program?.year, plant: program?.plant }
     );
   }
 
@@ -55,214 +61,153 @@ export default function PlanDevice(props) {
     setStartProgram(program);
   }
 
+  const plantPrograms = programs.filter(
+    (program) => program.plant === device.plant
+  );
+
   return (
-    <div className="container-fluid p-0 mt-1 mx-0">
-      <div className="row m-0">
-        <div className="col-auto p-1 d-flex align-items-center">
-          <input
-            type="checkbox"
-            className="form-check"
-            style={{ transform: "scale(1.6)" }}
-            id={device.code}
-            defaultChecked={props.checked}
-            onChange={(e) => props.onCheck(e)}
+    <div
+      className={`card flex flex-col gap-1 py-1 px-2 border ${
+        newProgram.name
+          ? "border-success bg-success/10"
+          : "border-transparent bg-error/10"
+      }`}
+    >
+      <div className="flex items-center gap-2 flex-wrap">
+        <input
+          type="checkbox"
+          className="checkbox"
+          id={device.code}
+          defaultChecked={props.checked}
+          onChange={(e) => props.onCheck(e)}
+        />
+        <div className="flex-grow text-base">
+          <b>{`[${device.code}] ${device.name}`}</b>
+        </div>
+
+        <div className="text-sm ">
+          {` (${device.type} ${
+            device.power > 7500
+              ? Math.floor(device.power / 3000) + "TR"
+              : device.power + "Frig"
+          }
+                                ${device.refrigerant})${
+            device.gasAmount ? ` - ${device.gasAmount}g` : ""
+          }`}
+        </div>
+      </div>
+      <div className="flex flex-col md:flex-row md:items-center flex-wrap gap-1">
+        <div className="text-xs md:w-1/3">
+          <FontAwesomeIcon icon={faLocationDot} className="mr-1" />
+          {`${device.plant} > ${device.area} > ${device.line}`}
+        </div>
+
+        <div className="flex flex-grow flex-wrap text-xs gap-1">
+          <div className="rounded-md bg-base-content/10 px-2 py-1 w-20 flex-grow min-w-fit">
+            <i className="fas fa-table me-1" />
+            {device.category}
+          </div>
+          <div className="rounded-md bg-base-content/10 px-2 py-1 w-20 flex-grow min-w-fit">
+            <i className="fas fa-tools me-1" />
+            {device.service}
+          </div>
+          <div className="rounded-md bg-base-content/10 px-2 py-1 w-20 flex-grow min-w-fit">
+            <i className="fas fa-globe me-1" />
+            {device.environment}
+          </div>
+          <div className="rounded-md bg-base-content/10 px-2 py-1 w-20 flex-grow min-w-fit">
+            <i className="far fa-calendar-alt  me-1" />
+            {device.age + " años"}
+          </div>
+          <div className="rounded-md bg-base-content/10 px-2 py-1 w-20 flex-grow min-w-fit">
+            <i className="far fa-star  me-1" />
+            {device.status}
+          </div>
+          <div className="rounded-md bg-base-content/10 px-2 py-1 w-20 flex-grow min-w-fit">
+            <i className="fas fa-bell me-1" />
+            {device.reclaims + " reclamos"}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col md:flex-row gap-1">
+        <div
+          title={
+            !plantPrograms.length
+              ? "No hay programas para esta planta"
+              : undefined
+          }
+          className="flex flex-col flex-grow justify-start"
+        >
+          <FormSelector
+            size="xs"
+            name="program"
+            label="Programa"
+            options={plantPrograms}
+            disabled={!plantPrograms.length}
+            valueField="name"
+            captionField="name"
+            onSelect={handleProgram}
+            defaultValue={newProgram ? newProgram.name : undefined}
+          />
+
+          <FormSelector
+            size="xs"
+            label="Responsable"
+            name="responsible"
+            options={program?.people}
+            valueField="id"
+            captionField="name"
+            onSelect={(event) =>
+              handleProperty(
+                "responsible",
+                program.people.find(
+                  (worker) => worker.id === Number(event.target.value)
+                )
+              )
+            }
+            disabled={!newProgram.name}
+            defaultValue={
+              newProgram
+                ? newProgram.responsible && newProgram.responsible.id
+                : undefined
+            }
+          />
+
+          <FormSelector
+            size="xs"
+            name="frequency"
+            label="Frecuencia"
+            options={frequencies}
+            valueField="weeks"
+            captionField="frequency"
+            onSelect={(e) =>
+              handleProperty(
+                "frequency",
+                e.target.value ? Number(e.target.value) : undefined
+              )
+            }
+            value={newProgram.frequency}
+            disabled={!newProgram.name}
           />
         </div>
-        <div
-          className={`col p-0 bg-opacity-25 ${
-            newProgram.name ? "bg-success" : "bg-secondary"
-          } rounded p-1`}
-          style={{ fontSize: "90%" }}
-        >
-          <div className="container-fluid px-2">
-            <div className="row justify-content-between">
-              <div className="col-auto">
-                <b>{`[${device.code}] ${device.name}`}</b>
-              </div>
-              <div className="col-auto ">
-                {` (${device.type} ${
-                  device.power > 7500
-                    ? Math.floor(device.power / 3000) + "TR"
-                    : device.power + "Frig"
-                }
-                                ${device.refrigerant})${
-                  device.gasAmount ? ` - ${device.gasAmount}g` : ""
-                }`}
-              </div>
-              <div
-                className="col-auto d-flex align-items-center"
-                style={{ fontSize: "80%" }}
-              >
-                {`${device.plant} > ${device.area} > ${device.line}`}
-              </div>
+        <div className="flex flex-grow gap-1">
+          <FormTextArea
+            key={newProgram.description}
+            label="Observaciones"
+            onChange={(e) => handleProperty("observations", e.target.value)}
+            defaultValue={newProgram?.observations || ""}
+          />
+          <button
+            className="btn btn-success btn-sm ml-auto h-full"
+            onClick={handleSave}
+            disabled={!save}
+          >
+            <div className="flex flex-col justify-center">
+              <FontAwesomeIcon icon={faSave} className="mb-2" />
+              Guardar
             </div>
-            <div className="row">
-              <div className="col-auto " style={{ fontSize: "80%" }}>
-                <div className="flex w-100 justify-content-start flex-wrap">
-                  <div className="bg-light rounded shadow-sm px-1 m-1">
-                    <i className="fas fa-table me-1" />
-                    {device.category}
-                  </div>
-                  <div className="bg-light rounded shadow-sm px-1 m-1">
-                    <i className="fas fa-tools me-1" />
-                    {device.service}
-                  </div>
-                  <div className="bg-light rounded shadow-sm px-1 m-1">
-                    <i className="fas fa-globe me-1" />
-                    {device.environment}
-                  </div>
-                  <div className="bg-light rounded shadow-sm px-1 m-1">
-                    <i className="far fa-calendar-alt  me-1" />
-                    {device.age + " años"}
-                  </div>
-                  <div className="bg-light rounded shadow-sm px-1 m-1">
-                    <i className="far fa-star  me-1" />
-                    {device.status}
-                  </div>
-                  <div className="bg-light rounded shadow-sm px-1 m-1">
-                    <i className="fas fa-bell me-1" />
-                    {device.reclaims + " reclamos"}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="row m-0">
-              <div className="col-lg-4 p-0">
-                <div
-                  className={`input-group ${
-                    newProgram.name ? "" : "border border-2 border-danger"
-                  }`}
-                >
-                  <label
-                    className="input-group-text col-3 px-1 py-0 is-flex justify-content-center"
-                    style={{ minWidth: "fit-content" }}
-                  >
-                    Programa
-                  </label>
-                  <select
-                    className="form-select px-1 py-0"
-                    onChange={(e) => handleProgram(e.target.value)}
-                    defaultValue={newProgram ? newProgram.name : undefined}
-                  >
-                    <option value="">Sin seleccionar</option>
-                    {programs &&
-                      programs.map((p, index) => (
-                        <option key={index} value={p.name}>
-                          {p.name}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-              </div>
-              <div className="col-lg-4 p-0">
-                <div className="input-group">
-                  <label
-                    className="input-group-text col-3 px-1 py-0 is-flex justify-content-center"
-                    style={{ minWidth: "fit-content" }}
-                  >
-                    Responsable
-                  </label>
-                  <select
-                    className="form-select px-1 py-0"
-                    key={newProgram.responsible}
-                    onBlur={(event) =>
-                      handleProperty(
-                        "responsible",
-                        program.people.find(
-                          (worker) => worker.id === Number(event.target.value)
-                        )
-                      )
-                    }
-                    defaultValue={
-                      newProgram
-                        ? newProgram.responsible && newProgram.responsible.id
-                        : undefined
-                    }
-                  >
-                    <option value="">Sin Seleccionar</option>
-                    {program &&
-                      program.people.map((worker, index) => (
-                        <option key={index} value={worker.id}>
-                          {worker.name}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-              </div>
-              {/* <div className='col-sm-2 p-0'>
-                                <div className='input-group'>
-                                    <label className="input-group-text col-3 px-1 py-0 is-flex justify-content-center" style={{minWidth: 'fit-content'}}>
-                                        Costo (mU$S)
-                                    </label>
-                                    <input className="form-control px-1 py-0 text-center"
-                                        defaultValue={newProgram? newProgram.cost : 0}
-                                        onBlur={(e)=>handleProperty( 'cost', Number(e.target.value) )}/>
-                                </div>
-                            </div>                             */}
-              <div className="col-lg-4 p-0">
-                <div
-                  className={`input-group ${
-                    newProgram.frequency ? "" : "border border-2 border-danger"
-                  }`}
-                >
-                  <label
-                    className="input-group-text col-3 px-1 py-0 is-flex justify-content-center"
-                    style={{ minWidth: "fit-content" }}
-                  >
-                    Frecuencia
-                  </label>
-                  <select
-                    className="form-select px-1 py-0"
-                    key={newProgram.frequency}
-                    onChange={(e) =>
-                      handleProperty("frequency", Number(e.target.value))
-                    }
-                    value={newProgram.frequency}
-                  >
-                    <option value="">Seleccionar</option>
-                    {frequencies &&
-                      frequencies.map((item, index) => (
-                        <option key={index} value={item.weeks}>
-                          {item.frequency}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div className="row align-items-stretch">
-              <div className="col-lg-10">
-                <div className="input-group">
-                  <label
-                    className="input-group-text col-3 px-1 py-0 is-flex justify-content-center"
-                    style={{ minWidth: "fit-content" }}
-                  >
-                    Observaciones
-                  </label>
-                  <textarea
-                    className="form-control px-1 py-0"
-                    key={newProgram.description}
-                    placeholder="Ingrese una descripción si es necesaria"
-                    style={{ width: "5rem" }}
-                    onBlur={(e) =>
-                      handleProperty("observations", e.target.value)
-                    }
-                    defaultValue={newProgram && newProgram.observations}
-                  />
-                </div>
-              </div>
-              <div className="col-lg-2">
-                <button
-                  className="btn btn-success w-100 h-100 d-flex align-items-center justify-content-center"
-                  onClick={handleSave}
-                  disabled={!save}
-                >
-                  {save && <i className="far fa-save fs-4 me-2" />}
-                  <div>Guardar</div>
-                </button>
-              </div>
-            </div>
-          </div>
+          </button>
         </div>
       </div>
     </div>

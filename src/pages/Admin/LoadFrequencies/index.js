@@ -1,10 +1,10 @@
-import * as xlsx from "xlsx/xlsx.mjs";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import * as xlsx from "xlsx/xlsx.mjs";
 import { deviceActions } from "../../../actions/StoreActions";
-import { appConfig } from "../../../config";
-import { ErrorModal, SuccessModal } from "../../../components/warnings";
 import waiting from "../../../assets/searching.gif";
+import { ErrorModal, SuccessModal } from "../../../components/warnings";
+import { appConfig } from "../../../config";
 const { putExcel } = deviceActions;
 const { frequencies } = appConfig;
 
@@ -69,52 +69,47 @@ export function LoadFrequencies() {
   }
 
   return (
-    <div className="adminOptionSelected p-4">
-      <div className="w-100 flex flex-column">
-        <h3>Cargar Frecuencias desde archivo excel</h3>
-        <p>
-          Tené en cuenta que se requiere el{" "}
-          <b>código del equipo que figura en la base de datos</b>
-        </p>
-        <div className="w-100 overflow-auto">
-          <table
-            className="table h-25 text-center"
-            style={{
-              fontSize: "90%",
-            }}
-          >
-            <thead>
-              <tr>
-                <th>Código de Equipo</th>
-                <th>Frecuencia</th>
+    <div className="page-container">
+      <div className="flex w-full justify-between flex-wrap">
+        <div className="page-title">Cargar Frecuencias desde archivo excel</div>
+      </div>
+      <p className="mt-2">
+        Tené en cuenta que se requiere el{" "}
+        <b>código del equipo que figura en la base de datos</b>
+      </p>
+      <div className="w-full max-w-md mx-auto my-4 overflow-auto">
+        <table className="table no-padding text-xs">
+          <thead className="sticky top-0 bg-base-100">
+            <tr>
+              <th className="text-center font-bold">Código de Equipo</th>
+              <th className="text-center font-bold">Frecuencia</th>
+            </tr>
+          </thead>
+          <tbody>
+            {frequencies.map(({ weeks, frequency }, index) => (
+              <tr key={weeks}>
+                <td className="text-center">CC1-00{index + 1}</td>
+                <td className="text-center">{frequency}</td>
               </tr>
-            </thead>
-            <tbody>
-              {frequencies.map(({ weeks, frequency }, index) => (
-                <tr key={weeks}>
-                  <td>CC1-00{index + 1}</td>
-                  <td>{frequency}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="w-full flex flex-col mt-4">
         {uploading && (
-          <div
-            className="w-25 flex flex-column text-center align-self-center"
-            style={{ minWidth: "10rem" }}
-          >
+          <div className="w-1/4 min-w-40 flex flex-col m-auto text-center">
             <img className="" src={waiting} alt="ventilador girando" />
             <b>Cargando Equipos</b>
           </div>
         )}
         {!uploading && (
-          <div>
-            <div className="d-flex my-3 flex-wrap-reverse">
+          <div className="flex flex-col items-center w-fit">
+            <div className="flex gap-2">
               <form
                 onSubmit={handleSubmit}
                 method="POST"
                 encType="multipart/form-data"
+                className="flex gap-2 items-center"
               >
                 <input
                   type="file"
@@ -122,9 +117,10 @@ export function LoadFrequencies() {
                   ref={inputRef}
                   onChange={changeFile}
                   onClick={() => setErrors(null)}
+                  className="file-input file-input-sm min-w-fit file-input-bordered file-input-primary w-full max-w-xs"
                 />
                 <button
-                  className="btn btn-outline-warning mx-2"
+                  className="btn btn-warning btn-outline btn-sm"
                   type="submit"
                   disabled={!updateData?.[0]}
                 >
@@ -133,7 +129,7 @@ export function LoadFrequencies() {
                 </button>
               </form>
               <button
-                className="btn btn-outline-info"
+                className="btn btn-info btn-outline btn-sm"
                 onClick={() =>
                   buildXLSX([
                     [excelCodeCol, excelFreqCol], // Encabezados
@@ -148,7 +144,7 @@ export function LoadFrequencies() {
               </button>
             </div>
             {updateData?.[0] && !errors && (
-              <div className="alert alert-success">
+              <div className="alert py-2 mt-2 alert-success w-fit opacity-75">
                 Click en [<i className="fas fa-file-upload me-2" />
                 Subir] para cargar los equipos
               </div>
@@ -157,8 +153,8 @@ export function LoadFrequencies() {
         )}
 
         {errors && (
-          <div className="alert-danger h-50 overflow-auto">
-            <p className="fw-bold">Error al cargar el archivo</p>
+          <div className="alert alert-error mt-4">
+            <p className="font-bold">Error al cargar el archivo</p>
             {errors.message}
           </div>
         )}
@@ -166,12 +162,14 @@ export function LoadFrequencies() {
       {deviceResult.error && (
         <ErrorModal
           message={deviceResult.error}
+          open={true}
           close={() => dispatch(deviceActions.resetResult())}
         />
       )}
       {deviceResult.success && (
         <SuccessModal
           message="Equipos actualizados exitosamente"
+          open={true}
           close={() => dispatch(deviceActions.resetResult())}
         />
       )}

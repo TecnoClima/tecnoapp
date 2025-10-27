@@ -3,8 +3,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { deviceActions } from "../../../actions/StoreActions";
 import CreateDevice from "./CreateDevice";
-import "./index.css";
 import DeviceReport from "./DeviceReport";
+import { FormSelector } from "../../../components/forms/FormInput";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCalendarAlt,
+  faEye,
+  faSnowflake,
+} from "@fortawesome/free-regular-svg-icons";
+import {
+  faBolt,
+  faFan,
+  faGlobe,
+  faStar,
+  faTable,
+  faTools,
+  faEdit,
+  faTrashAlt,
+  faBackspace,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
+import Pagination from "../../../components/Paginate/Pagination";
 
 // servicePoints,active
 export default function DeviceAdmin() {
@@ -16,7 +35,9 @@ export default function DeviceAdmin() {
   const [create, setCreate] = useState(false);
   const [loading, setLoading] = useState(false);
   const [edit, setEdit] = useState(undefined);
+  const [nameFilter, setNameFilter] = useState("");
   const dispatch = useDispatch();
+  const [page, setPage] = useState({ first: 0, size: 30 });
 
   useEffect(() => {
     if (loading) return;
@@ -69,24 +90,32 @@ export default function DeviceAdmin() {
           let check = true;
           for (let key of Object.keys(filters))
             if (device[key] !== filters[key]) check = false;
+          // Filtro por nombre
+          if (
+            nameFilter &&
+            !device.name.toLowerCase().includes(nameFilter.toLowerCase())
+          )
+            check = false;
           return check;
         })
       ),
-    [deviceFullList, filters]
+    [deviceFullList, filters, nameFilter]
   );
 
   function setfilter(e) {
     e.preventDefault();
-    const { id, value } = e.target;
+    const { name, value } = e.target;
     const newFilters = { ...filters };
-    value ? (newFilters[id] = value) : delete newFilters[id];
+    value && value !== "Seleccione"
+      ? (newFilters[name] = value)
+      : delete newFilters[name];
     setFilters(newFilters);
   }
   function deleteFilter(e) {
     e.preventDefault();
-    const { id } = e.target;
+    const { value } = e.currentTarget;
     const newFilters = { ...filters };
-    delete newFilters[id];
+    delete newFilters[value];
     setFilters(newFilters);
   }
   function addNewForm(e) {
@@ -95,141 +124,275 @@ export default function DeviceAdmin() {
     setCreate(!create);
   }
 
-  return (
-    <div className="adminOptionSelected">
-      <div className="container">
-        <div className="row py-2">
-          <div className="col col-8">
-            <h3>Administración de Equipos</h3>
-          </div>
-          <div className="col col-4">
-            <div className="d-flex justify-content-end gap-2">
-              <button
-                type="button"
-                className="btn btn-success w-auto "
-                onClick={addNewForm}
-              >
-                <i className="fas fa-plus me-1" />
-                Agregar Equipo
-              </button>
-              <DeviceReport filters={filters} />
-            </div>
-          </div>
-        </div>
+  // Calcular la lista paginada
+  const paginatedList = filteredList.slice(page.first, page.first + page.size);
 
-        <div className="row">
-          <b>Filtros</b>
-          {locOptions.map((field) => (
-            <div className="col-sm-4" key={field.name}>
-              <div className="input-group mb-1">
-                <span
-                  className="input-group-text col-3"
-                  id="inputGroup-sizing-default"
-                >
-                  {field.caption}
-                </span>
-                <select
-                  key={filters[field.name]}
-                  className="form-select"
-                  id={field.name}
-                  value={filters[field.name]}
-                  onChange={setfilter}
-                  aria-label="Default select example"
-                >
-                  <option value="">{`Sin especificar`}</option>
-                  {field.values.map((item) => (
-                    <option value={item} key={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
-                {filters[field.name] && (
-                  <button
-                    className="btn"
-                    style={{ color: "red" }}
-                    id={field.name}
-                    onClick={deleteFilter}
-                  >
-                    <i id={field.name} className="fas fa-minus-circle" />
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="row">
-          <table
-            className="table table-striped"
-            style={{
-              fontSize: "85%",
-              maxHeight: "inherit",
-              overflowY: "auto",
-            }}
+  return (
+    <div className="page-container">
+      <div className="flex justify-between items-center flex-wrap">
+        <div className="page-title">Administración de Equipos</div>
+        <div className=" flex gap-2 mb-2">
+          <button
+            type="button"
+            className="btn btn-success btn-sm"
+            onClick={addNewForm}
           >
-            <thead className="fixed-header">
-              <tr>
-                <th scope="col">Código</th>
-                <th scope="col">Planta</th>
-                <th scope="col">Area</th>
-                <th scope="col">Linea</th>
-                <th scope="col">Nombre</th>
-                <th scope="col">Tipo</th>
-                <th scope="col">Potencia</th>
-                <th scope="col">Refrigerante</th>
-                <th scope="col">Cant.Gas</th>
-                <th scope="col">Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredList.map((device, index) => (
+            <FontAwesomeIcon icon={faPlus} />
+            Agregar Equipo
+          </button>
+          <DeviceReport filters={filters} />
+        </div>
+      </div>
+      {/* Filtros modernos */}
+      <div className="flex gap-x-4 md:gap-y-2 items-center flex-wrap mb-3">
+        {locOptions.map((field) => (
+          <div
+            key={field.name}
+            className="flex w-60 gap-1 flex-grow items-center"
+          >
+            <FormSelector
+              className="join-item"
+              label={field.caption}
+              name={field.name}
+              options={field.values}
+              value={filters[field.name] || ""}
+              onSelect={setfilter}
+            />
+            <button
+              value={field.name}
+              title="Eliminar Filtro"
+              className={`btn btn-outline btn-error btn-xs border ${
+                filters[field.name] ? "opacity-100" : "opacity-0"
+              }`}
+              onClick={deleteFilter}
+              disabled={!filters[field.name]}
+            >
+              <FontAwesomeIcon icon={faBackspace} />
+            </button>
+          </div>
+        ))}
+        <input
+          type="text"
+          className="input input-bordered w-60 input-sm flex-grow"
+          placeholder="Buscar por nombre..."
+          value={nameFilter}
+          onChange={(e) => setNameFilter(e.target.value)}
+        />
+      </div>
+      <div className="flex-grow overflow-auto w-full">
+        {/* Tabla desktop */}
+        <table
+          className="hidden xl:table no-padding"
+          style={{ fontSize: "80%" }}
+        >
+          <thead>
+            <tr>
+              <th scope="col">Codigo Eq.</th>
+              <th scope="col">Nombre</th>
+              <th scope="col" className="text-center">
+                Tipo
+              </th>
+              <th scope="col" className="text-center">
+                Potencia
+                <br />
+                [kCal]
+              </th>
+              <th scope="col" className="text-center">
+                Potencia
+                <br />
+                [TR]
+              </th>
+              <th scope="col" className="text-center">
+                Gas
+              </th>
+              <th scope="col" className="text-center">
+                Cant.gas
+                <br />
+                (g)
+              </th>
+              <th scope="col" className="text-center">
+                Categoría
+              </th>
+              <th scope="col" className="text-center">
+                Ambiente
+              </th>
+              <th scope="col" className="text-center">
+                Servicio
+              </th>
+              <th scope="col" className="text-center">
+                Antigüedad
+              </th>
+              <th scope="col" className="text-center">
+                Estado
+              </th>
+              <th scope="col" className="text-center">
+                Acción
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedList.map((device, index) => {
+              const age = device.regDate
+                ? new Date().getFullYear() -
+                  new Date(device.regDate).getFullYear()
+                : "-";
+              return (
                 <tr key={index}>
-                  <th scope="row">
-                    <Link to={`/equipos/${device.code}`}>
-                      <p style={{ minWidth: "4rem" }}>{device.code}</p>
-                    </Link>
-                  </th>
-                  <td className="col-1">{device.plant}</td>
-                  <td>{device.area}</td>
-                  <td>{device.line}</td>
+                  <th style={{ minWidth: "5rem" }}>{device.code}</th>
                   <td>{device.name}</td>
-                  <td>{device.type}</td>
-                  <td>
-                    {!isNaN(device.power) && device.power >= 9000
-                      ? `${Math.floor(device.power / 3000)} tnRef`
-                      : `${device.power} frig`}
+                  <td className="text-center">{device.type}</td>
+                  <td className="text-center">
+                    {device.powerKcal || device.power}
                   </td>
-                  <td>{device.refrigerant}</td>
-                  <td>{device.gasAmount ? `${device.gasAmount}g` : ""}</td>
-                  <td>
-                    <div className="d-flex">
-                      <button
-                        className="btn btn-info"
-                        title="Modificar"
-                        style={{ margin: "0 .2rem" }}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setEdit(device);
-                          setCreate(true);
-                        }}
-                      >
-                        <i className="fas fa-pencil-alt" />
-                      </button>
-                      <button
-                        className="btn btn-danger"
-                        title="Desactivar"
-                        style={{ margin: "0" }}
-                        disabled
-                      >
-                        <i className="fa fa-minus" />
-                      </button>
-                    </div>
+                  <td className="text-center">
+                    {device.powerKcal
+                      ? Math.floor(device.powerKcal / 3000)
+                      : device.power
+                      ? Math.floor(device.power / 3000)
+                      : "-"}
+                  </td>
+                  <td className="text-center">
+                    {device.refrigerant?.refrigerante ||
+                      device.refrigerant ||
+                      ""}
+                  </td>
+                  <td className="text-center">{device.gasAmount || ""}</td>
+                  <td className="text-center">{device.category}</td>
+                  <td className="text-center">{device.environment}</td>
+                  <td className="text-center">{device.service}</td>
+                  <td className="text-center">{age} años</td>
+                  <td className="text-center">{device.status}</td>
+                  <td className="text-center flex gap-2 justify-center">
+                    <button
+                      className="btn btn-xs btn-info"
+                      onClick={() => setEdit(device)}
+                      title="Editar"
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <button
+                      className="hidden btn btn-xs btn-error"
+                      onClick={() => {
+                        /* lógica eliminar */
+                      }}
+                      title="Eliminar"
+                    >
+                      <FontAwesomeIcon icon={faTrashAlt} />
+                    </button>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          {create && <CreateDevice edit={edit} close={addNewForm} />}
+              );
+            })}
+          </tbody>
+        </table>
+        {/* Mobile cards */}
+        <div className="xl:hidden flex flex-col gap-1">
+          {paginatedList.map((device, index) => {
+            const age = device.regDate
+              ? new Date().getFullYear() -
+                new Date(device.regDate).getFullYear()
+              : "-";
+            return (
+              <div
+                key={device.code}
+                className="flex flex-col w-full bg-base-content/10 p-2 rounded-md hover:bg-base-content/15"
+              >
+                <div className="flex justify-between">
+                  <div className="card-title">
+                    {device.code} - {device.name}
+                  </div>
+                  <div className="flex gap-1">
+                    <Link
+                      title="Ver Equipo"
+                      className="btn btn-xs btn-info"
+                      to={`/equipos/${device.code}`}
+                    >
+                      <FontAwesomeIcon icon={faEye} />
+                    </Link>
+                    <button
+                      className="btn btn-xs btn-ghost"
+                      onClick={() => setEdit(device)}
+                      title="Editar"
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <button
+                      className="hidden btn btn-xs btn-error"
+                      onClick={() => {
+                        /* lógica eliminar */
+                      }}
+                      title="Eliminar"
+                    >
+                      <FontAwesomeIcon icon={faTrashAlt} />
+                    </button>
+                  </div>
+                </div>
+                <div className="flex text-sm flex-wrap text-base-content/75">
+                  <div className="device-info-item">
+                    <FontAwesomeIcon icon={faFan} />
+                    <div>{device.type}</div>
+                  </div>
+                  <div className="device-info-item">
+                    <FontAwesomeIcon icon={faBolt} />{" "}
+                    {device.powerKcal || device.power} kCal / (
+                    {device.powerKcal
+                      ? Math.floor(device.powerKcal / 3000)
+                      : device.power
+                      ? Math.floor(device.power / 3000)
+                      : "-"}{" "}
+                    TR)
+                  </div>
+                  <div className="device-info-item">
+                    <FontAwesomeIcon icon={faSnowflake} />
+                    <div>
+                      {device.refrigerant?.refrigerante ||
+                        device.refrigerant ||
+                        ""}
+                    </div>
+                    <div>{device.gasAmount || ""}</div>
+                  </div>
+                  <div className="device-info-item">
+                    <FontAwesomeIcon icon={faTable} />
+                    <div>{device.category}</div>
+                  </div>
+                  <div className="device-info-item">
+                    <FontAwesomeIcon icon={faGlobe} />
+                    <div>{device.environment}</div>
+                  </div>
+                  <div className="device-info-item">
+                    <FontAwesomeIcon icon={faTools} />
+                    <div>{device.service}</div>
+                  </div>
+                  <div className="device-info-item">
+                    <FontAwesomeIcon icon={faCalendarAlt} />
+                    <div>{`${age} año${age > 1 ? "s" : ""}`}</div>
+                  </div>
+                  <div className="device-info-item">
+                    <FontAwesomeIcon icon={faStar} />
+                    <div>{device.status}</div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
+      </div>
+      {create && <CreateDevice close={addNewForm} />}
+      {edit && <CreateDevice edit={edit} close={() => setEdit(null)} />}
+
+      {/* Paginación */}
+      <div className="flex justify-center pt-2">
+        <Pagination
+          length={filteredList.length}
+          current={Math.floor(page.first / page.size) + 1}
+          size={page.size}
+          setPage={(value) =>
+            setPage({ ...page, first: (Number(value) - 1) * page.size })
+          }
+          setSize={(value) =>
+            setPage({ ...page, size: Number(value), first: 0 })
+          }
+        />
       </div>
     </div>
   );

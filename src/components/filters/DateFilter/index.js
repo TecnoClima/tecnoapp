@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { appConfig } from "../../../config";
 const { startingYear } = appConfig.values;
 const currentYear = new Date().getFullYear();
@@ -44,55 +43,46 @@ export default function DateFilter(props) {
   );
 
   return (
-    <div className="container mb-2 col-lg-3">
-      <div className="row">
-        <div className="col">
-          <div className="input-group">
-            <span className="input-group-text py-0 px-1 fw-bold">FECHA</span>
-            <select
-              name="year"
-              className="form-control p-0 pe-3"
-              value={filters.year}
-              onChange={setFilter}
-            >
-              <option value="">Año</option>
-              {years.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
-            <select
-              name="month"
-              className="form-control p-0 pe-3"
-              value={filters.month}
-              disabled={!filters.year}
-              onChange={setFilter}
-            >
-              <option value="">Mes</option>
-              {months.map((m) => (
-                <option key={m} value={m}>
-                  {m + 1}
-                </option>
-              ))}
-            </select>
-            <select
-              name="day"
-              className="form-control p-0 pe-3"
-              value={filters.day}
-              disabled={!filters.month}
-              onChange={setFilter}
-            >
-              <option value="">Día</option>
-              {days.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
+    <div className="join">
+      <label className="label input-xs md:input-sm bg-base-content/10 w-28 join-item border border-base-content/20 min-w-fit">
+        Fecha
+      </label>
+      <select
+        name="year"
+        value={filters.year}
+        onChange={setFilter}
+        className="select select-bordered select-xs md:select-sm join-item"
+      >
+        {years.map((y, i) => (
+          <option key={i}>{y}</option>
+        ))}
+      </select>
+      <select
+        name="month"
+        value={filters.month}
+        onChange={setFilter}
+        disabled={!filters.year}
+        className="select select-bordered select-xs md:select-sm join-item"
+      >
+        <option value="">Mes</option>
+        {months.map((m, i) => (
+          <option key={i} value={m}>
+            {m + 1}
+          </option>
+        ))}
+      </select>
+      <select
+        name="day"
+        value={filters.day}
+        onChange={setFilter}
+        disabled={!filters.month}
+        className="select select-bordered select-xs md:select-sm join-item"
+      >
+        <option value="">Día</option>
+        {days.map((d, i) => (
+          <option key={i}>{d}</option>
+        ))}
+      </select>
     </div>
   );
 }

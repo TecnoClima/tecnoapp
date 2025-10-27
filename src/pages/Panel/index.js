@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import "./index.css";
 import { useDispatch, useSelector } from "react-redux";
-import TaskList from "../../components/lists/taskList";
+import TaskList from "../../components/Panel/TaskLists";
 import { getDeviceFromList } from "../../actions/deviceActions";
 import { planActions } from "../../actions/StoreActions";
-import AssignedWO from "../../components/lists/AssignedWO";
+import AssignedWO from "../../components/Panel/AssignedWO";
 import { workOrderActions } from "../../actions/StoreActions";
 
 export default function Panel() {
@@ -19,7 +18,7 @@ export default function Panel() {
 
   useEffect(() => {
     dispatch(workOrderActions.getAssignedOrders());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (userData && userData.user) {
@@ -97,21 +96,18 @@ export default function Panel() {
   }, [plan]);
 
   return (
-    <div className="container-fluid h-100 p-0">
-      <div className="row h-100 m-0">
-        {assignedOrders.length > 0 ? (
-          <AssignedWO />
-        ) : (
-          <div className="h-100 p-0" style={{ overflowY: "auto" }}>
-            <TaskList
-              pendant={pendant}
-              current={current}
-              next={next}
-              access={userData.access}
-            />
-          </div>
-        )}
-      </div>
+    <div className="page-container">
+      {assignedOrders.length > 0 ? (
+        <AssignedWO />
+      ) : (
+        <TaskList
+          loading={!plan?.[0]}
+          pendant={pendant}
+          current={current}
+          next={next}
+          access={userData.access}
+        />
+      )}
     </div>
   );
 }

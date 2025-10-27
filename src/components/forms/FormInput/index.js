@@ -1,4 +1,3 @@
-import "./index.css";
 import { appConfig } from "../../../config";
 const { headersRef } = appConfig;
 
@@ -20,37 +19,40 @@ export function FormInput(props) {
     placeholder,
   } = props;
   return (
-    <div className="input-group">
-      <span
-        className="input-group-text col-3 p-1 is-flex justify-content-center"
-        style={{ minWidth: "fit-content" }}
-      >
-        {headersRef[label] || label}
-      </span>
-      <input
-        className="form-control p-1"
-        autoComplete="off"
-        disabled={disabled}
-        defaultValue={defaultValue}
-        readOnly={readOnly}
-        ref={ref}
-        value={value}
-        placeholder={placeholder}
-        type={type || "text"}
-        name={name}
-        min={type === "number" ? min : undefined}
-        max={["number", "date"].includes(type) ? max : undefined}
-        step={["number", "date"].includes(type) ? step : undefined}
-        onBlur={onBlur}
-        onChange={(e) => changeInput && changeInput(e)}
-      />
-    </div>
+    <>
+      <div className="join w-full">
+        <label
+          className="label input-sm bg-base-content/10 w-28 join-item border border-base-content/20 min-w-fit"
+          placeholder="Search"
+        >
+          {headersRef[label] || label}
+        </label>
+        <input
+          className="input input-sm input-bordered join-item flex-grow"
+          autoComplete="off"
+          disabled={disabled}
+          defaultValue={defaultValue}
+          readOnly={readOnly}
+          ref={ref}
+          value={value}
+          placeholder={placeholder}
+          type={type || "text"}
+          name={name}
+          min={type === "number" ? min : undefined}
+          max={["number", "date"].includes(type) ? max : undefined}
+          step={["number", "date"].includes(type) ? step : undefined}
+          onBlur={onBlur}
+          onChange={(e) => changeInput && changeInput(e)}
+        />
+      </div>
+    </>
   );
 }
 
 export function FormSelector(props) {
   const {
     label,
+    size,
     defaultValue,
     valueField,
     name,
@@ -62,16 +64,32 @@ export function FormSelector(props) {
     disabled,
     value,
   } = props;
+  const inputClass = {
+    xs: "input-xs",
+    sm: "input-sm",
+    md: "input-md",
+    lg: "input-lg",
+  };
+  const selectClass = {
+    xs: "select-xs",
+    sm: "select-sm",
+    md: "select-md",
+    lg: "select-lg",
+  };
+  const inputSize = inputClass[size] || "input-sm";
+  const selectSize = selectClass[size] || "select-sm";
+
   return (
-    <div className="input-group">
+    <div className="join text-sm bg-base-content/10 w-full border border-base-content/20">
       <label
-        className="input-group-text col-3 p-1 is-flex justify-content-center"
-        style={{ minWidth: "fit-content" }}
+        htmlFor={name}
+        className={`label w-20 flex-none ${inputSize} join-item px-2 min-w-fit`}
       >
         {headersRef[label] || label}
       </label>
+
       <select
-        className="form-select p-1"
+        className={`select join-item ${selectSize} w-20 flex-grow px-1`}
         name={name}
         defaultValue={defaultValue}
         readOnly={readOnly}
@@ -80,7 +98,9 @@ export function FormSelector(props) {
         onBlur={onBlur}
         onChange={(e) => onSelect && onSelect(e)}
       >
-        <option className="w-auto">Seleccione</option>
+        <option className="w-auto" value="">
+          Seleccione
+        </option>
         {options &&
           options.map((element, index) => (
             <option
@@ -107,15 +127,12 @@ export function FormTextArea({
 }) {
   // const {label, disabled, defaultValue, changeInput, name, readOnly, placeholder}=props
   return (
-    <div className="input-group">
-      <span
-        className="input-group-text col-3 ps-1 pe-1 is-flex justify-content-center"
-        style={{ minWidth: "fit-content" }}
-      >
+    <div className="join join-vertical md:join-horizontal text-sm bg-base-content/10 w-full border border-base-content/20">
+      <span className="label w-20 flex-none join-item input-sm px-2 min-w-fit">
         {headersRef[label] || label}
       </span>
       <textarea
-        className="form-control"
+        className="textarea join-item flex-grow"
         disabled={disabled}
         defaultValue={defaultValue}
         value={value}

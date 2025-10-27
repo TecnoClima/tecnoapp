@@ -1,14 +1,13 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import CylindersList from "../../../components/lists/CylindersList";
 
 import { peopleActions } from "../../../actions/StoreActions";
 
-import NewCylinder from "../../../components/forms/NewCylinder";
-import { FormSelector } from "../../../components/forms/FormInput";
 import { cylinderActions } from "../../../actions/StoreActions";
+import { FormSelector } from "../../../components/forms/FormInput";
+import NewCylinder from "../../../components/forms/NewCylinder";
 import { appConfig } from "../../../config";
 const { cylinderStatuses } = appConfig;
 
@@ -72,66 +71,52 @@ export default function AdminCylinders() {
   }
 
   return (
-    <div className="adminOptionSelected pt-4 px-2">
-      <div className="container">
-        <div className="row">
-          <h4 className="col-sm-8">Administración de Garrafas</h4>
-          <button
-            className="btn btn-success col-sm-4"
-            onClick={() => setAdd(true)}
-          >
-            Agregar Garrafa
-          </button>
-        </div>
-
-        <div className="row my-2">
-          <div className="col-md-auto">
-            <label className="py-1 fw-bold text-center">Filtros</label>
-          </div>
-          <div className="col-md-3">
-            <FormSelector
-              label="Responsable"
-              name="user"
-              options={workersList}
-              valueField="idNumber"
-              captionField="name"
-              onSelect={setFilter}
-            />
-          </div>
-          <div className="col-md-3">
-            <FormSelector
-              label="Estado"
-              name="status"
-              options={statuses}
-              onSelect={setFilter}
-            />
-          </div>
-          <div className="col-md-3">
-            <FormSelector
-              label="Refrigerante"
-              name="refrigerant"
-              options={refrigerants.map((r) => r.refrigerante)}
-              onSelect={setFilter}
-            />
-          </div>
-        </div>
-
-        <div className="row flex- overflow-scroll">
-          <CylindersList
-            cylinders={filteredList}
-            workers={workersList}
-            refrigerants={refrigerants}
+    <div className="page-container">
+      <div className="flex justify-between flex-wrap items-center">
+        <div className="page-title">Administración de Garrafas</div>
+        <button
+          className="btn btn-success btn-sm mb-3"
+          onClick={() => setAdd(true)}
+        >
+          Agregar Garrafa
+        </button>
+      </div>
+      <div className="flex flex-col md:flex-row w-full gap-x-4">
+        <FormSelector
+          label="Responsable"
+          name="user"
+          options={workersList}
+          valueField="idNumber"
+          captionField="name"
+          onSelect={setFilter}
+        />
+        <FormSelector
+          label="Estado"
+          name="status"
+          options={statuses}
+          onSelect={setFilter}
+        />
+        <FormSelector
+          label="Refrigerante"
+          name="refrigerant"
+          options={refrigerants.map((r) => r.refrigerante)}
+          onSelect={setFilter}
+        />
+      </div>
+      <div className="flex-grow overflow-auto">
+        <CylindersList
+          cylinders={filteredList}
+          workers={workersList}
+          refrigerants={refrigerants}
+          statuses={statuses}
+        />
+        {addCylinder && (
+          <NewCylinder
+            key={allCylinders.length}
+            onClose={() => setAdd(false)}
             statuses={statuses}
           />
-
-          {addCylinder && (
-            <NewCylinder
-              key={allCylinders.length}
-              onClose={() => setAdd(false)}
-              statuses={statuses}
-            />
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

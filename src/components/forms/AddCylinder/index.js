@@ -3,6 +3,9 @@ import {
   useState,
 } from "react";
 import "./index.css";
+import TextInput, { NumInput, SelectInput } from "../FormFields";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
 export default function AddCylinder(props) {
   const { cylinderList, disabled, create } = props;
@@ -49,64 +52,97 @@ export default function AddCylinder(props) {
       setErrors(`El peso final no puede ser menor a ${min} kg.`);
     } else {
       setErrors(undefined);
-      newCylinder.final = amount;
-      newCylinder.total = Number((newCylinder.init - amount).toFixed(1));
     }
+    newCylinder.final = amount;
+    newCylinder.total = Number((newCylinder.init - amount).toFixed(1));
     setCylinder(newCylinder);
   }
 
   function handleClick(e) {
     e.preventDefault();
     create && create(cylinder);
-    setCylinder({ code: "" });
+    setCylinder({ code: "", total: "" });
   }
 
   return (
-    <form
-      key={(JSON.stringify(cylinder) + "1")[0]}
-      className="container"
-      style={{ fontSize: "80%" }}
-    >
-      <div className="row fw-bold">
-        <div className="col-4">Código (responsable)</div>
-        <div className="col">Peso inicial</div>
-        <div className="col">Peso final</div>
-        <div className="col">Total Kg</div>
-        <div className="col">Acción</div>
+    <form key={(JSON.stringify(cylinder) + "1")[0]} className="w-full text-xs">
+      <div className="flex flex-wrap w-full fw-bold sm:items-stretch gap-1">
+        <div className="w-full sm:w-1/3 flex-grow">
+          <div>Código (responsable)</div>
+          <SelectInput
+            handleChange={(e) => setCode(e.target.value)}
+            options={[
+              { value: "", label: "Sin Seleccionar" },
+              ...cylinderList.map((c) => ({
+                value: c.code,
+                label: `${c.code} (${c.owner})`,
+              })),
+            ]}
+            disabled={disabled}
+            value={cylinder.code || ""}
+          />
+        </div>
+        <div className="w-20 flex-grow sm:flex-grow-0">
+          <div>Peso inicial</div>
+          <NumInput
+            handleChange={(e) => setInit(e.target.value)}
+            value={cylinder.currentStock}
+            key={cylinder ? cylinder.currentStock : 2}
+            disabled={!cylinder.code}
+            min={min}
+            max={max}
+            step={0.1}
+          />
+        </div>
+        <div className="w-20 flex-grow sm:flex-grow-0">
+          <div>Peso final</div>
+          <NumInput
+            onInput={(e) => setFinal(e.target.value)}
+            // handleChange={(e) => setFinal(e.target.value)}
+            value={cylinder.final || ""}
+            key={cylinder ? cylinder.code : 3}
+            disabled={!cylinder.init}
+            min={min}
+            max={cylinder.init}
+            step={0.1}
+          />
+        </div>
+        <div className="w-16 flex-grow sm:flex-grow-0">
+          <div>Total Kg</div>
+          <TextInput
+            readOnly={true}
+            value={cylinder.total}
+            placeholder="gas (kg.)"
+          />
+        </div>
+        <div className="flex flex-col w-10">
+          <div>Acción</div>
+          <button
+            className="btn btn-xs btn-success w-fit px-1 m-auto"
+            onClick={(e) => handleClick(e)}
+            disabled={!cylinder.total || errors}
+          >
+            <FontAwesomeIcon icon={faCheck} className="text-base" />
+          </button>
+        </div>
       </div>
-      <div className="row">
-        <select
-          className="form-selector col-4 p-0"
-          onChange={(event) => setCode(event.target.value)}
-          disabled={disabled}
-          defaultValue={cylinder.code}
-        >
-          <option value="">Elegir garrafa</option>
-          {cylinderList.map((cylinder) => {
-            return (
-              <option key={cylinder.code} value={cylinder.code}>
-                {`${cylinder.code} (${cylinder.owner})`}
-              </option>
-            );
-          })}
-        </select>
-
-        <input
+      <div className="flex">
+        {/* <input
           type="number"
-          className="form-input col p-0"
+          className="form-input flex-grow p-0"
           onChange={(event) => setInit(event.target.value)}
           defaultValue={cylinder.currentStock}
           key={cylinder ? cylinder.currentStock : 2}
           disabled={!cylinder.code}
-          placeholder="kg"
+          placeholder=""
           min={min}
           max={max}
           step={0.1}
-        />
-
+        /> 
+        
         <input
           type="number"
-          className="form-input col p-0"
+          className="form-input flex-grow p-0"
           onChange={(event) => setFinal(event.target.value)}
           defaultValue={cylinder.final || 0}
           key={cylinder ? cylinder.code : 3}
@@ -118,27 +154,17 @@ export default function AddCylinder(props) {
         />
 
         <input
-          className="form-input col p-0"
+          className="form-input flex-grow p-0"
           readOnly={true}
           defaultValue={cylinder.total}
           placeholder="gas (kg.)"
-        />
+        /> */}
 
-        <div className="form-input col p-0">
-          <button
-            className="btn btn-success p-1 w-100"
-            onClick={(e) => handleClick(e)}
-            disabled={!cylinder.total}
-          >
-            <i className="fas fa-check" />
-          </button>
-        </div>
+        <div className="flex w-10 justify-center items-center"></div>
       </div>
       {errors && (
-        <div className="row">
-          <div className="alert alert-warning" role="alert">
-            {errors}
-          </div>
+        <div className="alert alert-warning py-1 px-2 rounded-md" role="alert">
+          {errors}
         </div>
       )}
     </form>

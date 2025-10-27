@@ -1,20 +1,137 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@plugin "daisyui";
+
+@layer base {
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.8);
+  }
+  *,
+  *:hover {
+    scrollbar-color: unset;
+  }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+      "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+      "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-gutter: unset;
+  }
+
+  #root {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+  }
+  :root:has(
+      :is(
+          .modal-open,
+          .modal:target,
+          .modal-toggle:checked + .modal,
+          .modal[open]
+        )
+    ) {
+    scrollbar-gutter: auto;
+  }
+
+  .text-capitalize {
+    text-transform: capitalize;
+  }
+
+  code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+      monospace;
+  }
+  .collapse-arrow:not(.collapse-close)
+    > input[type="radio"]:checked
+    ~ .collapse-title:after {
+    --tw-translate-y: -200% !important;
+  }
+  .collapse-arrow > .collapse-title:after {
+    --tw-translate-y: -200% !important;
+  }
 }
 
-#root{
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100vw;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@layer utilities {
+  .flex-center {
+    @apply flex w-full h-full items-center justify-center;
+  }
+  #excelTable thead tr,
+  :before,
+  :after {
+    @apply border-t-2 border-b-2 border-white/20;
+  }
+  #excelTable tbody tr,
+  :before,
+  :after {
+    @apply border-t border-b border-dotted border-white/20;
+  }
+  .error-data {
+    @apply bg-error/50 text-error-content font-bold;
+  }
+  .warning-data {
+    @apply bg-warning/50 text-warning-content font-bold;
+  }
+  .bg-landing {
+    @apply bg-repeat;
+    background: linear-gradient(45deg, black, darkred, black);
+    /* background-size: 10%; */
+    /* background-image: url("./assets/icons/backgroundT.png"); */
+  }
+  /* titles */
+  .page-title {
+    @apply text-xl font-bold mb-4 py-2;
+  }
+  .card-title {
+    @apply text-base sm:text-lg font-bold;
+  }
+  /* buttons */
+  .btn-check:focus + .btn-primary,
+  .btn-primary:focus {
+    @apply text-primary-content bg-primary border-secondary outline-base-100
+    /* color: #fff;
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+    box-shadow: 0 0 0 0.25rem rgba(49, 132, 253, 0.5); */;
+  }
+  .custom-input-text {
+    @apply input input-bordered input-sm text-base-content px-1 sm:px-3 focus-visible:outline-none;
+  }
+  .page-container {
+    @apply flex flex-col h-full min-h-0 py-1 px-2 sm:p-3;
+  }
+  .table.no-padding th,
+  .table.no-padding td {
+    @apply p-1;
+  }
+  .plan-filter-label {
+    @apply label w-20 flex-none join-item input-xs sm:input-sm px-2 font-bold;
+  }
+  .device-info-item {
+    @apply flex items-center gap-2 w-40 flex-grow border border-dotted border-white/20 border-collapse p-1;
+  }
+  .tabs-lifted
+    > .tab:is(.tab-active, [aria-selected="true"]):not(.tab-disabled):not(
+      [disabled]
+    )::before,
+  .tabs-lifted > .tab:is(input:checked):first-child:before {
+    @apply hidden;
+  }
 }

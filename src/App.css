@@ -64,9 +64,6 @@
 *::-webkit-scrollbar-track {
   border-radius: 0.5rem;
 }
-.hidden {
-  display: none;
-}
 .removeButton {
   background-color: none;
   height: 1.5rem;

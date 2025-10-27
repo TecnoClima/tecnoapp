@@ -1,39 +1,42 @@
-import { useState } from "react"
-import './index.css'
+import { useState } from "react";
+import "./index.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane, faTimes } from "@fortawesome/free-solid-svg-icons";
 
-export default function AddTextForm(props){
-    const {user, select, close} = props
-    const [text, setText]=useState('')
-    const today = new Date()
+export default function AddTextForm(props) {
+  const { user, select, close } = props;
+  const [text, setText] = useState("");
+  const today = new Date();
 
-    function handleAddText(e){
-        e.preventDefault()
-        select(text)
-        close()
-    }
-    function handleClose(e){
-        e.preventDefault()
-        close()
-    }
-    function handleWrite(e){
-        e.preventDefault()
-        setText(`(${ today.toLocaleDateString() } ${user}) ${e.target.value}`)
-    }
+  function handleChange(e) {
+    setText(e.target.value);
+  }
+  function handleSubmit(e) {
+    e.preventDefault();
+    select(`(${today.toLocaleDateString()} ${user}) ${text}`);
+    setText("");
+    close();
+  }
 
-    return(
-        <div className="modal">
-            <form className="container bg-light p-1" style={{width: '30rem', maxWidth:'100vw'}} onSubmit={(e)=>handleAddText(e)}>
-                <div className="row ms-2">
-                    <div className="col d-flex justify-content-between">
-                        <b>Agregar Texto</b>
-                        <button className="btn btn-close" onClick={handleClose}/>
-                    </div>
-                </div>
-                <textarea className='addTextInput' onBlur={handleWrite}/>
-                <div className="flex centerH">
-                    <button className="btn btn-success" type='submit'>Agregar</button>
-                </div>
-            </form>
-        </div>
-    )
+  return (
+    <div className="flex w-full items-center gap-1">
+      <textarea
+        value={text}
+        className="textarea textarea-bordered resize-none bg-base-content/10 py-0 flex-grow"
+        onChange={handleChange}
+      />
+      <div className="flex flex-col">
+        <button
+          className="btn btn-xs btn-secondary btn-outline ml-auto w-full"
+          onClick={close}
+        >
+          <FontAwesomeIcon icon={faTimes} />
+        </button>
+        <button className="btn btn-sm btn-primary" onClick={handleSubmit}>
+          <FontAwesomeIcon icon={faPaperPlane} className="md:hidden" />
+          <span className="hidden md:inline">Guardar</span>
+        </button>
+      </div>
+    </div>
+  );
 }

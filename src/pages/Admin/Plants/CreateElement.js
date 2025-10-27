@@ -9,7 +9,14 @@ import {
 } from "../../../components/warnings/index.js";
 import { appConfig } from "../../../config.js";
 import ExcelPasteToTable from "./ExcelToTable";
-import "./index.css";
+import ModalBase from "../../../Modals/ModalBase";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCheck,
+  faMinus,
+  faPaste,
+  faTable,
+} from "@fortawesome/free-solid-svg-icons";
 
 const { headersRef } = appConfig;
 const servicePoint = "servicePoint";
@@ -121,67 +128,74 @@ export default function CreateElement(props) {
     ) && setError(undefined);
   }, [codeName, manuallyAdded, error]);
 
-  // useEffect(
-  //   () =>
-  //     console.log(
-  //       fromExcel,
-  //       !addedByExcel[0],
-  //       addedByExcel.find((row) => !!row.error)
-  //     ),
-  //   [fromExcel, addedByExcel]
-  // );
+  function handleCloseSuccess() {
+    dispatch(plantActions.resetResult());
+    setSaving(false);
+    close();
+  }
+
+  const title = `${element ? "Editar" : "Crear"} ${headersRef[item]}${
+    element ? ` ${element.name}` : ""
+  }`;
 
   return (
-    <div className="modal p-5">
-      <div className="bg-light container w-auto rounded-2 py-2 h-100">
-        <form className="w-auto d-flex flex-column h-100">
-          <div className="row justify-content-end">
-            <button className="btn btn-close" onClick={close} />
-          </div>
-          <h4 className="text-center">
-            {(element ? "Editar " : "Crear ") +
-              headersRef[item] +
-              (element ? " " + element.name : "")}
-          </h4>
+    <>
+      <ModalBase
+        title={title}
+        open={true}
+        onClose={close}
+        className="max-h-[90vh] overflow-y-auto"
+      >
+        <form className="flex flex-col gap-4 p-4" onSubmit={saveData}>
+          {/* Parent Info */}
           {parent[item] && (
-            <div className="my-1 fw-bold text-center">
+            <div className="text-center font-bold text-primary">
               {headersRef[parent[item]]}: {data[parent[item]].name}
             </div>
           )}
 
-          <div className="flex gap-2 my-2 mx-auto">
+          {/* Mode Toggle */}
+          <div className="flex w-full gap-2">
             <button
-              className={`btn ${fromExcel ? "btn-outline-info" : "btn-info"}`}
+              type="button"
+              className={`btn btn-sm flex-grow btn-primary ${
+                !fromExcel ? "" : "btn-outline"
+              }`}
               onClick={handleSetExcel}
             >
               Alta Individual
             </button>
-
             <button
-              className={`btn ${fromExcel ? "btn-info" : "btn-outline-info"}`}
+              type="button"
+              className={`btn btn-sm flex-grow btn-primary ${
+                fromExcel ? "" : "btn-outline"
+              }`}
               onClick={handleSetExcel}
               value={1}
             >
               Desde Excel
             </button>
           </div>
-          <div className="flex-grow-1 overflow-auto w-auto">
-            <div className="flex flex-col align-items-center px-3">
-              {fromExcel ? (
-                <ExcelPasteToTable
-                  item={item}
-                  mayusc={true}
-                  setData={setAddedByExcel}
-                  data={addedByExcel}
-                />
-              ) : (
-                <div>
+
+          {/* Content Area */}
+          <div className="flex-1 overflow-auto">
+            {fromExcel ? (
+              <ExcelPasteToTable
+                item={item}
+                mayusc={true}
+                setData={setAddedByExcel}
+                data={addedByExcel}
+              />
+            ) : (
+              <div className="space-y-4">
+                {/* Form Fields */}
+                <div className="grid grid-cols-1 gap-2">
                   {item !== servicePoint && (
                     <FormInput
                       label="Código"
                       name="code"
                       value={codeName.code}
-                      placeholder={`ingrese código de ${headersRef[item]}`}
+                      placeholder={`Ingrese código de ${headersRef[item]}`}
                       changeInput={handleChange}
                     />
                   )}
@@ -189,113 +203,134 @@ export default function CreateElement(props) {
                     label="Nombre"
                     name="name"
                     value={codeName.name}
-                    placeholder={`ingrese nombre de ${headersRef[item]}`}
+                    placeholder={`Ingrese nombre de ${headersRef[item]}`}
                     changeInput={handleChange}
                   />
-                  {item === servicePoint && (
-                    <div>
-                      {["steelMine", "calory", "dangerTask", "insalubrity"].map(
-                        (key, i) => (
-                          <button
-                            key={i}
-                            value={key}
-                            className={`btn ${
-                              adds[key]
-                                ? "btn-primary"
-                                : "btn-outline-secondary"
-                            }`}
-                            onClick={setAddValue}
-                          >
-                            {headersRef[key]}
-                          </button>
-                        )
-                      )}
-                    </div>
-                  )}
-
-                  {!element && (
-                    <div className="row justify-content-center pt-2">
-                      {error ? (
-                        <div className="alert alert-danger">{error}</div>
-                      ) : (
-                        <button
-                          className="btn btn-info w-auto py-0"
-                          disabled={
-                            (item !== servicePoint && !codeName.code) ||
-                            !codeName.name
-                          }
-                          onClick={(e) => addToArrayBody(e)}
-                        >
-                          Agregar {headersRef[item]} a crear
-                        </button>
-                      )}
-                    </div>
-                  )}
-                  {manuallyAdded.map((element, i) => (
-                    <div
-                      key={i}
-                      className="flex border-4 justify-content-between align-items-center mt-1 border-bottom"
-                    >
-                      <div>
-                        <div>
-                          {element.code && "[" + element.code + "]"}{" "}
-                          {element.name}
-                        </div>
-                        <div className="d-flex gap-1">
-                          {adds &&
-                            Object.keys(adds)
-                              .filter((k) => !!element[k])
-                              .map((k, i) => (
-                                <span key={i} className="badge bg-primary">
-                                  {headersRef[k]}
-                                </span>
-                              ))}
-                        </div>
-                      </div>
-
-                      <button
-                        className="btn btn-danger py-0"
-                        onClick={(event) => handleDelete(event, element)}
-                      >
-                        <i className="fas fa-minus" />
-                      </button>
-                    </div>
-                  ))}
                 </div>
-              )}
-            </div>
+
+                {/* Service Point Options */}
+                {item === servicePoint && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    {["steelMine", "calory", "dangerTask", "insalubrity"].map(
+                      (key, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          value={key}
+                          className={`btn btn-sm ${
+                            adds[key] ? "btn-primary" : "btn-outline"
+                          }`}
+                          onClick={setAddValue}
+                        >
+                          {headersRef[key]}
+                        </button>
+                      )
+                    )}
+                  </div>
+                )}
+
+                {/* Add Button */}
+                {!element && (
+                  <div className="flex justify-center">
+                    {error ? (
+                      <div className="alert alert-error text-sm">{error}</div>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn btn-info btn-sm"
+                        disabled={
+                          (item !== servicePoint && !codeName.code) ||
+                          !codeName.name
+                        }
+                        onClick={addToArrayBody}
+                      >
+                        Agregar {headersRef[item]} a crear
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {/* Manual Items List */}
+                {manuallyAdded.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-sm">
+                      Elementos a crear:
+                    </h4>
+                    {manuallyAdded.map((element, i) => (
+                      <div
+                        key={element.code}
+                        className="flex justify-between items-center px-3 py-1 bg-base-200 rounded-lg border"
+                      >
+                        <div className="flex-1">
+                          <div className="font-medium">
+                            {element.code && `[${element.code}] `}
+                            {element.name}
+                          </div>
+                          {adds && (
+                            <div className="flex gap-1 mt-1">
+                              {Object.keys(adds)
+                                .filter((k) => !!element[k])
+                                .map((k, i) => (
+                                  <span
+                                    key={i}
+                                    className="badge badge-primary badge-sm"
+                                  >
+                                    {headersRef[k]}
+                                  </span>
+                                ))}
+                            </div>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          className="btn btn-error btn-sm"
+                          onClick={(event) => handleDelete(event, element)}
+                        >
+                          <FontAwesomeIcon icon={faMinus} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-          <div className="flex w-100 justify-content-evenly mt-4">
+
+          {/* Submit Button */}
+          <div className="flex justify-end pt-4">
             <button
-              className="btn btn-success col-5"
-              onClick={saveData}
+              className="btn btn-success btn-sm"
+              type="submit"
               disabled={
                 (fromExcel
                   ? !addedByExcel[0] || addedByExcel.find((row) => !!row.error)
                   : !manuallyAdded[0]) || element === codeName
               }
             >
+              <FontAwesomeIcon icon={faCheck} />
               GUARDAR
             </button>
           </div>
-          {plantResult.error && (
-            <ErrorModal
-              message={plantResult.error}
-              close={() => dispatch(plantActions.resetResult())}
-            />
-          )}
         </form>
-        {plantResult.success && saving && (
-          <SuccessModal
-            message="Guardado exitoso"
-            close={() => {
-              dispatch(plantActions.resetResult());
-              setSaving(false);
-              close();
-            }}
-          />
-        )}
-      </div>
-    </div>
+      </ModalBase>
+
+      {/* Error Modal */}
+      {plantResult.error && (
+        <ErrorModal
+          open={true}
+          message={plantResult.error}
+          close={() => dispatch(plantActions.resetResult())}
+        />
+      )}
+
+      {/* Success Modal */}
+      {plantResult.success && saving && (
+        <SuccessModal
+          open={true}
+          message="Guardado exitoso"
+          close={handleCloseSuccess}
+        />
+      )}
+    </>
   );
 }

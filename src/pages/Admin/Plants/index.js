@@ -22,12 +22,11 @@ export default function AdminPlants() {
   }
 
   return (
-    <div className="adminOptionSelected">
-      <div className="container-fluid px-0 mx-4">
-        <div className="row my-4">
-          <h4>Administración de plantas</h4>
-        </div>
-        <div></div>
+    <div className="page-container">
+      <div className="flex w-full items-center justify-between flex-wrap gap-2">
+        <div className="page-title">Administración de plantas</div>
+      </div>
+      <div className="flex flex-col gap-2">
         <ElementSection
           item="plant"
           array={plantList}

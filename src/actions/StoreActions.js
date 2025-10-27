@@ -1,7 +1,7 @@
 import { appConfig } from "../apiConfig";
 const baseURL = appConfig.url;
 
-function jsonToQuery(json) {
+export function jsonToQuery(json) {
   if (!json) return "";
   const keys = Object.keys(json);
   if (!keys[0]) return "";

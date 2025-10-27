@@ -29,6 +29,9 @@ const appConfig = {
     supervisor: "Supervisor",
     idNumber: "DNI",
     phone: "Teléfono",
+    following: "Siguiendo",
+    dateMin: "Desde",
+    dateMax: "Hasta",
 
     //forms
     location: "Ubicación",
@@ -87,19 +90,23 @@ const appConfig = {
   cylinderStatuses: [
     {
       name: "Nueva",
-      class: { unselected: "btn-outline-info", selected: "btn-info" },
+      class: { unselected: "btn-info btn-outline", selected: "btn-info" },
     },
     {
       name: "En uso",
-      class: { unselected: "btn-outline-success", selected: "btn-success" },
+      class: { unselected: "btn-success btn-outline", selected: "btn-success" },
     },
     {
       name: "Vacía",
-      class: { unselected: "btn-outline-danger", selected: "btn-danger" },
+      class: { unselected: "btn-error btn-outline", selected: "btn-error" },
     },
     {
       name: "Descartada",
-      class: { unselected: "btn-outline-secondary", selected: "btn-secondary" },
+      class: {
+        unselected:
+          "btn-neutral btn-outline border-neutral hover:bg-neutral hover:text-base-content border-2",
+        selected: "btn-neutral",
+      },
     },
   ],
 };
