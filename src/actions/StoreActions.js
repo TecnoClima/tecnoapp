@@ -13,6 +13,22 @@ export function jsonToQuery(json) {
   );
 }
 
+export async function fetchData({ endpoint, method, body }) {
+  const token = localStorage.getItem("tecnoToken");
+  return fetch(`${baseURL}/${endpoint}`, {
+    method: method,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  })
+    .then((res) => res.json())
+    .then((data) => data)
+    .catch((err) => console.error(err));
+}
+
 export function serverAction(data) {
   return async function (dispatch) {
     const token = localStorage.getItem("tecnoToken");
@@ -103,7 +119,7 @@ export const deviceActions = {
   putExcel: (data) => putAction("excel", data, "LOAD_DEVICE_EXCEL"),
 
   getPartialList: (filters) => {
-    filters.plant = "SSN"; // <-- review this. Should be userData.plant or selected plant.
+    // filters.plant = "SSN"; // <-- review this. Should be userData.plant or selected plant.
     postAction("devices/filters", filters, "PARTIAL_LIST");
   }, //getPartialDeviceList // should be get action
   getFilters: (plant) =>

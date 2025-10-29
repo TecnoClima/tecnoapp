@@ -64,9 +64,11 @@ export function NumInput({
 
 export function SelectInput({
   label,
+  required,
   name,
   value,
   className = "",
+  disabled,
   options,
   handleChange,
 }) {
@@ -78,11 +80,15 @@ export function SelectInput({
         </div>
       )}
       <select
-        className="select select-sm custom-input-text w-full pl-8"
+        className={`select select-sm w-full ${
+          required ? "border-error px-3" : "custom-input-text"
+        }`}
         onChange={handleChange}
         name={name}
         value={value}
+        disabled={disabled}
       >
+        <option value="">Seleccionar...</option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}

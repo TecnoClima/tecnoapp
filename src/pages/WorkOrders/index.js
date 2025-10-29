@@ -1,31 +1,26 @@
-import * as xlsx from "xlsx/xlsx.mjs";
+import { faBell, faTable, faToolbox } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import {
-  deleteOrder,
-  resetDetail,
-  setDetail,
-} from "../../actions/workOrderActions";
-import WarningErrors from "../../components/warnings/WarningErrors";
+import * as xlsx from "xlsx/xlsx.mjs";
 import {
   deviceActions,
   planActions,
   workOrderActions,
 } from "../../actions/StoreActions";
+import {
+  deleteOrder,
+  resetDetail,
+  setDetail,
+} from "../../actions/workOrderActions";
+import Pagination from "../../components/Paginate/Pagination";
 import { ErrorModal, SuccessModal } from "../../components/warnings";
+import WarningErrors from "../../components/warnings/WarningErrors";
+import WorkOrderListItem from "../../components/workOrder/WorkOrderListItem";
+import { ReasignateOrders } from "../../components/WorkOrders/ReassignateOrder";
 import { getHour, getShortDate } from "../../utils/utils";
 import OrdersFilters from "./OrderFilters";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBell,
-  faChevronRight,
-  faTable,
-  faToolbox,
-} from "@fortawesome/free-solid-svg-icons";
-import Pagination from "../../components/Paginate/Pagination";
-import ClassBadge from "../../components/Badges/ClassBadge";
-import WorkOrderListItem from "../../components/workOrder/WorkOrderListItem";
 
 //Método para editar intervención
 //Asignar garrafas a personal
@@ -223,13 +218,11 @@ export default function WorkOrders() {
           close={() => setWarning(false)}
         />
       )}
-
       <ErrorModal
         message={orderResult.error}
         open={orderResult.error}
         close={() => dispatch(workOrderActions.resetOrderResult())}
       />
-
       <SuccessModal
         message={orderResult.success}
         open={orderResult.success}
@@ -239,6 +232,7 @@ export default function WorkOrders() {
         <div className="flex w-full justify-between items-center flex-wrap">
           <div className="page-title">Listado de Órdenes de trabajo</div>
           <div className="flex gap-2 flex-wrap mb-4">
+            {isAdmin && <ReasignateOrders />}
             <Link
               to="/ots/new"
               onClick={() => dispatch(deviceActions.resetDevice())}
