@@ -1,21 +1,21 @@
+import { faComment } from "@fortawesome/free-regular-svg-icons";
+import { faTimes, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import PeoplePicker from "../../pickers/PeoplePicker";
-import AddCylinder from "../AddCylinder";
-import AddTextForm from "../AddText";
+import { cylinderActions, peopleActions } from "../../../actions/StoreActions";
 import {
   addCylinderUsage,
   deleteCylinderUsage,
   updateIntervention,
 } from "../../../actions/workOrderActions";
-import { cylinderActions, peopleActions } from "../../../actions/StoreActions";
 import CylinderIcon from "../../../assets/icons/Garrafa.svg";
 import ModalBase from "../../../Modals/ModalBase";
+import PeoplePicker from "../../pickers/PeoplePicker";
+import AddCylinder from "../AddCylinder";
+import AddTextForm from "../AddText";
 import DateAndTime from "../DateAndTime";
 import ErrorMessage from "../ErrorMessage";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { faComment } from "@fortawesome/free-regular-svg-icons";
 
 export default function AddIntervention(props) {
   const today = new Date().toISOString().split("T")[0];
@@ -65,7 +65,10 @@ export default function AddIntervention(props) {
       let hours = date.getHours();
       let minutes = date.getMinutes();
       editable.time =
-        editable.time || `${hours}:${(minutes < 10 ? "0" : "") + minutes}`;
+        editable.time ||
+        `${hours < 10 ? "0" : ""}${hours}:${
+          (minutes < 10 ? "0" : "") + minutes
+        }`;
 
       if (editable.endDate) {
         const endDate = new Date(editable.endDate);
@@ -74,7 +77,9 @@ export default function AddIntervention(props) {
         let endMinutes = endDate.getMinutes();
         editable.endTime =
           editable.endTime ||
-          `${endHours}:${(endMinutes < 10 ? "0" : "") + endMinutes}`;
+          `${endHours < 10 ? "0" : ""}${endHours}:${
+            (endMinutes < 10 ? "0" : "") + endMinutes
+          }`;
       }
 
       setIntervention({ ...editable });
@@ -104,6 +109,7 @@ export default function AddIntervention(props) {
   useEffect(() => dispatch(cylinderActions.resetList()), [dispatch]);
 
   function saveIntervention() {
+    console.log("intervention", intervention);
     if (intervention.id) {
       let update = {};
       const dataWorkers = data.workers.map((e) => e.id);
@@ -129,6 +135,7 @@ export default function AddIntervention(props) {
           endDate: intervention.endDate,
           endTime: intervention.endTime,
         };
+      console.log("update", update);
 
       if (Object.keys(update).length >= 1)
         dispatch(updateIntervention(intervention.id, update));

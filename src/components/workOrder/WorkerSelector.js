@@ -1,9 +1,9 @@
+import { faSyncAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { peopleActions } from "../../actions/StoreActions";
 import ModalBase from "../../Modals/ModalBase";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSyncAlt, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 export default function WorkerSelector({
   label,

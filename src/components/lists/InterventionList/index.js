@@ -22,13 +22,17 @@ export default function InterventionList(props) {
         required={required}
         className="h-full min-h-0 overflow-y-auto"
         headerButton={
-          <button
-            className="btn btn-xs btn-info mb-1 font-bold"
-            onClick={openAdd}
-          >
-            <FontAwesomeIcon icon={faPlus} />
-            Agregar intervención
-          </button>
+          Object.values(permissions).includes(true) ? (
+            <button
+              className="btn btn-xs btn-info mb-1 font-bold"
+              onClick={openAdd}
+            >
+              <FontAwesomeIcon icon={faPlus} />
+              Agregar intervención
+            </button>
+          ) : (
+            <></>
+          )
         }
       >
         <div className="flex flex-col min-h-0 overflow-y-auto gap-1">

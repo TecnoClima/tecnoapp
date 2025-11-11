@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { deviceActions, workOrderActions } from "../../actions/StoreActions";
+import { StatusBadge } from "../../components/Badges/StatusBadge";
 import FollowDevice from "../../components/DevicePage/FollowDevice";
 import DeviceList from "../../components/Devices/DeviceList";
 import AddIntervention from "../../components/forms/InterventionForm";
@@ -24,8 +25,6 @@ import WorkOrderCard from "../../components/workOrder/WorkOrderCard";
 import WorkOrderObservations from "../../components/workOrder/WorkOrderObservations";
 import { appConfig } from "../../config";
 import ModalBase from "../../Modals/ModalBase";
-import { StatusBadge } from "../../components/Badges/StatusBadge";
-import { Info } from "../../components/Badges/Info";
 
 const { headersRef } = appConfig;
 
@@ -66,6 +65,7 @@ export default function WorkOrder() {
     author: false,
     worker: false,
     supervisor: false,
+    responsible: false,
     admin: false,
   });
   const [errors, setErrors] = useState([]);
@@ -85,27 +85,26 @@ export default function WorkOrder() {
   }, [orderDetail]);
 
   // set Permissions
-  useEffect(
-    () =>
-      setPermissions({
-        author:
-          order.completed < 99 && (!order.code || order.userId === userData.id),
-        admin: userData.access === "Admin",
-        supervisor:
-          userData.access === "Supervisor" &&
-          (!order.code ||
-            (order.completed <= 99 && userData.id === order.supervisor)),
-        worker: order.completed < 99 && userData.access === "Worker",
-      }),
-    [userData, order]
-  );
+  useEffect(() => {
+    setPermissions({
+      author:
+        order.completed < 99 && (!order.code || order.userId === userData.id),
+      admin: userData.access === "Admin",
+      supervisor:
+        userData.access === "Supervisor" &&
+        (!order.code ||
+          (order.completed <= 99 && userData.id === order.supervisor)),
+      worker: order.completed < 99 && userData.access === "Worker",
+      responsible: order.responsible === userData.id,
+    });
+  }, [userData, order]);
 
   // reset detail on unmount
   useEffect(() => {
     return () => {
       dispatch(workOrderActions.resetDetail());
     };
-  }, []);
+  }, [dispatch]);
 
   // if orderCode, get order detail
   useEffect(() => {
@@ -398,7 +397,7 @@ export default function WorkOrder() {
             )}
           </div>
         </div>
-        <div className="flex flex-col md:grid md:grid-cols-2 md:grid-rows-[auto,1fr] 2xl:grid-cols-3 flex-grow gap-4 mb-4 md:min-h-0">
+        <div className="flex flex-col md:grid md:overflow-y-auto md:grid-cols-2 md:grid-rows-[auto,1fr] 2xl:grid-cols-3 flex-grow gap-4 mb-4 md:min-h-0">
           <WorkOrderCard title="DATOS DEL EQUIPO">
             <div className="join my-1md:my-2">
               {!device.name && (
