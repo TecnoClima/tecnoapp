@@ -1,4 +1,4 @@
-import { faCalendar, faSnowflake } from "@fortawesome/free-regular-svg-icons";
+import { faCalendar } from "@fortawesome/free-regular-svg-icons";
 import {
   faCalendarCheck,
   faPencilAlt,
@@ -36,7 +36,11 @@ export default function InterventionCard({
   setEdit,
   item,
 }) {
-  const { id, date, endDate, workers, task, refrigerant } = item;
+  const { date, time, endDate, endTime, workers, task, refrigerant } = item;
+  const initialDate = time ? `${date.split(" ")[0]}T${time}` : `${date}`;
+  const finishDate = endTime
+    ? `${endDate.split(" ")[0]}T${endTime}`
+    : `${endDate}`;
   function getDate(dateInput) {
     const givenDate = new Date(dateInput);
     if (isNaN(givenDate.getTime())) return ["", ""];
@@ -62,7 +66,7 @@ export default function InterventionCard({
               <FontAwesomeIcon icon={faCalendar} />
             </div>
             <div className="join-item bg-base-content/10 px-1 xl:px-2">
-              {getDate(date).join(" ")}
+              {getDate(initialDate).join(" ")}
             </div>
           </div>
           <div
@@ -77,7 +81,7 @@ export default function InterventionCard({
               <FontAwesomeIcon icon={faCalendarCheck} />
             </div>
             <div className="join-item bg-base-content/10 px-1 xl:px-2 whitespace-nowrap flex-grow ">
-              {endDate ? getDate(endDate).join(" ") : "-"}
+              {endDate ? getDate(finishDate).join(" ") : "-"}
             </div>
           </div>
         </div>
