@@ -97,7 +97,7 @@
   }
   /* titles */
   .page-title {
-    @apply text-xl font-bold mb-4 py-2;
+    @apply text-xl font-bold mb-2 py-2;
   }
   .card-title {
     @apply text-base sm:text-lg font-bold;

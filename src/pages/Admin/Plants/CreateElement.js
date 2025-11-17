@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import { faCheck, faMinus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { plantActions } from "../../../actions/StoreActions";
 import { FormInput } from "../../../components/forms/FormInput/index.js";
@@ -8,15 +9,8 @@ import {
   SuccessModal,
 } from "../../../components/warnings/index.js";
 import { appConfig } from "../../../config.js";
-import ExcelPasteToTable from "./ExcelToTable";
 import ModalBase from "../../../Modals/ModalBase";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCheck,
-  faMinus,
-  faPaste,
-  faTable,
-} from "@fortawesome/free-solid-svg-icons";
+import ExcelPasteToTable from "./ExcelToTable";
 
 const { headersRef } = appConfig;
 const servicePoint = "servicePoint";

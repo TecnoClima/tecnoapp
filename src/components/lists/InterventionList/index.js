@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import { useSelector } from 'react-redux'
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,6 +9,10 @@ import InterventionCard from "./interventionCard";
 export default function InterventionList(props) {
   const { onDelete, openAdd, permissions, interventions, required } = props;
   const [edit, setEdit] = useState(false);
+
+  useEffect(() => {
+    console.log("interventions", interventions);
+  }, [interventions]);
 
   function handleDelete(e, id) {
     e.preventDefault();

@@ -1,12 +1,25 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 import { plantActions } from "../../../actions/StoreActions";
 
 export function PlantSelector({ disabled, onSelect }) {
+  const [searchParams] = useSearchParams();
+  const plantCode = searchParams.get("plant");
+
   const { plantList, selectedPlant } = useSelector((state) => state.plants);
   const { userData } = useSelector((state) => state.people);
   const [requested, setRequested] = useState(false);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (plantCode && plantList[0]) {
+      const plant = plantList.find((p) => p.code === plantCode);
+      dispatch(plantActions.setPlant(plant));
+    }
+  }, [plantCode, dispatch, plantList]);
+
+  const isAdmin = userData.access === "Admin";
 
   useEffect(() => {
     if (requested) return;
@@ -17,16 +30,18 @@ export function PlantSelector({ disabled, onSelect }) {
   }, [requested, plantList, dispatch]);
 
   useEffect(() => {
-    if (!selectedPlant.name && plantList[0]) {
+    if (!plantCode && !selectedPlant?.name && plantList[0]) {
       dispatch(
         plantActions.setPlant(
-          userData.plant
+          isAdmin
+            ? undefined
+            : userData.plant
             ? plantList.find((p) => p.name === userData.plant)
-            : plantList[0]
+            : undefined
         )
       );
     }
-  }, [userData, selectedPlant, plantList, dispatch]);
+  }, [userData, selectedPlant, plantList, dispatch, isAdmin]);
 
   function handleSelect(e) {
     e.preventDefault();
@@ -44,10 +59,11 @@ export function PlantSelector({ disabled, onSelect }) {
       <select
         className="select join-item select-sm w-20 flex-grow px-1"
         name="plant"
-        value={selectedPlant.name}
+        value={selectedPlant?.name}
         disabled={disabled}
         onChange={handleSelect}
       >
+        <option value="">Seleccione</option>
         {plantList
           .map((p) => p.name)
           .map((element, index) => (
@@ -57,13 +73,5 @@ export function PlantSelector({ disabled, onSelect }) {
           ))}
       </select>
     </div>
-    // <FormSelector
-    //   name="plant"
-    //   label="Planta"
-    //   onSelect={handleSelect}
-    //   value={selectedPlant.name}
-    //   options={plantList.map((p) => p.name)}
-    //   disabled={disabled}
-    // />
   );
 }

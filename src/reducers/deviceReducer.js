@@ -9,6 +9,7 @@ const initialState = {
   deviceReportData: [],
   deviceView: "",
   deviceHistory: {},
+  reportData: [],
 };
 
 export default function deviceReducer(state = initialState, action) {
@@ -40,6 +41,11 @@ export default function deviceReducer(state = initialState, action) {
       return {
         ...state,
         deviceResult: action.payload,
+      };
+    case "REPORT_DATA":
+      return {
+        ...state,
+        reportData: action.payload,
       };
     case "NEW_DEVICE":
       return {

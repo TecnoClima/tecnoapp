@@ -131,6 +131,8 @@ export const deviceActions = {
   getByName: (name) => getAction(`devices/byName/${name}`, "PARTIAL_LIST"), //deviceByName
   getOptions: () => getAction("devices/options", "DEVICE_OPTIONS"), //getDeviceOptions
   getReportData: (body) => postAction(`devices/report`, body, "DEVICE_REPORT"),
+  getReportKPIs: (filters) =>
+    getAction(`devices/mtbf${jsonToQuery(filters)}`, "REPORT_DATA"),
 };
 
 export const workOrderActions = {

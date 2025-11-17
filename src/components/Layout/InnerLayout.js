@@ -1,6 +1,7 @@
 import {
   faBars,
   faCalendarAlt,
+  faChartLine,
   faFan,
   faKey,
   faShieldAlt,
@@ -18,6 +19,7 @@ import MenuOptions from "../MenuOptions";
 export default function InnerLayout({ children }) {
   const { userData } = useSelector((state) => state.people);
   const isAdmin = userData.access === "Admin";
+  const isSupervisor = userData.access === "Supervisor";
   const [openPassword, setOpenPassword] = useState(false);
   const location = useLocation();
 
@@ -38,6 +40,13 @@ export default function InnerLayout({ children }) {
       icon: <FontAwesomeIcon icon={faCalendarAlt} />,
     },
   ];
+  if (isSupervisor || isAdmin) {
+    routes.push({
+      section: "Reportes",
+      url: "/reportes",
+      icon: <FontAwesomeIcon icon={faChartLine} />,
+    });
+  }
 
   const mode = {
     dev: "desarrollo",

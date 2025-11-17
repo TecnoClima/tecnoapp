@@ -19,6 +19,7 @@ import Monitoring from "./pages/Monitoring";
 import NotFound from "./pages/NotFound";
 import Panel from "./pages/Panel";
 import Plan from "./pages/Plan";
+import Reports from "./pages/Reports/Reports";
 import WorkOrder from "./pages/WorkOrder";
 import WorkOrders from "./pages/WorkOrders";
 
@@ -34,15 +35,17 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
+    // update setLoading useEffect when access is updated
     userData &&
       setAccess({
         isLogged: !!userData.user,
         isAdmin: userData.access === "Admin",
+        isSupervisor: userData.access === "Supervisor",
       });
-  }, [dispatch, userData]);
+  }, [userData]);
 
   useEffect(
-    () => Object.keys(access).length === 2 && setLoading(false),
+    () => Object.keys(access).length === 3 && setLoading(false),
     [access]
   );
 
@@ -160,6 +163,28 @@ function App() {
               element={
                 <InnerLayout>
                   <AdminPanel />
+                </InnerLayout>
+              }
+            />
+          )}
+          {(access.isSupervisor || access.isAdmin) && (
+            <Route
+              exact
+              path="/reportes"
+              element={
+                <InnerLayout>
+                  <Reports />
+                </InnerLayout>
+              }
+            />
+          )}
+          {(access.isSupervisor || access.isAdmin) && (
+            <Route
+              exact
+              path="/reports/:plantCode?/:from?/:to?"
+              element={
+                <InnerLayout>
+                  <Reports />
                 </InnerLayout>
               }
             />
