@@ -137,6 +137,7 @@ export default function InterventionCard({
           handleDelete={handleDelete}
           permissions={permissions}
           index={index}
+          item={item}
         />
       </div>
     </div>
