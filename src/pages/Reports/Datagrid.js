@@ -37,44 +37,44 @@ export default function DataGrid({ data }) {
             .filter(
               (item) => !hidePendingClose || item.pendingClose?.length === 0
             )
-            .map((item) => (
-              <tr className="text-center" key={item.device}>
-                <td className="py-0 text-left">
-                  <div>
-                    <div className="font-bold">{item.device}</div>
-                    <div className="text-sm text-base-content/75">
-                      {item.name}
+            .map((item) => {
+              const mttr = item.mttr ? Math.round(item.mttr * 100) / 100 : "-";
+              const mtbf = item.mtbf ? Math.round(item.mtbf * 100) / 100 : "-";
+              return (
+                <tr className="text-center" key={item.device}>
+                  <td className="py-0 text-left">
+                    <div>
+                      <div className="font-bold">{item.device}</div>
+                      <div className="text-sm text-base-content/75">
+                        {item.name}
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td className="py-0">
-                  {item.lastOrder ? (
-                    <Link
-                      className="link link-info"
-                      to={`/ots/detail/${item.lastOrder}`}
-                    >
-                      {item.lastOrder}
-                    </Link>
-                  ) : (
-                    "-"
-                  )}
-                </td>
-                <td className="py-0">
-                  <div className="flex justify-center items-center">
-                    {item.totalReclaims || "-"}
-                    {item.pendingClose?.length > 0 && (
-                      <PendantDropdown reclaims={item.pendingClose} />
+                  </td>
+                  <td className="py-0">
+                    {item.lastOrder ? (
+                      <Link
+                        className="link link-info"
+                        to={`/ots/detail/${item.lastOrder}`}
+                      >
+                        {item.lastOrder}
+                      </Link>
+                    ) : (
+                      "-"
                     )}
-                  </div>
-                </td>
-                <td className="py-0">
-                  {Math.round(item.mtbf * 100) / 100 || "-"}
-                </td>
-                <td className="py-0">
-                  {Math.round(item.mttr * 100) / 100 || "-"}
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td className="py-0">
+                    <div className="flex justify-center items-center">
+                      {isNaN(item.totalReclaims) ? "-" : item.totalReclaims}
+                      {item.pendingClose?.length > 0 && (
+                        <PendantDropdown reclaims={item.pendingClose} />
+                      )}
+                    </div>
+                  </td>
+                  <td className="py-0">{isNaN(mtbf) ? "-" : mtbf}</td>
+                  <td className="py-0">{isNaN(mttr) ? "-" : mttr}</td>
+                </tr>
+              );
+            })}
         </tbody>
       </table>
     </div>
