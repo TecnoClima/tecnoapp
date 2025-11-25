@@ -10,9 +10,7 @@ const getCurrentMonth = (diff = 0) => {
   const from = new Date(now.getFullYear(), now.getMonth() + diff, 1)
     .toISOString()
     .split("T")[0];
-  const to = new Date(now.getFullYear(), now.getMonth() + diff + 1)
-    .toISOString()
-    .split("T")[0];
+  const to = new Date(now).toISOString().split("T")[0];
   return { from, to };
 };
 
@@ -23,7 +21,7 @@ export default function Reports() {
 
   const [filters, setFilters] = useState({
     plant: searchParams.get("plant") || "",
-    from: searchParams.get("from") || getCurrentMonth(-1).from,
+    from: searchParams.get("from") || getCurrentMonth().from,
     to: searchParams.get("to") || getCurrentMonth(-1).to,
   });
 
