@@ -21,7 +21,7 @@ export default function DataGrid({ data }) {
             <th title="Tiempo Medio Entre Fallos">
               MTBF
               <br />
-              [días]
+              [hs]
             </th>
             <th title="Tiempo Medio de Reparación">
               MTTR
