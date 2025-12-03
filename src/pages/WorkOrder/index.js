@@ -93,11 +93,12 @@ export default function WorkOrder() {
       supervisor:
         userData.access === "Supervisor" &&
         (!order.code ||
-          (order.completed <= 99 && userData.id === order.supervisor)),
+          (order.completed <= 99 && userData.id === order.supervisor) ||
+          userData.plant === orderDetail?.device?.plant),
       worker: order.completed < 99 && userData.access === "Worker",
       responsible: order.responsible === userData.id,
     });
-  }, [userData, order]);
+  }, [userData, order, device, orderDetail]);
 
   // reset detail on unmount
   useEffect(() => {
@@ -294,8 +295,8 @@ export default function WorkOrder() {
   }
   useEffect(() => orderResult && setSaving(false), [orderResult]);
 
-  const isClosed = order.status === "Cerrada";
-  const toClose = order.completed === 99 && !isClosed;
+  // const isClosed = order.status === "Cerrada";
+  // const toClose = order.completed === 99 && !isClosed;
 
   return (
     <div className="page-container">

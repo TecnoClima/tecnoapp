@@ -109,7 +109,12 @@ export default function AddIntervention(props) {
   useEffect(() => dispatch(cylinderActions.resetList()), [dispatch]);
 
   function saveIntervention() {
-    console.log("intervention", intervention);
+    const date = new Date(
+      `${intervention.date}T${intervention.time}:00`
+    ).toISOString();
+    const endDate = new Date(
+      `${intervention.endDate}T${intervention.endTime}:00`
+    ).toISOString();
     if (intervention.id) {
       let update = {};
       const dataWorkers = data.workers.map((e) => e.id);
@@ -121,21 +126,16 @@ export default function AddIntervention(props) {
         update.workers = intervention.workers;
       }
       if (intervention.task !== data.task) update.task = intervention.task;
-      const date = intervention.date + " " + intervention.time;
-      const endDate = intervention.endDate + " " + intervention.endTime;
       if (date !== data.date)
         update = {
           ...update,
-          date: intervention.date,
-          time: intervention.time,
+          date,
         };
       if (endDate !== data.endDate)
         update = {
           ...update,
-          endDate: intervention.endDate,
-          endTime: intervention.endTime,
+          endDate,
         };
-      console.log("update", update);
 
       if (Object.keys(update).length >= 1)
         dispatch(updateIntervention(intervention.id, update));
