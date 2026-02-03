@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { deviceActions } from "../../actions/StoreActions.js";
 import DataGrid from "./Datagrid.js";
 import { ReportFilters } from "./Filters.js";
+import { ReportGenerator } from "./ReportGenerator.js";
 
 const getCurrentMonth = (diff = 0) => {
   const now = new Date();
@@ -34,7 +35,16 @@ export default function Reports() {
 
   return (
     <div className="page-container">
-      <div className="page-title">Reportes</div>
+      <div className="flex items-center w-full">
+        <div className="page-title">Reportes</div>
+        {!!reportData?.[0] && (
+          <ReportGenerator
+            className="ml-auto"
+            data={reportData}
+            dates={{ from: filters.from, to: filters.to }}
+          />
+        )}
+      </div>
       <ReportFilters filters={filters} setFilters={setFilters} />
       {fullFilters && reportData && <DataGrid data={reportData} />}
     </div>
