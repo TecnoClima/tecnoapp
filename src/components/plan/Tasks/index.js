@@ -22,7 +22,7 @@ export default function PlanTask() {
   const initialFilter = {};
 
   useEffect(() => {
-    if (!(selectedPlant.name && year)) return;
+    if (!(selectedPlant?.name && year)) return;
     dispatch(planActions.getStrategies({ plant: selectedPlant.name, year }));
     dispatch(
       planActions.getPlanDevices({ plantName: selectedPlant.name, year })

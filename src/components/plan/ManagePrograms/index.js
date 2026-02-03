@@ -84,7 +84,9 @@ export default function ProgramManagement(props) {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {programList
-              .filter(({ plant }) => plant === selectedPlant.name)
+              .filter(({ plant }) =>
+                selectedPlant ? plant === selectedPlant.name : true
+              )
               .map((element, index) => (
                 <div key={index} className="w-full flex-grow">
                   <ProgramCard strategy={element} />

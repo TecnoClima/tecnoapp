@@ -42,12 +42,11 @@ export default function NewProgram(props) {
     dispatch(peopleActions.getSupervisors(selectedPlant));
   }, [dispatch, selectedPlant]);
 
-  useEffect(
-    () =>
-      program.plant !== selectedPlant.name &&
-      setProgram({ ...program, plant: selectedPlant.name }),
-    [selectedPlant, program]
-  );
+  useEffect(() => {
+    if (!selectedPlant) return;
+    program.plant !== selectedPlant.name &&
+      setProgram({ ...program, plant: selectedPlant.name });
+  }, [selectedPlant, program]);
 
   useEffect(() => {
     let programmed = [];
@@ -137,55 +136,64 @@ export default function NewProgram(props) {
               />
             </div>
           </div>
-          <FormInput
-            label="Nombre"
-            name="name"
-            value={program.name}
-            changeInput={handleValue}
-          />
-          <FormSelector
-            key={program.supervisor}
-            label="Supervisor"
-            value={`${program.supervisor}`}
-            options={supervisors.filter(
-              ({ plant }) => plant === selectedPlant.name
-            )}
-            valueField="idNumber"
-            name="supervisor"
-            captionField="name"
-            onSelect={handleValue}
-          />
-          <div className="h-fit max-h-60 overflow-y-auto">
-            <PeoplePicker
-              name="Seleccionar Personal"
-              options={workersList
-                .filter(({ plant }) => plant === selectedPlant.name)
-                .map((w) => ({
-                  id: w.idNumber,
-                  name: w.name,
-                }))}
-              update={(idArray) => setProgram({ ...program, people: idArray })}
-              idList={program ? program.people : []}
-              selectedWorkers={{
-                caption: "Programa(s)",
-                array: programmedWorkers,
-              }}
-            />
-          </div>
-          <FormTextArea
-            label={"Descripción"}
-            name="description"
-            defaultValue={program.description}
-            changeInput={handleValue}
-          />
-          {errors ? (
-            <div className="alert alert-error" role="alert">
-              {`Debe completar ${errors.join(", ")}.`}
-            </div>
-          ) : (
-            <button className="btn btn-success btn-sm ml-auto" type="submit">
-              GUARDAR PROGRAMA
-            </button>
+          {!!selectedPlant && (
+            <>
+              <FormInput
+                label="Nombre"
+                name="name"
+                value={program.name}
+                changeInput={handleValue}
+              />
+              <FormSelector
+                key={program.supervisor}
+                label="Supervisor"
+                value={`${program.supervisor}`}
+                options={supervisors.filter(
+                  ({ plant }) => plant === selectedPlant.name
+                )}
+                valueField="idNumber"
+                name="supervisor"
+                captionField="name"
+                onSelect={handleValue}
+              />
+              <div className="h-fit max-h-60 overflow-y-auto">
+                <PeoplePicker
+                  name="Seleccionar Personal"
+                  options={workersList
+                    .filter(({ plant }) => plant === selectedPlant.name)
+                    .map((w) => ({
+                      id: w.idNumber,
+                      name: w.name,
+                    }))}
+                  update={(idArray) =>
+                    setProgram({ ...program, people: idArray })
+                  }
+                  idList={program ? program.people : []}
+                  selectedWorkers={{
+                    caption: "Programa(s)",
+                    array: programmedWorkers,
+                  }}
+                />
+              </div>
+              <FormTextArea
+                label={"Descripción"}
+                name="description"
+                defaultValue={program.description}
+                changeInput={handleValue}
+              />
+              {errors ? (
+                <div className="alert alert-error" role="alert">
+                  {`Debe completar ${errors.join(", ")}.`}
+                </div>
+              ) : (
+                <button
+                  className="btn btn-success btn-sm ml-auto"
+                  type="submit"
+                >
+                  GUARDAR PROGRAMA
+                </button>
+              )}
+            </>
           )}
         </form>
       )}

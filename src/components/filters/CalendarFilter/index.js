@@ -60,7 +60,7 @@ export function CalendarLocFilter(props) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (selectedPlant) {
+    if (selectedPlant && areaList && lineList) {
       let newAreas = areaList.filter((a) => a.plant === selectedPlant._id);
       let newLines = lineList.filter((l) =>
         newAreas.map((a) => a._id).includes(l.area._id)

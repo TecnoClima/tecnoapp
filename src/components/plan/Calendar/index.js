@@ -187,7 +187,7 @@ export default function PlanCalendar(props) {
 
   return (
     <div className="flex flex-col h-full gap-1 pt-1">
-      {plant.name && year ? (
+      {plant?.name && year ? (
         <div
           className="collapse bg-base-content/10"
           style={{ borderRadius: "0.5rem" }}
