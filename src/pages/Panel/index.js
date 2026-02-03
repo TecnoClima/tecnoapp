@@ -15,10 +15,17 @@ export default function Panel() {
   const [pendant, setPendant] = useState([]);
   const [current, setCurrent] = useState([]);
   const [next, setNext] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
     dispatch(workOrderActions.getAssignedOrders());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isFetching && plan) {
+      setIsFetching(false);
+    }
+  }, [isFetching, plan]);
 
   useEffect(() => {
     if (userData && userData.user) {
@@ -31,6 +38,7 @@ export default function Panel() {
   }, [userData]);
 
   useEffect(() => {
+    setIsFetching(true);
     dispatch(planActions.selectTask(undefined));
     dispatch(getDeviceFromList({}));
   }, [dispatch]);
@@ -95,18 +103,30 @@ export default function Panel() {
     );
   }, [plan]);
 
+  useEffect(() => console.log("isFetching", isFetching), [isFetching]);
+
   return (
     <div className="page-container">
       {assignedOrders.length > 0 ? (
         <AssignedWO />
       ) : (
-        <TaskList
-          loading={!plan?.[0]}
-          pendant={pendant}
-          current={current}
-          next={next}
-          access={userData.access}
-        />
+        <>
+          {!isFetching && !plan[0] ? (
+            <>
+              <div className="page-title text-error">
+                No hay un plan cargado para este año en su planta
+              </div>
+            </>
+          ) : (
+            <TaskList
+              loading={!!isFetching}
+              pendant={pendant}
+              current={current}
+              next={next}
+              access={userData.access}
+            />
+          )}
+        </>
       )}
     </div>
   );
