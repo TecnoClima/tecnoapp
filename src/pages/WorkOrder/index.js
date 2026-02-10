@@ -255,7 +255,7 @@ export default function WorkOrder() {
         workOrderActions.newWorkOrder({
           ...orderToSave,
           device: device.code,
-          user: userData.user,
+          user: userData.id,
           interventions,
         })
       );
