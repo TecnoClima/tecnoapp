@@ -22,6 +22,7 @@ import Plan from "./pages/Plan";
 import Reports from "./pages/Reports/Reports";
 import WorkOrder from "./pages/WorkOrder";
 import WorkOrders from "./pages/WorkOrders";
+import TechnicalOrder from "./components/TechnicalOrder.js";
 
 function App() {
   const { userData } = useSelector((state) => state.people);
@@ -136,6 +137,18 @@ function App() {
               }
             />
           )}
+          {access.isLogged && (
+            <Route
+              exact
+              path={"/orden-tecnica/detalle/:code"}
+              element={
+                <InnerLayout>
+                  <TechnicalOrder />
+                </InnerLayout>
+              }
+            />
+          )}
+
           {access.isLogged && (
             <Route
               exact

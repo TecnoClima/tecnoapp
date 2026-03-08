@@ -19,3 +19,8 @@ export const orderFields = [
   "RESPONSABLE",
   "FECHA_PLAN",
 ];
+
+export const companyData = {
+  name: "Tecnoclima S.A.",
+  cuit: 30667671457,
+};
