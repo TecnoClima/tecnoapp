@@ -193,7 +193,13 @@ export default function AddIntervention(props) {
       : (intervention.endDate && !intervention.endTime) ||
         (intervention.endTime && !intervention.endDate)
       ? "Fecha Fin se indica con fecha y hora"
+      : intervention.date > intervention.endDate
+      ? "La Fecha Fin debe ser posterior a la Fecha Inicio"
+      : intervention.date === intervention.endDate &&
+        intervention.time > intervention.endTime
+      ? "La Hora Fin debe ser posterior a la Hora Inicio"
       : null;
+
   const displayPeoplePicker = intervention.date && !errorDate;
 
   return (

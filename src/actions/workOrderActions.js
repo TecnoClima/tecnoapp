@@ -88,11 +88,11 @@ export function deleteOrder(code) {
   });
 }
 
-export function newIntervention(order, data) {
+export function newIntervention(data) {
   return serverAction({
     endpoint: `intervention`,
     method: "POST",
-    body: { order: order, ...data },
+    body: data,
     type: "ADD_INTERVENTION",
   });
 }

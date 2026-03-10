@@ -25,6 +25,7 @@ import WorkOrderCard from "../../components/workOrder/WorkOrderCard";
 import WorkOrderObservations from "../../components/workOrder/WorkOrderObservations";
 import { appConfig } from "../../config";
 import ModalBase from "../../Modals/ModalBase";
+import { newIntervention } from "../../actions/workOrderActions";
 
 const { headersRef } = appConfig;
 
@@ -208,7 +209,11 @@ export default function WorkOrder() {
     setOrder(newOrder);
   }
   function handleNewIntervention(data) {
-    setInterventions([...interventions, data]);
+    if (orderCode) {
+      dispatch(newIntervention({ ...data, order: Number(orderCode) }));
+    } else {
+      setInterventions([...interventions, data]);
+    }
   }
 
   function handleCheck(e) {
@@ -255,7 +260,7 @@ export default function WorkOrder() {
         workOrderActions.newWorkOrder({
           ...orderToSave,
           device: device.code,
-          user: userData.user,
+          user: userData.id,
           interventions,
         })
       );
