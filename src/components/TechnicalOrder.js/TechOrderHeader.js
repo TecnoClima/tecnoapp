@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom/dist";
+import { useParams } from "react-router-dom";
 import logo from "../../assets/icons/logoTecnoclima.png";
 import { companyData } from "../../constants/OrderData";
 

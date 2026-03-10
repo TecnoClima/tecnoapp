@@ -55,6 +55,21 @@
     text-transform: capitalize;
   }
 
+  @media print {
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      background: white !important;
+      color: black !important;
+      border-color: black !important;
+    }
+    * .checkbox:checked,
+    * .checkbox[aria-checked="true"] {
+      color: black !important;
+      content: "✔";
+    }
+  }
+
   code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
       monospace;

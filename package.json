@@ -19,6 +19,7 @@
     "react-redux": "^7.2.5",
     "react-router-dom": "^6.2.1",
     "react-scripts": "^5.0.1",
+    "react-to-print": "^3.3.0",
     "reactstrap": "^8.10.0",
     "redux": "^4.1.1",
     "redux-thunk": "^2.3.0",

@@ -5,8 +5,13 @@ import { TechOrderData } from "./TechOrderData";
 import { TechOrderSubTaskList } from "./TechOrderSubTaskList";
 import TechOrderFailureData from "./TechOrderFailureData";
 import { TechOrderSignatures } from "./TechOrderSignatures";
+import { useRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPrint } from "@fortawesome/free-solid-svg-icons";
+import { useReactToPrint } from "react-to-print";
 
 export default function TechnicalOrder() {
+  const technicalOrder = useRef(null);
   const order = {
     calification: 5,
     generator: { name: "Nicolas Andrada" },
@@ -56,23 +61,41 @@ export default function TechnicalOrder() {
     estimatedDuration,
   } = order;
 
+  const generatePDF = useReactToPrint({
+    contentRef: technicalOrder,
+    documentTitle: "MiDocumentoModerno",
+  });
+
   return (
-    <div className="page-container gap-8">
-      <TechOrderHeader calification={calification} date={date} />
-      <div className="flex w-full flex-wrap rounded-box border p-4 gap-2">
-        <DataField label="Generó">{generator.name}</DataField>
-        <DataField label="Responsable">{responsible.name}</DataField>
-        <DataField label="Duración estimada">{`${estimatedDuration} horas`}</DataField>
-        <DataField label="Fecha">{registrationDate}</DataField>
+    <>
+      <button
+        className="absolute top-2 right-32 btn btn-info btn-outline btn-xs"
+        onClick={generatePDF}
+      >
+        <FontAwesomeIcon icon={faPrint} />
+        Imprimir
+      </button>
+      <div
+        id="technicalOrder"
+        ref={technicalOrder}
+        className="page-container gap-8"
+      >
+        <TechOrderHeader calification={calification} date={date} />
+        <div className="flex w-full flex-wrap rounded-box border p-4 gap-2">
+          <DataField label="Generó">{generator.name}</DataField>
+          <DataField label="Responsable">{responsible.name}</DataField>
+          <DataField label="Duración estimada">{`${estimatedDuration} horas`}</DataField>
+          <DataField label="Fecha">{registrationDate}</DataField>
+        </div>
+        <TechOrderDeviceData device={order.device} />
+        <TechOrderData order={order} />
+        <div className="flex flex-col gap-2">
+          <TechOrderSubTaskList />
+          <TechOrderFailureData order={order} />
+        </div>
+        {/* ADJUNTOS */}
+        <TechOrderSignatures order={order} />
       </div>
-      <TechOrderDeviceData device={order.device} />
-      <TechOrderData order={order} />
-      <div className="flex flex-col gap-2">
-        <TechOrderSubTaskList />
-        <TechOrderFailureData order={order} />
-      </div>
-      {/* ADJUNTOS */}
-      <TechOrderSignatures order={order} />
-    </div>
+    </>
   );
 }

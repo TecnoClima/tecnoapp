@@ -127,12 +127,12 @@ export function TechOrderSubTaskList() {
                         <div className="form-control">
                           <label className="label cursor-pointer flex-row-reverse gap-1">
                             <span className="label-text">{option}</span>
-                            <input
+                            <div
                               type="checkbox"
-                              defaultChecked
-                              className="checkbox"
-                              checked={option === selectedOption}
-                            />
+                              className="checkbox checkbox-sm flex items-center justify-center flex-none"
+                            >
+                              {option === selectedOption ? "✔" : ""}
+                            </div>
                           </label>
                         </div>
                       </div>
