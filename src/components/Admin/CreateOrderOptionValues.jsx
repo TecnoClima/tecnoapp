@@ -2,11 +2,11 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-import { OrderField } from "../../../components/workOrder/OrderFields";
+import { OrderField } from "../workOrder/OrderFields";
 import { useDispatch, useSelector } from "react-redux";
-import { optionActions } from "../../../actions/StoreActions";
-import { ErrorModal, SuccessModal } from "../../../components/warnings";
-import { appConfig } from "../../../config";
+import { optionActions } from "../../actions/StoreActions";
+import { ErrorModal, SuccessModal } from "../warnings";
+import { appConfig } from "../../config";
 const { headersRef } = appConfig;
 
 export function CreateOrderOptionValues({ order, targetCollection, type }) {
@@ -54,7 +54,10 @@ export function CreateOrderOptionValues({ order, targetCollection, type }) {
         <dialog className="modal w-full h-full" open={openModal}>
           <div className="modal-box w-fit bg-base-200 p-4 relative">
             <button
-              onClick={() => setOpenModal(false)}
+              onClick={(e) => {
+                e.preventDefault();
+                handleClose();
+              }}
               className="absolute top-2 right-2"
             >
               <FontAwesomeIcon icon={faTimes} className="h-5 mx-1" />
@@ -95,10 +98,7 @@ export function CreateOrderOptionValues({ order, targetCollection, type }) {
         </dialog>
       ) : (
         <button
-          onClick={(e) => {
-            e.preventDefault();
-            handleClose();
-          }}
+          onClick={() => setOpenModal(true)}
           className="btn btn-xs btn-info btn-outline"
         >
           <FontAwesomeIcon icon={faPlus} /> Agregar opción

@@ -93,6 +93,9 @@ const appConfig = {
     classification: "Clasificación",
     activator: "Activador",
     devicePart: "Parte del equipo",
+    number: "número",
+    text: "texto",
+    gps: "gps",
   },
   values: {
     startingYear: 2015,

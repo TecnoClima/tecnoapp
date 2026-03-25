@@ -307,3 +307,28 @@ export const optionActions = {
     },
   resetResult: () => ({ type: "RESET_OPTION_RESULT", payload: {} }),
 };
+
+export const subTaskActions = {
+  getList: () => getAction("subtasks", "GET_SUBTASKS"),
+  getById: (id) => getAction(`subtasks/${id}`, "GET_SUBTASK"),
+  create: (body) => postAction("subtasks", body, "NEW_SUBTASK"),
+  update: (id, body) => putAction(`subtasks/${id}`, body, "UPDATE_SUBTASK"),
+  delete: (id) =>
+    async function (dispatch) {
+      const token = localStorage.getItem("tecnoToken");
+      return fetch(`${baseURL}/subtasks/${id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
+        .then((res) => res.json())
+        .then((json) =>
+          dispatch({ type: "DELETE_SUBTASK", payload: { ...json, id } }),
+        )
+        .catch((e) => console.error(e));
+    },
+  resetResult: () => ({ type: "RESET_SUBTASK_RESULT", payload: {} }),
+};
