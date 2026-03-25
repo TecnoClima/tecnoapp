@@ -79,12 +79,12 @@ export const peopleActions = {
   getWorkers: (cond) =>
     getAction(
       `users${jsonToQuery({ ...cond, access: "Worker" })}`,
-      "WORKERS_LIST"
+      "WORKERS_LIST",
     ),
   getSupervisors: (plant) =>
     getAction(
       `users?access=Supervisor${plant ? `&plant=${plant}` : ""}`,
-      "SUPERVISORS"
+      "SUPERVISORS",
     ),
   getOptions: () => getAction("users/options", "USER_OPTIONS"),
   getAllUsers: (filters) =>
@@ -103,7 +103,7 @@ export const deviceActions = {
   getDetail: (id, dates) =>
     getAction(
       `devices/id?id=${id}${dates ? "&dates=true" : ""}`,
-      "DEVICE_DETAIL"
+      "DEVICE_DETAIL",
     ),
   getHistory: (id) => getAction(`devices/history?code=${id}`, "DEVICE_HISTORY"),
   allOptions: () => getAction(`devices/fullOptions`, "DEVICE_OPTIONS"),
@@ -176,7 +176,7 @@ export const workOrderActions = {
     deleteAction(
       `cylinders/usages`,
       { intervention, user, usages },
-      "DEL_USAGE"
+      "DEL_USAGE",
     ),
   getAssignedOrders: () => getAction(`workorder/assigned`, "ASSIGNED_ORDERS"),
   resetReport: () => ({ type: "RESET_REPORT", payload: {} }),
@@ -248,7 +248,7 @@ export function getDevicesList(selectedData) {
   return async function (dispatch) {
     if (selectedData.linesName !== "") {
       return fetch(
-        `${baseURL}/abmdevices/devicelist?line=${selectedData.linesName}&sp=${selectedData.spName}`
+        `${baseURL}/abmdevices/devicelist?line=${selectedData.linesName}&sp=${selectedData.spName}`,
       )
         .then((response) => response.json())
         .then((json) => {
@@ -278,3 +278,57 @@ export const resetDeviceData = (payload) => {
 
 //check if this equals to peopleActions.getAllUsers()
 export const getEmpleados = () => getAction("users", "GET_WORKERS");
+
+export const optionActions = {
+  getList: (collection) =>
+    getAction(
+      `options${collection ? `?targetCollection=${collection}` : ""}`,
+      "GET_OPTIONS",
+    ),
+  getById: (id) => getAction(`options/${id}`, "GET_OPTION"),
+  create: (body) => postAction("options", body, "NEW_OPTION"),
+  update: (id, body) => putAction(`options/${id}`, body, "UPDATE_OPTION"),
+  delete: (id) =>
+    async function (dispatch) {
+      const token = localStorage.getItem("tecnoToken");
+      return fetch(`${baseURL}/options/${id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
+        .then((res) => res.json())
+        .then((json) =>
+          dispatch({ type: "DELETE_OPTION", payload: { ...json, id } }),
+        )
+        .catch((e) => console.error(e));
+    },
+  resetResult: () => ({ type: "RESET_OPTION_RESULT", payload: {} }),
+};
+
+export const subTaskActions = {
+  getList: () => getAction("subtasks", "GET_SUBTASKS"),
+  getById: (id) => getAction(`subtasks/${id}`, "GET_SUBTASK"),
+  create: (body) => postAction("subtasks", body, "NEW_SUBTASK"),
+  update: (id, body) => putAction(`subtasks/${id}`, body, "UPDATE_SUBTASK"),
+  delete: (id) =>
+    async function (dispatch) {
+      const token = localStorage.getItem("tecnoToken");
+      return fetch(`${baseURL}/subtasks/${id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
+        .then((res) => res.json())
+        .then((json) =>
+          dispatch({ type: "DELETE_SUBTASK", payload: { ...json, id } }),
+        )
+        .catch((e) => console.error(e));
+    },
+  resetResult: () => ({ type: "RESET_SUBTASK_RESULT", payload: {} }),
+};

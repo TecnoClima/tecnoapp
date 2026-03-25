@@ -23,6 +23,9 @@ import Reports from "./pages/Reports/Reports";
 import WorkOrder from "./pages/WorkOrder";
 import WorkOrders from "./pages/WorkOrders";
 import TechnicalOrder from "./components/TechnicalOrder.js";
+import TechOrder from "./pages/TechOrder";
+import TechConfig from "./pages/Admin/TechConfig";
+import { AdminOptions } from "./pages/Admin/Options/index.jsx";
 
 function App() {
   const { userData } = useSelector((state) => state.people);
@@ -47,21 +50,21 @@ function App() {
 
   useEffect(
     () => Object.keys(access).length === 3 && setLoading(false),
-    [access]
+    [access],
   );
 
   useEffect(() => {
     console.log(
       "%c🚀 Aplicación web desarrollada por Leo Monay 🚀",
-      "color: #00ff00; font-size: 20px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); background: linear-gradient(45deg, #ff6b6b, #4ecdc4); padding: 10px; border-radius: 10px;"
+      "color: #00ff00; font-size: 20px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); background: linear-gradient(45deg, #ff6b6b, #4ecdc4); padding: 10px; border-radius: 10px;",
     );
     console.log(
       "%c💼 Visita mi portfolio: https://leomonay.github.io/",
-      "color: #ffffff; font-size: 16px; font-weight: bold; background: linear-gradient(45deg, #667eea, #764ba2); padding: 8px; border-radius: 8px; margin-top: 5px;"
+      "color: #ffffff; font-size: 16px; font-weight: bold; background: linear-gradient(45deg, #667eea, #764ba2); padding: 8px; border-radius: 8px; margin-top: 5px;",
     );
     console.log(
       "%c🔗 GitHub: https://github.com/leomonay",
-      "color: #ffffff; font-size: 14px; background: #333; padding: 6px; border-radius: 6px; margin-top: 3px;"
+      "color: #ffffff; font-size: 14px; background: #333; padding: 6px; border-radius: 6px; margin-top: 3px;",
     );
   }, []);
 
@@ -148,6 +151,28 @@ function App() {
               }
             />
           )}
+          {access.isLogged && (
+            <Route
+              exact
+              path={"/orden-tecnica/nueva"}
+              element={
+                <InnerLayout>
+                  <TechOrder />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isLogged && (
+            <Route
+              exact
+              path={"/orden-tecnica/editar/:orderCode"}
+              element={
+                <InnerLayout>
+                  <TechOrder />
+                </InnerLayout>
+              }
+            />
+          )}
 
           {access.isLogged && (
             <Route
@@ -202,7 +227,7 @@ function App() {
               }
             />
           )}
-          {access.isAdmin && (
+          {/* {access.isAdmin && (
             <Route
               exact
               path={"/admin/:selected"}
@@ -212,7 +237,7 @@ function App() {
                 </InnerLayout>
               }
             />
-          )}
+          )} */}
           <Route
             exact
             path={"/plan"}
@@ -240,6 +265,17 @@ function App() {
               element={
                 <InnerLayout>
                   <DeviceAdmin />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/opciones"}
+              element={
+                <InnerLayout>
+                  <AdminOptions />
                 </InnerLayout>
               }
             />
@@ -315,6 +351,17 @@ function App() {
               element={
                 <InnerLayout>
                   <LoadFrequencies />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/tech-config"}
+              element={
+                <InnerLayout>
+                  <TechConfig />
                 </InnerLayout>
               }
             />

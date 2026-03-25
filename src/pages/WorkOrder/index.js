@@ -18,7 +18,7 @@ import WOProgress from "../../components/progress/WOProgresBar";
 import { ErrorModal, SuccessModal } from "../../components/warnings";
 import WarningErrors from "../../components/warnings/WarningErrors";
 import ForPlan from "../../components/workOrder/ForPlan";
-import OrderField from "../../components/workOrder/OrderFields";
+import {OrderField} from "../../components/workOrder/OrderFields";
 import LoadOrdersFromExcel from "../../components/workOrder/UploadFromExcel";
 import WorkerSelector from "../../components/workOrder/WorkerSelector";
 import WorkOrderCard from "../../components/workOrder/WorkOrderCard";

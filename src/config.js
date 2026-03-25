@@ -83,6 +83,19 @@ const appConfig = {
     dangerTask: "Tarea Peligrosa",
     steelMine: "Acería",
     insalubrity: "Insalubridad",
+
+    //Options
+    priority: "Prioridad",
+    severity: "Severidad",
+    failureType: "Tipo de falla",
+    damageType: "Tipo de daño",
+    detection: "Detección",
+    classification: "Clasificación",
+    activator: "Activador",
+    devicePart: "Parte del equipo",
+    number: "número",
+    text: "texto",
+    gps: "gps",
   },
   values: {
     startingYear: 2015,

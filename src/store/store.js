@@ -8,6 +8,8 @@ import planReducer from '../reducers/planReducer'
 import adminCylindersReducer from '../reducers/adminCylindersReducer';
 import abmDevicesReducer from '../reducers/abmDevices';
 import plantReducer from '../reducers/plantReducer';
+import optionReducer from '../reducers/optionReducer';
+import subTaskReducer from '../reducers/subTaskReducer';
 import thunk from 'redux-thunk'
 
 const reducers = combineReducers({
@@ -19,7 +21,9 @@ const reducers = combineReducers({
     plan: planReducer,
     adminCylinders: adminCylindersReducer,
     abmDevices: abmDevicesReducer,
-    plants: plantReducer
+    plants: plantReducer,
+    options: optionReducer,
+    subTasks: subTaskReducer
 })
 
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
