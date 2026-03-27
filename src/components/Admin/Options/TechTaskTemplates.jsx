@@ -1,0 +1,70 @@
+import { useDispatch, useSelector } from "react-redux";
+import { techTaskTemplateActions } from "../../../actions/StoreActions";
+import { Fragment, useEffect, useState } from "react";
+import { appConfig } from "../../../config";
+import TextInput from "../../forms/FormFields";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+const { headersRef } = appConfig;
+
+export function TechTaskTemplates() {
+  const { list: techTaskTemplates } = useSelector(
+    (state) => state.techTaskTemplates,
+  );
+  const [searchKey, setSearchKey] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const dispatch = useDispatch();
+  useEffect(() => dispatch(techTaskTemplateActions.getList()), [dispatch]);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex gap-2 items-center text-base-content w-full">
+        <TextInput
+          className="ml-auto"
+          handleChange={(e) => setSearchKey(e.target.value)}
+          value={searchKey}
+          placeholder="3 caracteres o más"
+        />
+        <FontAwesomeIcon icon={faSearch} className="text-white" />
+      </div>
+      {techTaskTemplates
+        .filter(({ name }) =>
+          searchKey?.length > 2
+            ? name.toLowerCase().includes(searchKey.toLowerCase())
+            : true,
+        )
+        .map(({ _id, name, subtasks }) => {
+          const isSelected = selectedTemplate === _id;
+          return (
+            <div
+              key={_id}
+              onClick={isSelected ? undefined : () => setSelectedTemplate(_id)}
+              className={`card bg-base-content/5 border border-transparent hover:border-primary hover:bg-base-content/10 p-4 ${isSelected ? "" : "cursor-pointer"}`}
+            >
+              <div className="card-title">{name}</div>
+              <div
+                className={`flex flex-col sm:grid sm:grid-cols-[8rem,auto,8rem] text-xs transition-height duration-300 ${isSelected ? "h-auto" : "h-0 overflow-y-hidden"}`}
+              >
+                {subtasks.map((subTask) => (
+                  <Fragment key={subTask._id}>
+                    <div className="hidden sm:block border-b border-dotted border-base-content/20">
+                      {subTask.devicePart?.label}
+                    </div>
+                    <div className="border-b border-dotted border-base-content/20">
+                      {" "}
+                      {subTask.procedure}
+                    </div>
+                    <div className="border-b border-dotted border-base-content/20 hidden sm:block">
+                      {subTask.options?.length > 1
+                        ? subTask.options.join(" / ")
+                        : `Ingresar ${headersRef[subTask.resultType]}`}
+                    </div>
+                  </Fragment>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+    </div>
+  );
+}

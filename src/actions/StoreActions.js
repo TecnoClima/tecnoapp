@@ -332,3 +332,33 @@ export const subTaskActions = {
     },
   resetResult: () => ({ type: "RESET_SUBTASK_RESULT", payload: {} }),
 };
+
+export const techTaskTemplateActions = {
+  getList: () => getAction("techtasktemplates", "GET_TECHTASKTEMPLATES"),
+  getById: (id) => getAction(`techtasktemplates/${id}`, "GET_TECHTASKTEMPLATE"),
+  create: (body) =>
+    postAction("techtasktemplates", body, "NEW_TECHTASKTEMPLATE"),
+  update: (id, body) =>
+    putAction(`techtasktemplates/${id}`, body, "UPDATE_TECHTASKTEMPLATE"),
+  delete: (id) =>
+    async function (dispatch) {
+      const token = localStorage.getItem("tecnoToken");
+      return fetch(`${baseURL}/techtasktemplates/${id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      })
+        .then((res) => res.json())
+        .then((json) =>
+          dispatch({
+            type: "DELETE_TECHTASKTEMPLATE",
+            payload: { ...json, id },
+          }),
+        )
+        .catch((e) => console.error(e));
+    },
+  resetResult: () => ({ type: "RESET_TECHTASKTEMPLATE_RESULT", payload: {} }),
+};

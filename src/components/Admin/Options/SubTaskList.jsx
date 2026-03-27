@@ -1,9 +1,9 @@
 import { CreateSubTask } from "./CreateSubTask";
 import { useDispatch, useSelector } from "react-redux";
-import { subTaskActions } from "../../actions/StoreActions";
+import { subTaskActions } from "../../../actions/StoreActions";
 import { useEffect, useState } from "react";
 import { DeleteSubTask } from "./DeleteSubTask";
-import { appConfig } from "../../config";
+import { appConfig } from "../../../config";
 const { headersRef } = appConfig;
 
 export function SubTaskList() {

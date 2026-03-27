@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 const tabs = [
   { item: "workOrders", caption: "Ordenes" },
   { item: "subtask", caption: "Subtareas" },
+  { item: "techTaskTemplates", caption: "Tareas" },
   //   { item: "device", caption: "Equipo" },
   //   { item: "users", caption: "Usuarios" },
 ];

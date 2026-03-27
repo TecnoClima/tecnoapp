@@ -2,10 +2,10 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import { OrderField } from "../workOrder/OrderFields";
+import { OrderField } from "../../workOrder/OrderFields";
 import { useDispatch, useSelector } from "react-redux";
-import { optionActions, subTaskActions } from "../../actions/StoreActions";
-import { ErrorModal, SuccessModal } from "../warnings";
+import { optionActions, subTaskActions } from "../../../actions/StoreActions";
+import { ErrorModal, SuccessModal } from "../../warnings";
 
 const resultTypes = [
   { value: "boolean", label: "Sí / No / N/A" },
