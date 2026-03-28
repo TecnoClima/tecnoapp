@@ -309,7 +309,10 @@ export const optionActions = {
 };
 
 export const subTaskActions = {
-  getList: () => getAction("subtasks", "GET_SUBTASKS"),
+  getList: (params) => {
+    const query = new URLSearchParams(params).toString();
+    return getAction(`subtasks${query ? `?${query}` : ""}`, "GET_SUBTASKS");
+  },
   getById: (id) => getAction(`subtasks/${id}`, "GET_SUBTASK"),
   create: (body) => postAction("subtasks", body, "NEW_SUBTASK"),
   update: (id, body) => putAction(`subtasks/${id}`, body, "UPDATE_SUBTASK"),

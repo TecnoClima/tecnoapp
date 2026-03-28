@@ -1,4 +1,6 @@
-import { useEffect } from "react";
+import { use, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 
 const tabs = [
@@ -9,37 +11,33 @@ const tabs = [
   //   { item: "users", caption: "Usuarios" },
 ];
 
-export function AdminOptionsNav() {
-  const [searchParams, setSearchParams] = useSearchParams();
+export function AdminOptionsNav({ tabs }) {
+  const [searchParams] = useSearchParams();
   const tab = searchParams.get("tab");
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!tab) {
-      setSearchParams({ tab: tabs[0].caption });
+      navigate(`${tabs[0].href}`);
     }
   }, [tab]);
 
-  function handleClick(e) {
-    e.preventDefault();
-    setSearchParams({ tab: e.currentTarget.value });
-  }
-
   return (
     <div role="tablist" className="tabs w-full tabs-lifted">
-      {tabs.map(({ item, caption }) => {
-        const isActive = caption === tab;
+      {tabs.map(({ name, href }) => {
+        const isActive = name === tab;
         return (
-          <button
-            key={item}
-            onClick={handleClick}
-            value={caption}
+          <Link
+            key={name}
+            to={href}
             className={`tab text-center px-2 ${
               isActive
                 ? "tab-active bg-gradient-to-b from-base-200 to-transparent"
                 : "bg-gradient-to-b from-base-content/5 to-transparent"
             }`}
           >
-            {caption}
-          </button>
+            {name}
+          </Link>
         );
       })}
     </div>

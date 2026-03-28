@@ -1,10 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
-import { techTaskTemplateActions } from "../../../actions/StoreActions";
+import { techTaskTemplateActions } from "../../../../actions/StoreActions";
 import { Fragment, useEffect, useState } from "react";
-import { appConfig } from "../../../config";
-import TextInput from "../../forms/FormFields";
+import { appConfig } from "../../../../config";
+import TextInput from "../../../forms/FormFields";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { SearchInput } from "../../../ui/SearchInput";
 const { headersRef } = appConfig;
 
 export function TechTaskTemplates() {
@@ -19,13 +20,9 @@ export function TechTaskTemplates() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-2 items-center text-base-content w-full">
-        <TextInput
-          className="ml-auto"
-          handleChange={(e) => setSearchKey(e.target.value)}
-          value={searchKey}
-          placeholder="3 caracteres o más"
-        />
-        <FontAwesomeIcon icon={faSearch} className="text-white" />
+        <div className="w-80 max-w-full ml-auto">
+          <SearchInput searchKey={searchKey} setSearchKey={setSearchKey} />
+        </div>
       </div>
       {techTaskTemplates
         .filter(({ name }) =>

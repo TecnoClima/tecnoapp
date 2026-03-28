@@ -1,4 +1,4 @@
-import { appConfig } from "../../../config";
+import { appConfig } from "../../../../config";
 import { CreateOrderOptionValues } from "./CreateOrderOptionValues";
 const { headersRef } = appConfig;
 

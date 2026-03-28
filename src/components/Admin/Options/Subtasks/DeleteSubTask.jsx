@@ -1,10 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
-import { subTaskActions } from "../../../actions/StoreActions";
+import { subTaskActions } from "../../../../actions/StoreActions";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
-import WarningErrors from "../../warnings/WarningErrors";
-import { ErrorModal, SuccessModal } from "../../warnings";
+import WarningErrors from "../../../warnings/WarningErrors";
+import { ErrorModal, SuccessModal } from "../../../warnings";
 
 export function DeleteSubTask({ id, procedure }) {
   const { subTaskResult } = useSelector((state) => state.subTasks);

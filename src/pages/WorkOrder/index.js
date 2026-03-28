@@ -18,7 +18,7 @@ import WOProgress from "../../components/progress/WOProgresBar";
 import { ErrorModal, SuccessModal } from "../../components/warnings";
 import WarningErrors from "../../components/warnings/WarningErrors";
 import ForPlan from "../../components/workOrder/ForPlan";
-import {OrderField} from "../../components/workOrder/OrderFields";
+import { OrderField } from "../../components/workOrder/OrderFields";
 import LoadOrdersFromExcel from "../../components/workOrder/UploadFromExcel";
 import WorkerSelector from "../../components/workOrder/WorkerSelector";
 import WorkOrderCard from "../../components/workOrder/WorkOrderCard";
@@ -44,7 +44,7 @@ export default function WorkOrder() {
   const { userData } = useSelector((s) => s.people);
   const { orderCode } = useParams();
   const { workOrderOptions, orderDetail, orderResult } = useSelector(
-    (state) => state.workOrder
+    (state) => state.workOrder,
   );
   const [order, setOrder] = useState({
     supervisor: "",
@@ -156,7 +156,7 @@ export default function WorkOrder() {
         const { plant, area, line } = d;
         const { type, power, refrigerant, gasAmount } = d;
         for (let key of Object.keys(device).filter(
-          (k) => !["location", "type", "gasAmount"].includes(k)
+          (k) => !["location", "type", "gasAmount"].includes(k),
         )) {
           newDevice[key] = d[key];
         }
@@ -169,7 +169,7 @@ export default function WorkOrder() {
       }
       setDevice(newDevice);
     },
-    [device]
+    [device],
   );
 
   useEffect(() => {
@@ -253,7 +253,7 @@ export default function WorkOrder() {
           ...orderToSave,
           device: device.code,
           interventions,
-        })
+        }),
       );
     } else {
       dispatch(
@@ -262,7 +262,7 @@ export default function WorkOrder() {
           device: device.code,
           user: userData.id,
           interventions,
-        })
+        }),
       );
     }
   }
@@ -557,7 +557,7 @@ export default function WorkOrder() {
             }
             value={order.description}
           />
-          <div className="flex xl:col-span-3 min-h-0 overflow-y-auto flex-grow">
+          <div className="flex xl:col-span-3 min-h-0 md:min-h-60 overflow-y-auto flex-grow">
             <InterventionList
               required={!allowSaving}
               interventions={interventions}
@@ -566,10 +566,10 @@ export default function WorkOrder() {
               onDelete={(id) => {
                 permissions.admin && interventions[id].id
                   ? alert(
-                      "No pueden eliminarse las intervenciones grabadas. Funcionalidad en desarrollo."
+                      "No pueden eliminarse las intervenciones grabadas. Funcionalidad en desarrollo.",
                     )
                   : setInterventions(
-                      interventions.filter((i, index) => index !== id)
+                      interventions.filter((i, index) => index !== id),
                     );
               }}
             />

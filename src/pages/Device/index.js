@@ -27,7 +27,7 @@ import Loading from "../../components/Loading";
 export default function Device() {
   const { userData } = useSelector((state) => state.people);
   const { selectedDevice, deviceHistory, deviceResult } = useSelector(
-    (state) => state.devices
+    (state) => state.devices,
   );
   const { year } = useSelector((state) => state.data);
   const { code } = useParams();
@@ -54,14 +54,18 @@ export default function Device() {
   const [colors] = useState(["darkred", "navy", "purple", "green", "grey"]);
   const [chartValues, setValues] = useState([]);
 
+  useEffect(() => {
+    console.log("reclaims", reclaims);
+  }, [reclaims]);
+
   // Device data
   useEffect(
     () => code && !device.code && dispatch(deviceActions.getDetail(code)),
-    [dispatch, device, code]
+    [dispatch, device, code],
   );
   useEffect(
     () => code && dispatch(deviceActions.getHistory(code)),
-    [dispatch, code]
+    [dispatch, code],
   );
   useEffect(() => {
     if (selectedDevice.code) {
@@ -76,12 +80,12 @@ export default function Device() {
     setReclaims(
       orders
         .filter((order) => order.class === "Reclamo")
-        .map((order) => ({ ...order, date: new Date(order.date) }))
+        .map((order) => ({ ...order, date: new Date(order.date) })),
     );
     setInterventions(
       history
         .map((task) => ({ ...task, date: new Date(task.date) }))
-        .sort((a, b) => (a.date > b.date ? -1 : 1))
+        .sort((a, b) => (a.date > b.date ? -1 : 1)),
     );
   }, [deviceHistory]);
   useEffect(() => {
@@ -89,7 +93,7 @@ export default function Device() {
     for (let i = 0; i <= 11; i++)
       monthReclaims[i] = reclaims.filter(
         (reclaim) =>
-          reclaim.date.getFullYear() === year && reclaim.date.getMonth() === i
+          reclaim.date.getFullYear() === year && reclaim.date.getMonth() === i,
       ).length;
     setValues([
       {
@@ -115,7 +119,8 @@ export default function Device() {
       for (let i = 0; i <= 11; i++)
         monthReclaims[i] = reclaims.filter(
           (reclaim) =>
-            reclaim.date.getFullYear() === year && reclaim.date.getMonth() === i
+            reclaim.date.getFullYear() === year &&
+            reclaim.date.getMonth() === i,
         ).length;
       values.push({
         label: year,
@@ -275,7 +280,7 @@ export default function Device() {
                             <td>
                               {intervention.gas.map(
                                 (usage) =>
-                                  `garrafa ${usage.cylinder}: ${usage.consumption} kg`
+                                  `garrafa ${usage.cylinder}: ${usage.consumption} kg`,
                               )}
                             </td>
                             <td>

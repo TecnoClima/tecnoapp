@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { optionActions } from "../../../actions/StoreActions";
-import { appConfig } from "../../../config";
-import { CreateOrderOptionValues } from "./CreateOrderOptionValues";
-import { OptionCard } from "./OptionCard";
+import { optionActions } from "../../../../actions/StoreActions";
+import { appConfig } from "../../../../config";
+import { CreateOrderOptionValues } from "../WorkOrders/CreateOrderOptionValues";
+import { OptionCard } from "../WorkOrders/OptionCard";
 import { SubTaskList } from "./SubTaskList";
 const { headersRef } = appConfig;
 
