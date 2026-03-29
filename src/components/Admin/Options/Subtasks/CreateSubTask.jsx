@@ -70,8 +70,6 @@ export function CreateSubTask() {
     dispatch(subTaskActions.resetResult());
   }
 
-  useEffect(() => console.log("subtaskList", subtaskList), [subtaskList]);
-
   return (
     <>
       {openModal && (

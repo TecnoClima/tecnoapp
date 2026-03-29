@@ -13,6 +13,8 @@ import {
 } from "@dnd-kit/sortable";
 
 import { CSS } from "@dnd-kit/utilities";
+import { faGripVertical } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SubtaskItem from "./SubtaskItem";
 
 // Helper para reordenar y normalizar order
@@ -37,10 +39,14 @@ function SortableItem({ subtask, onItemChange }) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="flex items-center gap-2">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center gap-2 bg-base-100/40 rounded-md transition-colors"
+    >
       {/* Drag handle */}
       <button {...attributes} {...listeners} className="cursor-grab px-2">
-        ☰
+        <FontAwesomeIcon icon={faGripVertical} />
       </button>
 
       <div className="flex-1">

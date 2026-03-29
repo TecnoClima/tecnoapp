@@ -23,13 +23,15 @@ export default function SubtaskItem({ subtask, onChange }) {
   }
 
   function handleComments(e) {
-    onChange(_id, { comments: e.target.value });
+    const value = e.target.value;
+    if (!value) setEnableComment(false);
+    onChange(_id, { comments: value });
   }
 
   return (
     <div
       // className={`flex flex-col gap-1 p-2 border-l-4 ${borderClass} bg-base-100 rounded-r-md transition-colors`}
-      className={`flex flex-col gap-1 p-2 bg-base-100/40 rounded-md transition-colors w-full`}
+      className="flex flex-col gap-1 p-2 w-full"
     >
       {/* Top row: task name + inputs + result buttons */}
       <div className="flex flex-wrap md:flex-nowrap items-center md:justify-between gap-2 w-full">

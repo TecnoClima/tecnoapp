@@ -1,5 +1,6 @@
 import {
   faBookOpen,
+  faExchange,
   faSearch,
   faSyncAlt,
   faTable,
@@ -20,6 +21,7 @@ import {
   TextAreaField,
 } from "../OrderFields";
 import WorkOrderCard from "../WorkOrderCard";
+import AddSubtaskModal from "./AddSubtaskModal";
 import SubtasksSection from "./SubtasksSection";
 import TemplateModal from "./TemplateModal";
 import { mapToFormSubtask, toBackendSubtask } from "./helpers";
@@ -95,6 +97,7 @@ export default function TechOrderForm({ orderCode }) {
   const [device, setDevice] = useState(EMPTY_DEVICE);
   const [deviceTable, setDeviceTable] = useState(false);
   const [templateModal, setTemplateModal] = useState(false);
+  const [addSubtaskModal, setAddSubtaskModal] = useState(false);
   const [templateName, setTemplateName] = useState("");
   const [templateId, setTemplateId] = useState("");
   const [subtasks, setSubtasks] = useState([]);
@@ -171,10 +174,11 @@ export default function TechOrderForm({ orderCode }) {
   }
 
   // ── subtask handler ───────────────────────────────────────────────────────
-  function handleChangeSubtask(id, patch) {
-    setSubtasks((prev) =>
-      prev.map((st) => (st.id === id ? { ...st, ...patch } : st)),
-    );
+  function handleAddSubtask(subtask) {
+    setSubtasks((prev) => [
+      mapToFormSubtask(subtask, 0),
+      ...prev.map((s, i) => ({ ...s, order: i + 1 })),
+    ]);
   }
 
   // ── save ──────────────────────────────────────────────────────────────────
@@ -236,6 +240,14 @@ export default function TechOrderForm({ orderCode }) {
             <DeviceList close={() => setDeviceTable(false)} />
           </div>
         </ModalBase>
+      )}
+      {addSubtaskModal && (
+        <AddSubtaskModal
+          open={true}
+          onClose={() => setAddSubtaskModal(false)}
+          onAdd={handleAddSubtask}
+          currentIds={subtasks.map((s) => s._id)}
+        />
       )}
       {templateModal && (
         <TemplateModal
@@ -449,8 +461,11 @@ export default function TechOrderForm({ orderCode }) {
               title={
                 templateName ? (
                   <>
-                    Template activo: <b>{templateName}</b> — {subtasks.length}{" "}
-                    subtarea(s)
+                    Tarea: <b>{templateName}</b>
+                    <span className="font-normal">
+                      {" "}
+                      - {subtasks.length} subtarea(s)
+                    </span>
                   </>
                 ) : (
                   "SUBTAREAS"
@@ -460,15 +475,18 @@ export default function TechOrderForm({ orderCode }) {
                 <div className="flex gap-4">
                   <button
                     type="button"
-                    className="btn btn-sm btn-outline btn-primary"
+                    className={`btn btn-sm btn-outline ${templateName ? "btn-primary" : "btn-error"}`}
                     onClick={() => setTemplateModal(true)}
                   >
-                    <FontAwesomeIcon icon={faBookOpen} /> Elegir tarea
+                    <FontAwesomeIcon
+                      icon={templateName ? faExchange : faBookOpen}
+                    />{" "}
+                    {templateName ? "Cambiar" : "Elegir"} tarea
                   </button>
                   <button
                     type="button"
-                    className="btn btn-sm btn-outline btn-primary"
-                    // onClick={() => setTemplateModal(true)}
+                    className={`btn btn-sm btn-outline ${templateName ? "btn-error" : "btn-primary"}`}
+                    onClick={() => setAddSubtaskModal(true)}
                   >
                     <FontAwesomeIcon icon={faTools} /> Agregar subtarea
                   </button>
