@@ -1,22 +1,14 @@
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import { OrderField } from "../../../workOrder/OrderFields";
 import { useDispatch, useSelector } from "react-redux";
 import {
   optionActions,
   subTaskActions,
 } from "../../../../actions/StoreActions";
+import { resultTypes } from "../../../../constants/techOrders";
 import { ErrorModal, SuccessModal } from "../../../warnings";
-
-const resultTypes = [
-  { value: "boolean", label: "Sí / No / N/A" },
-  { value: "approved", label: "Aprobó / Alerta / Falló" },
-  { value: "number", label: "Número" },
-  { value: "text", label: "Texto" },
-  { value: "gps", label: "GPS" },
-];
+import { OrderField } from "../../../workOrder/OrderFields";
 
 const emptyTask = {
   devicePart: "",

@@ -3,14 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 
-const tabs = [
-  { item: "workOrders", caption: "Ordenes" },
-  { item: "subtask", caption: "Subtareas" },
-  { item: "techTaskTemplates", caption: "Tareas" },
-  //   { item: "device", caption: "Equipo" },
-  //   { item: "users", caption: "Usuarios" },
-];
-
 export function AdminOptionsNav({ tabs }) {
   const [searchParams] = useSearchParams();
   const tab = searchParams.get("tab");

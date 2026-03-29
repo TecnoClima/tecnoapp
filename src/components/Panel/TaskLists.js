@@ -24,9 +24,9 @@ function CollapseTask({ list, title, className, listName, defaultChecked }) {
             .find((key) =>
               `${object[key]?.name || object[key]}`
                 .toLowerCase()
-                .includes(searchKey.toLowerCase())
-            )
-        )
+                .includes(searchKey.toLowerCase()),
+            ),
+        ),
       );
     }
     setCurrentPage(1);
@@ -110,7 +110,7 @@ export default function TaskList({ pendant, current, next, loading }) {
             ) : (
               `${
                 current[0] ? current.length + " P" : "No hay p"
-              }endientes de esta semana pasada`
+              }endientes de esta semana`
             )
           }
           loadingMessage="Cargando pendientes..."

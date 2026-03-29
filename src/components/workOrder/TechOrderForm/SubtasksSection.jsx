@@ -1,41 +1,103 @@
+import {
+  DndContext,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+
+import { CSS } from "@dnd-kit/utilities";
 import SubtaskItem from "./SubtaskItem";
 
-function getGroupKey(subtask) {
-  return subtask.groupPart?._id || subtask.groupPart || "__no_group__";
+// Helper para reordenar y normalizar order
+function reorderSubtasks(list, fromIndex, toIndex) {
+  const updated = [...list];
+  const [moved] = updated.splice(fromIndex, 1);
+  updated.splice(toIndex, 0, moved);
+
+  return updated.map((item, index) => ({
+    ...item,
+    order: index + 1,
+  }));
 }
 
-function getGroupLabel(subtask) {
-  return subtask.groupPart?.name || subtask.groupPart || "Sin grupo";
+function SortableItem({ subtask, onItemChange }) {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: subtask._id.toString() });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="flex items-center gap-2">
+      {/* Drag handle */}
+      <button {...attributes} {...listeners} className="cursor-grab px-2">
+        ☰
+      </button>
+
+      <div className="flex-1">
+        <SubtaskItem subtask={subtask} onChange={onItemChange} />
+      </div>
+    </div>
+  );
 }
 
-export default function SubtasksSection({ subtasks, onChange }) {
-  // Collect ordered unique groups (preserving insertion order)
-  const groups = [];
-  const seen = new Set();
-  for (const st of subtasks) {
-    const key = getGroupKey(st);
-    if (!seen.has(key)) {
-      seen.add(key);
-      groups.push({ key, label: getGroupLabel(st) });
-    }
+export default function SubtasksSection({ subtasks, setSubtasks }) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    }),
+  );
+
+  // Cambios de un item individual
+  function handleItemChange(id, patch) {
+    setSubtasks((prev) =>
+      prev.map((st) => (st._id === id ? { ...st, ...patch } : st)),
+    );
+  }
+
+  // Drag & drop
+  function handleDragEnd(event) {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) return;
+
+    setSubtasks((prev) => {
+      const oldIndex = prev.findIndex((s) => s._id.toString() === active.id);
+      const newIndex = prev.findIndex((s) => s._id.toString() === over.id);
+
+      return reorderSubtasks(prev, oldIndex, newIndex);
+    });
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      {groups.map(({ key, label }) => (
-        <div key={key}>
-          <div className="text-xs font-bold uppercase tracking-wider text-base-content/50 mb-1 px-1 border-b border-base-300 pb-0.5">
-            {label}
-          </div>
-          <div className="flex flex-col gap-1">
-            {subtasks
-              .filter((st) => getGroupKey(st) === key)
-              .map((st) => (
-                <SubtaskItem key={st.id} subtask={st} onChange={onChange} />
-              ))}
-          </div>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext
+        items={subtasks.map((s) => s._id.toString())}
+        strategy={verticalListSortingStrategy}
+      >
+        <div className="flex flex-col gap-2">
+          {subtasks.map((st) => (
+            <SortableItem
+              key={st._id}
+              subtask={st}
+              onItemChange={handleItemChange}
+            />
+          ))}
         </div>
-      ))}
-    </div>
+      </SortableContext>
+    </DndContext>
   );
 }

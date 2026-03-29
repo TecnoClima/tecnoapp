@@ -3,12 +3,7 @@ import { AdminOptionsNav } from "../../../components/Admin/Options/OptionsNaviga
 import { OrderOptions } from "../../../components/Admin/Options/WorkOrders/OrderOptions";
 import { SubtaskOptions } from "../../../components/Admin/Options/Subtasks/SubtaskOptions";
 import { TechTaskTemplates } from "../../../components/Admin/Options/TechTaskTemplate/TechTaskTemplates";
-
-const adminOptionsTabs = [
-  { name: "Ordenes", href: "/admin/opciones?tab=Ordenes" },
-  { name: "Subtareas", href: "/admin/opciones?tab=Subtareas" },
-  { name: "Tareas", href: "/admin/opciones?tab=Tareas" },
-];
+import { adminOptionsTabs } from "../../../constants/routes";
 
 export function AdminOptions() {
   const [searchParams] = useSearchParams();

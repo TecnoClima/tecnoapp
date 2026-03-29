@@ -1,14 +1,13 @@
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { techTaskTemplateActions } from "../../../../actions/StoreActions";
-import { Fragment, useEffect, useState } from "react";
 import { appConfig } from "../../../../config";
-import TextInput from "../../../forms/FormFields";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { SearchInput } from "../../../ui/SearchInput";
 const { headersRef } = appConfig;
 
-export function TechTaskTemplates() {
+export function TechTaskTemplates({ handleSelect }) {
   const { list: techTaskTemplates } = useSelector(
     (state) => state.techTaskTemplates,
   );
@@ -30,15 +29,34 @@ export function TechTaskTemplates() {
             ? name.toLowerCase().includes(searchKey.toLowerCase())
             : true,
         )
-        .map(({ _id, name, subtasks }) => {
+        .map((template) => {
+          const { _id, name, subtasks } = template;
           const isSelected = selectedTemplate === _id;
           return (
             <div
               key={_id}
-              onClick={isSelected ? undefined : () => setSelectedTemplate(_id)}
               className={`card bg-base-content/5 border border-transparent hover:border-primary hover:bg-base-content/10 p-4 ${isSelected ? "" : "cursor-pointer"}`}
             >
-              <div className="card-title">{name}</div>
+              <div className="w-full flex justify-between">
+                <button
+                  className={`flex items-center gap-4 ${isSelected ? "" : "w-full h-full"}`}
+                  onClick={() => setSelectedTemplate(isSelected ? null : _id)}
+                >
+                  <div className="card-title">{name}</div>
+                  <FontAwesomeIcon
+                    icon={faChevronDown}
+                    className={`transition-transform duration-300 ${isSelected ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {isSelected && handleSelect && (
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={() => handleSelect(template)}
+                  >
+                    Seleccionar
+                  </button>
+                )}
+              </div>
               <div
                 className={`flex flex-col sm:grid sm:grid-cols-[8rem,auto,8rem] text-xs transition-height duration-300 ${isSelected ? "h-auto" : "h-0 overflow-y-hidden"}`}
               >
@@ -48,7 +66,6 @@ export function TechTaskTemplates() {
                       {subTask.devicePart?.label}
                     </div>
                     <div className="border-b border-dotted border-base-content/20">
-                      {" "}
                       {subTask.procedure}
                     </div>
                     <div className="border-b border-dotted border-base-content/20 hidden sm:block">

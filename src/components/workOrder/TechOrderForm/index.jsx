@@ -3,19 +3,20 @@ import {
   faSearch,
   faSyncAlt,
   faTable,
+  faTools,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import ModalBase from "../../../Modals/ModalBase";
 import { deviceActions, workOrderActions } from "../../../actions/StoreActions";
 import DeviceList from "../../Devices/DeviceList";
-import ModalBase from "../../../Modals/ModalBase";
 import { ErrorModal, SuccessModal } from "../../warnings";
 import {
-  OrderField,
   DateField,
   NumberField,
+  OrderField,
   TextAreaField,
 } from "../OrderFields";
 import WorkOrderCard from "../WorkOrderCard";
@@ -117,7 +118,7 @@ export default function TechOrderForm({ orderCode }) {
     const { tech, device: _d, ...rest } = orderDetail;
     setForm((prev) => ({ ...prev, ...rest }));
     if (tech?.subtasks?.length) {
-      setSubtasks(tech.subtasks.map((st) => mapToFormSubtask(st)));
+      setSubtasks(tech.subtasks.map(mapToFormSubtask));
     }
     if (tech?.templateId) setTemplateId(tech.templateId);
   }, [orderDetail, dispatch]);
@@ -165,7 +166,7 @@ export default function TechOrderForm({ orderCode }) {
     setTemplateId(template._id);
     setTemplateName(template.name);
     if (template.subtasks?.length) {
-      setSubtasks(template.subtasks.map((st) => mapToFormSubtask(st, true)));
+      setSubtasks(template.subtasks.map(mapToFormSubtask));
     }
   }
 
@@ -445,23 +446,35 @@ export default function TechOrderForm({ orderCode }) {
           {/* ── 4. SUBTAREAS ── */}
           <div className="md:col-span-2">
             <WorkOrderCard
-              title="SUBTAREAS"
+              title={
+                templateName ? (
+                  <>
+                    Template activo: <b>{templateName}</b> — {subtasks.length}{" "}
+                    subtarea(s)
+                  </>
+                ) : (
+                  "SUBTAREAS"
+                )
+              }
               headerButton={
-                <button
-                  type="button"
-                  className="btn btn-xs btn-outline btn-primary"
-                  onClick={() => setTemplateModal(true)}
-                >
-                  <FontAwesomeIcon icon={faBookOpen} /> Gestionar Template
-                </button>
+                <div className="flex gap-4">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline btn-primary"
+                    onClick={() => setTemplateModal(true)}
+                  >
+                    <FontAwesomeIcon icon={faBookOpen} /> Elegir tarea
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline btn-primary"
+                    // onClick={() => setTemplateModal(true)}
+                  >
+                    <FontAwesomeIcon icon={faTools} /> Agregar subtarea
+                  </button>
+                </div>
               }
             >
-              {templateName && (
-                <p className="text-xs opacity-50 mb-1">
-                  Template activo: <b>{templateName}</b> — {subtasks.length}{" "}
-                  subtarea(s)
-                </p>
-              )}
               {subtasks.length === 0 ? (
                 <p className="text-sm opacity-40 py-6 text-center">
                   Seleccioná un template o cargá subtareas manualmente.
@@ -470,7 +483,7 @@ export default function TechOrderForm({ orderCode }) {
                 <div className="mt-2">
                   <SubtasksSection
                     subtasks={subtasks}
-                    onChange={handleChangeSubtask}
+                    setSubtasks={setSubtasks}
                   />
                 </div>
               )}

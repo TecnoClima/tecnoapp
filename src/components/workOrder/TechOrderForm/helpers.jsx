@@ -1,18 +1,19 @@
-export function mapToFormSubtask(subtask, fromTemplate = false) {
-  return {
-    id: subtask._id || crypto.randomUUID(),
-    groupPart: subtask.groupPart,
-    task: subtask.task,
-    selectedOption: subtask.selectedOption || "",
-    customValue: subtask.customValue || "",
-    result: subtask.result || "",
-    comments: subtask.comments || "",
-    availableOptions: subtask.availableOptions || [],
-    allowCustomValue: !!subtask.allowCustomValue,
-    fromTemplate,
-  };
+export function mapToFormSubtask(subtask, index) {
+  return { ...subtask, order: index + 1, comments: "" };
 }
 
 export function toBackendSubtask({ id, fromTemplate, ...rest }) {
   return rest;
+}
+
+export function reorderSubtasks(list, fromIndex, toIndex) {
+  const updated = [...list];
+  const [moved] = updated.splice(fromIndex, 1);
+  updated.splice(toIndex, 0, moved);
+
+  // Normalizar order (1...n)
+  return updated.map((item, index) => ({
+    ...item,
+    order: index + 1,
+  }));
 }
