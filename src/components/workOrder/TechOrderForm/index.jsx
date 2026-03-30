@@ -191,7 +191,7 @@ export default function TechOrderForm() {
   const [templateId, setTemplateId] = useState("");
   const [subtasks, setSubtasks] = useState([]);
   // const [form, setForm] = useState(EMPTY_FORM);
-  const [form, setForm] = useState(testJson);
+  const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   useGetPlantWorkers();
   useEffect(() => {
@@ -226,7 +226,7 @@ export default function TechOrderForm() {
     if (tech?.subtasks?.length) {
       setSubtasks(
         orderDetail.tech.subtasks
-          .map(({ subtask, rest }) => ({ ...rest, ...subtask }))
+          .map(({ subtask, ...rest }) => ({ ...rest, ...subtask }))
           .map(mapToFormSubtask),
       );
     }
@@ -297,7 +297,7 @@ export default function TechOrderForm() {
     setSaving(true);
     const payload = {
       type: "tech",
-      device: device.code,
+      device: device._id || device.code,
       ...form,
       tech: {
         ...(templateId && { templateId }),
@@ -305,7 +305,7 @@ export default function TechOrderForm() {
       },
     };
     if (orderCode) {
-      dispatch(workOrderActions.updateOrder(orderCode, payload));
+      dispatch(workOrderActions.updateTechOrder(orderDetail._id, payload));
     } else {
       dispatch(workOrderActions.newWorkOrder(payload));
     }

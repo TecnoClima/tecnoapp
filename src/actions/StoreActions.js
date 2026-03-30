@@ -152,6 +152,8 @@ export const workOrderActions = {
   newWorkOrder: (order) => postAction(`workorder`, order, "NEW_ORDER"),
   updateOrder: (code, update) =>
     putAction(`workorder/${code}`, update, "UPDATE_ORDER"),
+  updateTechOrder: (id, update) =>
+    putAction(`techorders/tech/${id}`, update, "NEW_ORDER"),
   resetNewOrder: () => ({
     type: "NEW_ORDER",
     payload: null,

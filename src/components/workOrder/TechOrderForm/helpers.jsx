@@ -1,14 +1,19 @@
 export function mapToFormSubtask(subtask, index) {
   return {
     ...subtask,
-    value: subtask.value || "",
-    order: index + 1,
-    comments: "",
+    value: subtask.value ?? "",
+    order: subtask.order ?? index + 1,
+    comments: subtask.comments ?? "",
   };
 }
 
-export function toBackendSubtask({ id, fromTemplate, ...rest }) {
-  return rest;
+export function toBackendSubtask(subtask) {
+  return {
+    subtask: subtask._id,
+    value: subtask.value,
+    comments: subtask.comments,
+    order: subtask.order,
+  };
 }
 
 export function reorderSubtasks(list, fromIndex, toIndex) {
