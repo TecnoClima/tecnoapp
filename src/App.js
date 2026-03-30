@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 import { peopleActions } from "./actions/StoreActions";
 import "./App.css";
 import InnerLayout from "./components/Layout/InnerLayout";
+import TechOrderForm from "./components/workOrder/TechOrderForm/index.jsx";
 import AdminPanel from "./pages/Admin/AdminPanel";
 import AdminCylinders from "./pages/Admin/Cylinders";
 import DeviceAdmin from "./pages/Admin/Devices";
 import { LoadExcel } from "./pages/Admin/LoadExcel";
 import { LoadFrequencies } from "./pages/Admin/LoadFrequencies";
+import { AdminOptions } from "./pages/Admin/Options/index.jsx";
 import AdminPlan from "./pages/Admin/Plan";
 import AdminPlants from "./pages/Admin/Plants";
+import TechConfig from "./pages/Admin/TechConfig";
 import AdminUsers from "./pages/Admin/Users";
 import Device from "./pages/Device";
 import Landing from "./pages/Landing";
@@ -20,12 +23,9 @@ import NotFound from "./pages/NotFound";
 import Panel from "./pages/Panel";
 import Plan from "./pages/Plan";
 import Reports from "./pages/Reports/Reports";
+import TechOrder from "./pages/TechOrder";
 import WorkOrder from "./pages/WorkOrder";
 import WorkOrders from "./pages/WorkOrders";
-import TechnicalOrder from "./components/TechnicalOrder.js";
-import TechOrder from "./pages/TechOrder";
-import TechConfig from "./pages/Admin/TechConfig";
-import { AdminOptions } from "./pages/Admin/Options/index.jsx";
 
 function App() {
   const { userData } = useSelector((state) => state.people);
@@ -140,17 +140,17 @@ function App() {
               }
             />
           )}
-          {access.isLogged && (
+          {/* {access.isLogged && (
             <Route
               exact
-              path={"/orden-tecnica/detalle/:code"}
+              path={"/orden-tecnica/:code"}
               element={
                 <InnerLayout>
                   <TechnicalOrder />
                 </InnerLayout>
               }
             />
-          )}
+          )} */}
           {access.isLogged && (
             <Route
               exact
@@ -165,10 +165,10 @@ function App() {
           {access.isLogged && (
             <Route
               exact
-              path={"/orden-tecnica/editar/:orderCode"}
+              path={"/orden-tecnica/:orderCode"}
               element={
                 <InnerLayout>
-                  <TechOrder />
+                  <TechOrderForm />
                 </InnerLayout>
               }
             />

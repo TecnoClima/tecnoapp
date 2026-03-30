@@ -9,9 +9,14 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ModalBase from "../../../Modals/ModalBase";
-import { deviceActions, workOrderActions } from "../../../actions/StoreActions";
+import {
+  deviceActions,
+  optionActions,
+  workOrderActions,
+} from "../../../actions/StoreActions";
+import { useGetPlantWorkers } from "../../../hooks/users.hooks";
 import DeviceList from "../../Devices/DeviceList";
 import { ErrorModal, SuccessModal } from "../../warnings";
 import {
@@ -26,6 +31,88 @@ import SubtasksSection from "./SubtasksSection";
 import TemplateModal from "./TemplateModal";
 import { mapToFormSubtask, toBackendSubtask } from "./helpers";
 
+const testJson = {
+  type: "tech",
+  device: "AH1-001",
+  generatedBy: "Fulano",
+  responsible: "Mengano",
+  priority: "Media",
+  classification: "Preventivo",
+  description: "Descripción  genérica",
+  requestedBy: "Sultano",
+  costCenter: "",
+  plannedDate: "2026-03-20",
+  eventDate: "",
+  startDate: "",
+  endDate: "",
+  estimatedDuration: "2",
+  downtime: "",
+  failureType: "",
+  failureCause: "",
+  detectionMethod: "",
+  severity: "",
+  damageType: "",
+  diagnostics: "",
+  finalStatus: "",
+  registerDate: "2026-03-20",
+  activator: "Plan",
+  tech: {
+    templateId: "69c93a3a57e3196f7d245bb9",
+    subtasks: [
+      {
+        _id: "69c4022a88e20bb2f295418d",
+        devicePart: {
+          _id: "69c1d8ceaddf9ecb81ca1eca",
+          value: "equipo_completo",
+          label: "Equipo completo",
+          targetCollection: "subTask",
+          type: "devicePart",
+          active: true,
+          order: 3,
+          createdAt: "2026-03-24T00:20:30.641Z",
+          updatedAt: "2026-03-24T00:20:30.641Z",
+          __v: 0,
+        },
+        procedure: "Ajuste de correas de ventilador",
+        resultType: "boolean",
+        active: true,
+        options: ["Sí", "No", "N/A"],
+        createdAt: "2026-03-25T15:41:30.683Z",
+        updatedAt: "2026-03-25T15:41:30.683Z",
+        __v: 0,
+        value: "",
+        order: 1,
+        comments: "",
+      },
+      {
+        _id: "69c4022a88e20bb2f2954195",
+        devicePart: {
+          _id: "69c1d8ceaddf9ecb81ca1ec8",
+          value: "unidad_interior",
+          label: "Unidad interior",
+          targetCollection: "subTask",
+          type: "devicePart",
+          active: true,
+          order: 1,
+          createdAt: "2026-03-24T00:20:30.641Z",
+          updatedAt: "2026-03-24T00:20:30.641Z",
+          __v: 0,
+        },
+        procedure: "Medir consumo eléctrico Motor Ventilador Evaporador [Amp]",
+        resultType: "number",
+        active: true,
+        options: [],
+        createdAt: "2026-03-25T15:41:30.683Z",
+        updatedAt: "2026-03-25T15:41:30.683Z",
+        __v: 0,
+        value: "",
+        order: 2,
+        comments: "",
+      },
+    ],
+  },
+};
+
 // ─── constants ────────────────────────────────────────────────────────────────
 
 const EMPTY_DEVICE = {
@@ -38,7 +125,6 @@ const EMPTY_DEVICE = {
 
 const EMPTY_FORM = {
   // General
-  generatedBy: "",
   responsible: "",
   priority: "",
   classification: "",
@@ -88,10 +174,13 @@ const FINAL_STATUS = [
 
 // ─── component ────────────────────────────────────────────────────────────────
 
-export default function TechOrderForm({ orderCode }) {
+export default function TechOrderForm() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { orderCode } = useParams();
+  const { optionsList } = useSelector((s) => s.options);
   const { orderDetail, orderResult } = useSelector((s) => s.workOrder);
+  const { workersList } = useSelector((s) => s.people);
   const { selectedDevice } = useSelector((s) => s.devices);
 
   const [device, setDevice] = useState(EMPTY_DEVICE);
@@ -101,8 +190,17 @@ export default function TechOrderForm({ orderCode }) {
   const [templateName, setTemplateName] = useState("");
   const [templateId, setTemplateId] = useState("");
   const [subtasks, setSubtasks] = useState([]);
-  const [form, setForm] = useState(EMPTY_FORM);
+  // const [form, setForm] = useState(EMPTY_FORM);
+  const [form, setForm] = useState(testJson);
   const [saving, setSaving] = useState(false);
+  useGetPlantWorkers();
+  useEffect(() => {
+    dispatch(optionActions.getList());
+  }, [dispatch]);
+
+  useEffect(() => {
+    console.log("orderDetail", orderDetail);
+  }, [orderDetail]);
 
   // ── unmount cleanup ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -111,17 +209,26 @@ export default function TechOrderForm({ orderCode }) {
 
   // ── load existing order ───────────────────────────────────────────────────
   useEffect(() => {
-    if (!orderCode) return;
+    if (!orderCode || !!orderDetail._id) return;
     dispatch(workOrderActions.searchWO(orderCode));
-  }, [orderCode, dispatch]);
+  }, [orderCode, orderDetail, dispatch]);
 
   useEffect(() => {
     if (!orderDetail?.code) return;
-    dispatch(deviceActions.setDevice(orderDetail.device));
-    const { tech, device: _d, ...rest } = orderDetail;
-    setForm((prev) => ({ ...prev, ...rest }));
+    dispatch(deviceActions.getDetail(orderDetail.device.code));
+    const { tech, device: _d, responsible, ...rest } = orderDetail;
+
+    setForm((prev) => ({
+      ...prev,
+      ...rest,
+      responsible: responsible?._id || "",
+    }));
     if (tech?.subtasks?.length) {
-      setSubtasks(tech.subtasks.map(mapToFormSubtask));
+      setSubtasks(
+        orderDetail.tech.subtasks
+          .map(({ subtask, rest }) => ({ ...rest, ...subtask }))
+          .map(mapToFormSubtask),
+      );
     }
     if (tech?.templateId) setTemplateId(tech.templateId);
   }, [orderDetail, dispatch]);
@@ -157,6 +264,9 @@ export default function TechOrderForm({ orderCode }) {
     e.preventDefault();
     if (device.code) dispatch(deviceActions.getDetail(device.code, true));
   }
+  useEffect(() => {
+    setDevice(selectedDevice);
+  }, [selectedDevice]);
 
   function handleResetDevice(e) {
     e.preventDefault();
@@ -328,7 +438,11 @@ export default function TechOrderForm({ orderCode }) {
               <div className="flex flex-col gap-4">
                 <div className="text-sm opacity-60 pt-1 space-y-0.5">
                   <p>
-                    <b>Ubicación:</b> {device.location}
+                    <b>Ubicación:</b>{" "}
+                    {device.location ||
+                      (device.plant && device.area && device.line
+                        ? `${device.plant} > ${device.area} > ${device.line}`
+                        : "")}
                   </p>
                   <p>
                     <b>Tipo:</b> {device.type}
@@ -343,20 +457,16 @@ export default function TechOrderForm({ orderCode }) {
 
           {/* ── 2. INFO GENERAL ── */}
           <WorkOrderCard title="INFO GENERAL">
-            <div className="flex flex-col lg:grid grid-cols-2 gap-1 mt-1">
-              <OrderField
-                field="Generado por"
-                name="generatedBy"
-                value={form.generatedBy}
-                onInput={handleFormChange}
-                placeholder="Nombre..."
-              />
+            <div className="flex flex-col md:grid grid-cols-3 gap-1 mt-1">
               <OrderField
                 field="Responsable"
                 name="responsible"
+                options={
+                  workersList?.map((w) => ({ id: w._id, name: w.name })) || []
+                }
+                displayEmpty
                 value={form.responsible}
                 onInput={handleFormChange}
-                placeholder="Nombre..."
               />
               <NumberField
                 field="Duración estimada (hs)"
@@ -376,10 +486,10 @@ export default function TechOrderForm({ orderCode }) {
 
           {/* ── 3. PLANIFICACIÓN ── */}
           <WorkOrderCard title="PLANIFICACIÓN">
-            <div className="flex flex-col lg:grid grid-cols-2 gap-1 mt-1">
+            <div className="flex flex-col md:grid grid-cols-3 gap-1 mt-1">
               <TextAreaField
                 field="Descripción"
-                className="w-full lg:col-span-2"
+                className="w-full md:col-span-3"
                 name="description"
                 value={form.description}
                 onInput={handleFormChange}
@@ -412,12 +522,6 @@ export default function TechOrderForm({ orderCode }) {
                 value={form.classification}
                 onInput={handleFormChange}
                 placeholder="Tipo de trabajo..."
-              />
-              <DateField
-                field="Fecha evento"
-                name="eventDate"
-                value={form.eventDate}
-                onInput={handleFormChange}
               />
               <DateField
                 field="Inicio"
@@ -472,7 +576,7 @@ export default function TechOrderForm({ orderCode }) {
                 )
               }
               headerButton={
-                <div className="flex gap-4">
+                <div className="flex gap-4 ml-auto">
                   <button
                     type="button"
                     className={`btn btn-sm btn-outline ${templateName ? "btn-primary" : "btn-error"}`}

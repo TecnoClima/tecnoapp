@@ -117,9 +117,6 @@ export default function WorkOrder() {
   // if orderDetail, fill order with detail
   useEffect(() => {
     if (!orderDetail.code) return;
-    if (orderDetail.type === "tech") {
-      navigate(`/orden-tecnica/${orderDetail.code}`);
-    }
     const editOrder = { ...orderDetail };
     const device = orderDetail.device;
     dispatch(deviceActions.setDevice(device));

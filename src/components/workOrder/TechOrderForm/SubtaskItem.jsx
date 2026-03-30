@@ -3,23 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 
 export default function SubtaskItem({ subtask, onChange }) {
-  const {
-    _id,
-    order,
-    procedure: task,
-    options: availableOptions,
-    value: customValue,
-    resultType,
-    comments,
-  } = subtask;
+  const { _id, procedure, options, value, comments } = subtask;
+
   const [enableComment, setEnableComment] = useState(!!comments);
 
-  function handleOption(e) {
-    onChange(_id, { selectedOption: e.target.value, customValue: "" });
-  }
-
-  function handleCustomValue(e) {
-    onChange(_id, { customValue: e.target.value, selectedOption: "" });
+  function handleValueChange(e) {
+    onChange(_id, { value: e.target.value });
   }
 
   function handleComments(e) {
@@ -36,20 +25,20 @@ export default function SubtaskItem({ subtask, onChange }) {
       {/* Top row: task name + inputs + result buttons */}
       <div className="flex flex-wrap md:flex-nowrap items-center md:justify-between gap-2 w-full">
         <div className="w-full md:w-1/2 text-sm font-medium min-w-[8rem]">
-          {task}
+          {procedure}
         </div>
 
         <div className="flex w-full md:w-fit gap-2">
-          {availableOptions?.length > 0 ? (
+          {options?.length > 0 ? (
             <div className="flex">
-              {availableOptions.map((opt) => {
-                const isSelected = opt === customValue;
+              {options.map((opt) => {
+                const isSelected = opt === value;
                 return (
                   <button
                     className={`btn btn-primary btn-sm w-20 ${isSelected ? "" : "btn-outline"}`}
                     key={opt}
                     value={opt}
-                    onClick={handleOption}
+                    onClick={handleValueChange}
                   >
                     {opt}
                   </button>
@@ -60,8 +49,8 @@ export default function SubtaskItem({ subtask, onChange }) {
             <input
               className="input input-sm input-bordered w-60"
               placeholder="Valor"
-              value={customValue}
-              onChange={handleCustomValue}
+              value={value}
+              onChange={handleValueChange}
             />
           )}
           {!comments && (

@@ -1,5 +1,10 @@
 export function mapToFormSubtask(subtask, index) {
-  return { ...subtask, order: index + 1, comments: "" };
+  return {
+    ...subtask,
+    value: subtask.value || "",
+    order: index + 1,
+    comments: "",
+  };
 }
 
 export function toBackendSubtask({ id, fromTemplate, ...rest }) {

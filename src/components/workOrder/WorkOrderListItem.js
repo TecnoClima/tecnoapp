@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
 import ClassBadge from "../../components/Badges/ClassBadge";
 import { StatusBadge } from "../Badges/StatusBadge";
 
@@ -10,11 +10,12 @@ export default function WorkOrderListItem({
   handleWarning,
   isAdmin,
 }) {
+  const isTech = order.type === "tech";
   return (
     <div key={order.code} className="flex w-full items-center gap-2">
       <Link
         title="Detalle"
-        to={`/ots/detail/${order.code}`}
+        to={`${isTech ? `/orden-tecnica/${order.code}` : `/ots/detail/${order.code}`}`}
         onClick={onClick}
         className="card rounded-lg sm:rounded-box bg-base-content/10 overflow-x-auto flex flex-wrap flex-grow text-sm flex-row border-2 border-transparent hover:border-base-content/20"
       >

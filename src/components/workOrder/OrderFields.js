@@ -10,9 +10,9 @@ export function OrderField({
   required,
 }) {
   return (
-    <div className={`join ${className}`}>
+    <div className={`join ${className || ""}`}>
       <label
-        className="relative label input-xs md:input-sm md:text-xs bg-neutral w-28 join-item font-bold border border-base-200"
+        className="relative label input-xs md:input-sm md:text-xs bg-neutral w-28 join-item font-bold border border-base-200 text-ellipsis whitespace-nowrap overflow-hidden"
         placeholder="Search"
       >
         {field}
@@ -67,7 +67,7 @@ export function DateField({ field, name, value, onInput }) {
         type="date"
         name={name}
         className="input input-xs md:input-sm input-bordered join-item flex-grow"
-        value={value}
+        value={value || ""}
         onChange={onInput}
       />
     </div>
@@ -79,7 +79,7 @@ export function NumberField({ field, name, value, onInput, placeholder }) {
     <div className="join">
       <div
         title={field}
-        className="label input-xs md:input-sm text-ellipsis whitespace-nowrap overflow-hidden md:text-xs bg-neutral w-28 join-item font-bold border border-base-200"
+        className="relative label input-xs md:input-sm md:text-xs bg-neutral w-28 join-item font-bold border border-base-200 text-ellipsis whitespace-nowrap overflow-hidden"
       >
         {field}
       </div>
