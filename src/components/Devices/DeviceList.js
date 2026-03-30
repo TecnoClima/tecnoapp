@@ -1,11 +1,3 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { deviceActions } from "../../actions/StoreActions";
-import { Link, useNavigate } from "react-router-dom";
-import DeviceFilters from "../filters/DeviceFilters/newFilters";
-import { ErrorModal } from "../warnings";
-import Pagination from "../Paginate/Pagination";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendarAlt,
   faSnowflake,
@@ -18,10 +10,19 @@ import {
   faTable,
   faTools,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { deviceActions } from "../../actions/StoreActions";
+import DeviceFilters from "../filters/DeviceFilters/newFilters";
+import Pagination from "../Paginate/Pagination";
+import { ConditionalLink } from "../ui/ConditionalLink";
+import { ErrorModal } from "../warnings";
 
-export default function DeviceList({ close, select }) {
+export default function DeviceList({ close, hideLinks, select }) {
   const { deviceResult, devicePage, deviceOptions } = useSelector(
-    (state) => state.devices
+    (state) => state.devices,
   );
   const { userData } = useSelector((state) => state.people);
   const [page, setPage] = useState({ first: 0, size: 30 });
@@ -45,7 +46,7 @@ export default function DeviceList({ close, select }) {
     const init = {};
     if (userData?.plant && deviceOptions?.plant) {
       init.plant = deviceOptions?.plant?.find(
-        (p) => p.name === userData.plant
+        (p) => p.name === userData.plant,
       )?._id;
     }
     setInitialFilter(init);
@@ -195,11 +196,13 @@ export default function DeviceList({ close, select }) {
                   new Date().getFullYear() -
                   new Date(device.regDate).getFullYear();
                 return (
-                  <Link
-                    to={`/equipos/${device.code}`}
+                  <ConditionalLink
+                    to={hideLinks ? "" : `/equipos/${device.code}`}
                     key={device.code}
-                    className="flex flex-col w-full bg-base-content/10 p-2 rounded-md m-1 hover:bg-base-content/15 border-2 border-transparent hover:border-primary"
-                    // onClick={(e) => handleSelect(e, device.code)}
+                    className={`flex flex-col w-full bg-base-content/10 p-2 rounded-md m-1 hover:bg-base-content/15 border-2 border-transparent hover:border-primary ${hideLinks ? "cursor-pointer" : ""}`}
+                    onClick={
+                      hideLinks ? (e) => handleSelect(e, device.code) : ""
+                    }
                   >
                     <div className="card-title">
                       {device.code} - {device.name}
@@ -243,7 +246,7 @@ export default function DeviceList({ close, select }) {
                         <div>{device.status}</div>
                       </div>
                     </div>
-                  </Link>
+                  </ConditionalLink>
                 );
               })}
             </div>

@@ -7,7 +7,7 @@ import {
   faTools,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import ModalBase from "../../../Modals/ModalBase";
@@ -31,126 +31,50 @@ import SubtasksSection from "./SubtasksSection";
 import TemplateModal from "./TemplateModal";
 import { mapToFormSubtask, toBackendSubtask } from "./helpers";
 
-const testJson = {
-  type: "tech",
-  device: "AH1-001",
-  generatedBy: "Fulano",
-  responsible: "Mengano",
-  priority: "Media",
-  classification: "Preventivo",
-  description: "Descripción  genérica",
-  requestedBy: "Sultano",
-  costCenter: "",
-  plannedDate: "2026-03-20",
-  eventDate: "",
-  startDate: "",
-  endDate: "",
-  estimatedDuration: "2",
-  downtime: "",
-  failureType: "",
-  failureCause: "",
-  detectionMethod: "",
-  severity: "",
-  damageType: "",
-  diagnostics: "",
-  finalStatus: "",
-  registerDate: "2026-03-20",
-  activator: "Plan",
-  tech: {
-    templateId: "69c93a3a57e3196f7d245bb9",
-    subtasks: [
-      {
-        _id: "69c4022a88e20bb2f295418d",
-        devicePart: {
-          _id: "69c1d8ceaddf9ecb81ca1eca",
-          value: "equipo_completo",
-          label: "Equipo completo",
-          targetCollection: "subTask",
-          type: "devicePart",
-          active: true,
-          order: 3,
-          createdAt: "2026-03-24T00:20:30.641Z",
-          updatedAt: "2026-03-24T00:20:30.641Z",
-          __v: 0,
-        },
-        procedure: "Ajuste de correas de ventilador",
-        resultType: "boolean",
-        active: true,
-        options: ["Sí", "No", "N/A"],
-        createdAt: "2026-03-25T15:41:30.683Z",
-        updatedAt: "2026-03-25T15:41:30.683Z",
-        __v: 0,
-        value: "",
-        order: 1,
-        comments: "",
-      },
-      {
-        _id: "69c4022a88e20bb2f2954195",
-        devicePart: {
-          _id: "69c1d8ceaddf9ecb81ca1ec8",
-          value: "unidad_interior",
-          label: "Unidad interior",
-          targetCollection: "subTask",
-          type: "devicePart",
-          active: true,
-          order: 1,
-          createdAt: "2026-03-24T00:20:30.641Z",
-          updatedAt: "2026-03-24T00:20:30.641Z",
-          __v: 0,
-        },
-        procedure: "Medir consumo eléctrico Motor Ventilador Evaporador [Amp]",
-        resultType: "number",
-        active: true,
-        options: [],
-        createdAt: "2026-03-25T15:41:30.683Z",
-        updatedAt: "2026-03-25T15:41:30.683Z",
-        __v: 0,
-        value: "",
-        order: 2,
-        comments: "",
-      },
-    ],
-  },
-};
-
 // ─── constants ────────────────────────────────────────────────────────────────
 
-const EMPTY_DEVICE = {
-  code: "",
-  name: "",
-  location: "",
-  type: "",
-  category: "",
-};
-
-const EMPTY_FORM = {
+const EMPTY_ORDER = {
   // General
   responsible: "",
-  priority: "",
-  classification: "",
   description: "",
-  requestedBy: "",
-  costCenter: "",
+
+  registerDate: "",
+};
+
+const EMPTY_TECH = {
+  generatedBy: "",
+  estimatedDuration: "",
+};
+
+const EMPTY_PLANNED = {
   // Time / Planning
   plannedDate: "",
   eventDate: "",
+  priority: "",
   startDate: "",
+  activator: "",
   endDate: "",
-  estimatedDuration: "",
-  downtime: "",
+  worktime: "",
+  requester: "",
+  classification: "",
+  originDate: "",
+  scheduledDate: "",
+  approvalDate: "",
+};
+
+const EMPTY_DIAGNOSTIC = {
   // Failure / Diagnostics
   failureType: "",
   failureCause: "",
-  detectionMethod: "",
+  method: "",
   severity: "",
   damageType: "",
   diagnostics: "",
   finalStatus: "",
+  cause: "",
+  assetsDowntime: "",
 };
 
-const PRIORITY_OPTIONS = ["Alta", "Media", "Baja"];
-const SEVERITY_OPTIONS = ["Crítica", "Alta", "Media", "Baja"];
-const DETECTION_OPTIONS = ["Preventivo", "Predictivo", "Correctivo", "Reclamo"];
 const FINAL_STATUS = [
   {
     key: "ok",
@@ -178,12 +102,13 @@ export default function TechOrderForm() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { orderCode } = useParams();
-  const { optionsList } = useSelector((s) => s.options);
+  const { list: optionList } = useSelector((state) => state.options);
   const { orderDetail, orderResult } = useSelector((s) => s.workOrder);
   const { workersList } = useSelector((s) => s.people);
   const { selectedDevice } = useSelector((s) => s.devices);
+  const [deviceCode, setDeviceCode] = useState("");
 
-  const [device, setDevice] = useState(EMPTY_DEVICE);
+  // const [device, setDevice] = useState(EMPTY_DEVICE);
   const [deviceTable, setDeviceTable] = useState(false);
   const [templateModal, setTemplateModal] = useState(false);
   const [addSubtaskModal, setAddSubtaskModal] = useState(false);
@@ -191,16 +116,21 @@ export default function TechOrderForm() {
   const [templateId, setTemplateId] = useState("");
   const [subtasks, setSubtasks] = useState([]);
   // const [form, setForm] = useState(EMPTY_FORM);
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [order, setOrder] = useState(EMPTY_ORDER);
+  const [tech, setTech] = useState(EMPTY_TECH);
+  const [planned, setPlanned] = useState(EMPTY_PLANNED);
+  const [diagnostic, setDiagnostic] = useState(EMPTY_DIAGNOSTIC);
   const [saving, setSaving] = useState(false);
   useGetPlantWorkers();
+
   useEffect(() => {
     dispatch(optionActions.getList());
   }, [dispatch]);
 
-  useEffect(() => {
-    console.log("orderDetail", orderDetail);
-  }, [orderDetail]);
+  const options = (optionList ?? []).reduce((acc, { type, _id, label }) => {
+    (acc[type] ??= []).push({ id: _id, name: label });
+    return acc;
+  }, {});
 
   // ── unmount cleanup ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -216,11 +146,35 @@ export default function TechOrderForm() {
   useEffect(() => {
     if (!orderDetail?.code) return;
     dispatch(deviceActions.getDetail(orderDetail.device.code));
-    const { tech, device: _d, responsible, ...rest } = orderDetail;
-
-    setForm((prev) => ({
+    const {
+      tech,
+      device: _d,
+      responsible,
+      registration,
+      ...restOrder
+    } = orderDetail;
+    const registerDate = registration?.date
+      ? registration.date.split("T")[0]
+      : "";
+    const { planned, diagnostics, ...restTech } = tech;
+    if (planned) {
+      const { scheduledDate, startDate, endDate } = planned;
+      const scheduled = scheduledDate ? scheduledDate.split("T")[0] : "";
+      const start = startDate ? startDate.split("T")[0] : "";
+      const end = endDate ? endDate.split("T")[0] : "";
+      setPlanned({
+        ...planned,
+        scheduledDate: scheduled,
+        startDate: start,
+        endDate: end,
+      });
+    }
+    if (diagnostics) setDiagnostic(diagnostics);
+    if (restTech) setTech(restTech);
+    setOrder((prev) => ({
       ...prev,
-      ...rest,
+      registerDate,
+      ...restOrder,
       responsible: responsible?._id || "",
     }));
     if (tech?.subtasks?.length) {
@@ -233,45 +187,45 @@ export default function TechOrderForm() {
     if (tech?.templateId) setTemplateId(tech.templateId);
   }, [orderDetail, dispatch]);
 
-  // ── sync device from Redux ────────────────────────────────────────────────
-  const applyDevice = useCallback((d) => {
-    if (!d?.name) {
-      setDevice(EMPTY_DEVICE);
-      return;
-    }
-    setDevice({
-      code: d.code,
-      name: d.name,
-      location: [d.plant, d.area, d.line].filter(Boolean).join(" > "),
-      type: d.type || "",
-      category: d.category || "",
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!selectedDevice?.name || selectedDevice.name === device.name) return;
-    applyDevice(selectedDevice);
-  }, [selectedDevice, applyDevice, device.name]);
-
   // ── form change handler ───────────────────────────────────────────────────
-  function handleFormChange(e) {
+  function handleDiagnosticChange(e) {
     const { name, value } = e.target || e;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setDiagnostic((prev) => ({
+      ...prev,
+      [name]: isNaN(value) ? value : Number(value),
+    }));
+  }
+  function handleOrderChange(e) {
+    const { name, value } = e.target || e;
+    setOrder((prev) => ({
+      ...prev,
+      [name]: isNaN(value) ? value : Number(value),
+    }));
+  }
+  function handlePlannedChange(e) {
+    const { name, value } = e.target || e;
+    setPlanned((prev) => ({
+      ...prev,
+      [name]: isNaN(value) ? value : Number(value),
+    }));
+  }
+  function handleTechChange(e) {
+    const { name, value } = e.target || e;
+    setTech((prev) => ({
+      ...prev,
+      [name]: isNaN(value) ? value : Number(value),
+    }));
   }
 
   // ── device handlers ───────────────────────────────────────────────────────
   function handleSearch(e) {
     e.preventDefault();
-    if (device.code) dispatch(deviceActions.getDetail(device.code, true));
+    if (deviceCode) dispatch(deviceActions.getDetail(deviceCode, true));
   }
-  useEffect(() => {
-    setDevice(selectedDevice);
-  }, [selectedDevice]);
 
   function handleResetDevice(e) {
     e.preventDefault();
     dispatch(deviceActions.resetDevice());
-    setDevice(EMPTY_DEVICE);
   }
 
   // ── template handlers ─────────────────────────────────────────────────────
@@ -295,16 +249,24 @@ export default function TechOrderForm() {
   function handleSave(e) {
     e?.preventDefault();
     setSaving(true);
+    const { _id, code, ...restOrder } = order;
     const payload = {
       type: "tech",
-      device: device._id || device.code,
-      ...form,
+      device: selectedDevice._id,
+      ...restOrder,
       tech: {
+        ...tech,
+        generatedBy: tech.generatedBy?._id || "",
+        planned,
+        diagnostics: { ...diagnostic },
+
         ...(templateId && { templateId }),
         subtasks: subtasks.map(toBackendSubtask),
       },
     };
     if (orderCode) {
+      const { generatedBy, ...restTech } = payload.tech;
+      payload.tech = restTech;
       dispatch(workOrderActions.updateTechOrder(orderDetail._id, payload));
     } else {
       dispatch(workOrderActions.newWorkOrder(payload));
@@ -320,7 +282,7 @@ export default function TechOrderForm() {
     if (orderResult) setSaving(false);
   }, [orderResult]);
 
-  const canSave = !!device.name && !saving;
+  const canSave = !!selectedDevice._id && !saving;
 
   // ── render ────────────────────────────────────────────────────────────────
   return (
@@ -347,7 +309,7 @@ export default function TechOrderForm() {
           className="xl:max-w-[90%]"
         >
           <div className="flex flex-col overflow-y-auto h-[90%]">
-            <DeviceList close={() => setDeviceTable(false)} />
+            <DeviceList close={() => setDeviceTable(false)} hideLinks />
           </div>
         </ModalBase>
       )}
@@ -378,22 +340,20 @@ export default function TechOrderForm() {
           <WorkOrderCard title="EQUIPO">
             <div className="w-full flex flex-col md:flex-row md:items-center gap-4">
               <div className="join my-1 flex-grow">
-                {!device.name ? (
+                {!selectedDevice.name ? (
                   <>
                     <input
                       className="flex flex-grow input-sm join-item bg-base-100 border-2 border-info"
                       type="text"
                       placeholder="Código de equipo"
-                      value={device.code}
-                      onChange={(e) =>
-                        setDevice({ ...device, code: e.target.value })
-                      }
+                      value={deviceCode}
+                      onChange={(e) => setDeviceCode(e.target.value)}
                     />
                     <button
                       className="btn btn-sm btn-info join-item"
                       style={{ zIndex: 0 }}
                       onClick={handleSearch}
-                      disabled={!device.code}
+                      disabled={!deviceCode.trim()}
                     >
                       <FontAwesomeIcon icon={faSearch} />
                     </button>
@@ -411,7 +371,7 @@ export default function TechOrderForm() {
                   <>
                     <div className="flex items-center flex-grow px-2 join-item bg-base-100 border-2 border-primary rounded-l-md overflow-hidden">
                       <p>
-                        <b>[{device.code}]</b> {device.name}
+                        <b>[{selectedDevice.code}]</b> {selectedDevice.name}
                       </p>
                     </div>
                     <button
@@ -427,28 +387,30 @@ export default function TechOrderForm() {
               <OrderField
                 field="Centro costo"
                 name="costCenter"
-                className={device.name ? "" : "opacity-0"}
-                disabled={!device.name}
-                value={form.costCenter}
-                onInput={handleFormChange}
+                className={selectedDevice.name ? "" : "opacity-0"}
+                disabled={!selectedDevice.name}
+                value={selectedDevice.costCenter}
+                // onInput={handleChange}
                 placeholder="CC-XXX"
               />
             </div>
-            {device.name && (
+            {selectedDevice.name && (
               <div className="flex flex-col gap-4">
                 <div className="text-sm opacity-60 pt-1 space-y-0.5">
                   <p>
                     <b>Ubicación:</b>{" "}
-                    {device.location ||
-                      (device.plant && device.area && device.line
-                        ? `${device.plant} > ${device.area} > ${device.line}`
+                    {selectedDevice.location ||
+                      (selectedDevice.plant &&
+                      selectedDevice.area &&
+                      selectedDevice.line
+                        ? `${selectedDevice.plant} > ${selectedDevice.area} > ${selectedDevice.line}`
                         : "")}
                   </p>
                   <p>
-                    <b>Tipo:</b> {device.type}
+                    <b>Tipo:</b> {selectedDevice.type}
                   </p>
                   <p>
-                    <b>Categoría:</b> {device.category}
+                    <b>Categoría:</b> {selectedDevice.category}
                   </p>
                 </div>
               </div>
@@ -458,6 +420,15 @@ export default function TechOrderForm() {
           {/* ── 2. INFO GENERAL ── */}
           <WorkOrderCard title="INFO GENERAL">
             <div className="flex flex-col md:grid grid-cols-3 gap-1 mt-1">
+              {tech.generatedBy && (
+                <OrderField
+                  field="Generada por"
+                  name="generatedBy"
+                  displayEmpty
+                  value={tech.generatedBy?.name}
+                  readOnly
+                />
+              )}
               <OrderField
                 field="Responsable"
                 name="responsible"
@@ -465,21 +436,21 @@ export default function TechOrderForm() {
                   workersList?.map((w) => ({ id: w._id, name: w.name })) || []
                 }
                 displayEmpty
-                value={form.responsible}
-                onInput={handleFormChange}
+                value={order.responsible}
+                onInput={handleOrderChange}
               />
               <NumberField
                 field="Duración estimada (hs)"
                 name="estimatedDuration"
-                value={form.estimatedDuration}
-                onInput={handleFormChange}
+                value={tech.estimatedDuration}
+                onInput={handleTechChange}
                 placeholder="Horas"
               />
               <DateField
                 field="Fecha"
                 name="registerDate"
-                value={form.registerDate}
-                onInput={handleFormChange}
+                value={order.registerDate}
+                onInput={handleOrderChange}
               />
             </div>
           </WorkOrderCard>
@@ -491,69 +462,74 @@ export default function TechOrderForm() {
                 field="Descripción"
                 className="w-full md:col-span-3"
                 name="description"
-                value={form.description}
-                onInput={handleFormChange}
+                value={order.description}
+                onInput={handleOrderChange}
                 placeholder="Descripción del trabajo..."
               />
               <DateField
                 field="Fecha evento"
-                name="plannedDate"
-                value={form.plannedDate}
-                onInput={handleFormChange}
+                name="scheduledDate"
+                value={planned.scheduledDate}
+                onInput={handlePlannedChange}
               />
               <OrderField
                 field="Prioridad"
                 name="priority"
-                value={form.priority}
-                options={PRIORITY_OPTIONS}
+                value={planned.priority}
+                options={options.priority || []}
                 displayEmpty
-                onInput={handleFormChange}
+                onInput={handlePlannedChange}
               />
               <OrderField
                 field="Activador"
                 name="activator"
-                value={form.activator}
-                onInput={handleFormChange}
-                placeholder="Plan/Reclamo"
+                value={planned.activator}
+                options={options.activator || []}
+                displayEmpty
+                onInput={handlePlannedChange}
               />
               <OrderField
                 field="Clasificación"
                 name="classification"
-                value={form.classification}
-                onInput={handleFormChange}
+                value={planned.classification}
+                options={options.classification || []}
+                displayEmpty
+                onInput={handlePlannedChange}
                 placeholder="Tipo de trabajo..."
               />
               <DateField
                 field="Inicio"
                 name="startDate"
-                value={form.startDate}
-                onInput={handleFormChange}
+                value={planned.startDate}
+                onInput={handlePlannedChange}
               />
               <DateField
                 field="Fin"
                 name="endDate"
-                value={form.endDate}
-                onInput={handleFormChange}
+                value={planned.endDate}
+                onInput={handlePlannedChange}
               />
               <NumberField
                 field="Tiempo trabajo (h)"
                 name="worktime"
-                value={form.downtime}
-                onInput={handleFormChange}
+                value={planned.worktime}
+                min={0}
+                onInput={handlePlannedChange}
                 placeholder="Horas"
               />
               <NumberField
                 field="Tiempo parada (h)"
                 name="downtime"
-                value={form.downtime}
-                onInput={handleFormChange}
+                value={planned.downtime}
+                min={0}
+                onInput={handlePlannedChange}
                 placeholder="Horas"
               />
               <OrderField
                 field="Solicitante"
-                name="requestedBy"
-                value={form.requestedBy}
-                onInput={handleFormChange}
+                name="requester"
+                value={planned.requester || ""}
+                onInput={handlePlannedChange}
                 placeholder="Quien solicita..."
               />
             </div>
@@ -619,53 +595,60 @@ export default function TechOrderForm() {
                 field="Diagnóstico"
                 className="w-full lg:col-span-2"
                 name="diagnostics"
-                value={form.diagnostics}
-                onInput={handleFormChange}
+                value={diagnostic.diagnostics}
+                onInput={handleDiagnosticChange}
                 placeholder="Observaciones diagnósticas..."
               />
 
               <OrderField
                 field="Tipo falla"
                 name="failureType"
-                value={form.failureType}
-                onInput={handleFormChange}
+                value={diagnostic.failureType}
+                options={options.failureType || []}
+                displayEmpty
+                onInput={handleDiagnosticChange}
                 placeholder="Descripción del fallo..."
               />
               <OrderField
                 field="Causa falla"
-                name="failureCause"
-                value={form.failureCause}
-                onInput={handleFormChange}
+                name="cause"
+                value={diagnostic.cause}
+                options={options.cause || []}
+                displayEmpty
+                onInput={handleDiagnosticChange}
                 placeholder="Causa raíz..."
               />
               <OrderField
                 field="Detección"
-                name="detectionMethod"
-                value={form.detectionMethod}
-                options={DETECTION_OPTIONS}
+                name="method"
+                value={diagnostic.method}
+                options={options.detection || []}
                 displayEmpty
-                onInput={handleFormChange}
+                onInput={handleDiagnosticChange}
               />
               <OrderField
                 field="Severidad"
                 name="severity"
-                value={form.severity}
-                options={SEVERITY_OPTIONS}
+                value={diagnostic.severity}
+                options={options.severity || []}
                 displayEmpty
-                onInput={handleFormChange}
+                onInput={handleDiagnosticChange}
               />
               <OrderField
                 field="Daño"
                 name="damageType"
-                value={form.damageType}
-                onInput={handleFormChange}
+                value={diagnostic.damageType}
+                options={options.damageType || []}
+                displayEmpty
+                onInput={handleDiagnosticChange}
                 placeholder="Tipo de daño..."
               />
               <NumberField
                 field="Interrupción otros activos"
-                name="assetsInterruptions"
-                value={form.damageType}
-                onInput={handleFormChange}
+                name="assetsDowntime"
+                value={diagnostic.assetsDowntime}
+                min={0}
+                onInput={handleDiagnosticChange}
                 placeholder="Horas"
               />
               {/* Final status quick buttons */}
@@ -680,7 +663,7 @@ export default function TechOrderForm() {
                       type="button"
                       className={`btn btn-xs border ${form.finalStatus === key ? active : inactive}`}
                       onClick={() =>
-                        handleFormChange({
+                        handleChange({
                           target: {
                             name: "finalStatus",
                             value: form.finalStatus === key ? "" : key,

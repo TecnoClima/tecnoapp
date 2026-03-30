@@ -8,6 +8,7 @@ export function OrderField({
   placeholder,
   displayEmpty,
   required,
+  readOnly,
 }) {
   return (
     <div className={`join ${className || ""}`}>
@@ -31,6 +32,7 @@ export function OrderField({
           className="select select-xs md:select-sm select-bordered join-item flex-grow"
           onChange={onInput}
           value={value}
+          disabled={readOnly}
         >
           {displayEmpty && <option value="">Seleccionar...</option>}
           {options.map((o) => (
@@ -45,6 +47,7 @@ export function OrderField({
           className="input input-xs md:input-sm input-bordered join-item flex-grow"
           placeholder={placeholder}
           value={value}
+          readOnly={readOnly}
           onChange={onInput}
         />
       )}
