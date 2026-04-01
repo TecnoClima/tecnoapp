@@ -12,8 +12,7 @@ export const useGetPlantWorkers = () => {
     // Solo fetch si no hay datos
     if (!workersList || workersList.length === 0) {
       dispatch(peopleActions.getWorkers(plant ? { plant } : undefined));
+      dispatch(peopleActions.getSupervisors(plant ? { plant } : undefined));
     }
   }, [dispatch, plant, workersList]);
-
-  return workersList;
 };

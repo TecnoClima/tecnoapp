@@ -193,12 +193,9 @@ export default function WorkOrders() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!yearList || !userData) return;
-    const orderOfTheYear = workOrderList.find(
-      (ot) => new Date(ot.date).getFullYear() === yearList,
-    );
-    if (!orderOfTheYear) dispatch(workOrderActions.getList(yearList));
-  }, [userData, yearList, workOrderList, dispatch]);
+    if (!yearList) return;
+    dispatch(workOrderActions.getList(yearList));
+  }, [yearList, dispatch]);
 
   useEffect(() => {
     const date = filters.dateMin || filters.dateMax || null;
@@ -284,6 +281,7 @@ export default function WorkOrders() {
                 {isAdmin && <div className="w-11">Eliminar</div>}
               </div>
               {filteredList
+                .filter(({ type }) => type !== "tech")
                 .slice((currentPage - 1) * size, currentPage * size)
                 .map((order) => (
                   <WorkOrderListItem

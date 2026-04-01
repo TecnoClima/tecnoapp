@@ -110,7 +110,7 @@ export default function WorkOrder() {
 
   // if orderCode, get order detail
   useEffect(() => {
-    if (!orderCode || !!orderDetail._id) return;
+    if (!orderCode || orderDetail.code) return;
     dispatch(workOrderActions.searchWO(orderCode));
   }, [orderCode, orderDetail, dispatch]);
 

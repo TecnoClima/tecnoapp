@@ -15,6 +15,7 @@ import { AdminOptions } from "./pages/Admin/Options/index.jsx";
 import AdminPlan from "./pages/Admin/Plan";
 import AdminPlants from "./pages/Admin/Plants";
 import TechConfig from "./pages/Admin/TechConfig";
+import { TechOrderList } from "./pages/Admin/TechOrderList/TechOrderList.jsx";
 import AdminUsers from "./pages/Admin/Users";
 import Device from "./pages/Device";
 import Landing from "./pages/Landing";
@@ -151,7 +152,7 @@ function App() {
               }
             />
           )} */}
-          {access.isLogged && (
+          {access.isAdmin && (
             <Route
               exact
               path={"/orden-tecnica/nueva"}
@@ -162,7 +163,7 @@ function App() {
               }
             />
           )}
-          {access.isLogged && (
+          {access.isAdmin && (
             <Route
               exact
               path={"/orden-tecnica/:orderCode"}
@@ -254,6 +255,17 @@ function App() {
               element={
                 <InnerLayout>
                   <AdminUsers />
+                </InnerLayout>
+              }
+            />
+          )}
+          {access.isAdmin && (
+            <Route
+              exact
+              path={"/admin/ordenes-tecnicas"}
+              element={
+                <InnerLayout>
+                  <TechOrderList />
                 </InnerLayout>
               }
             />

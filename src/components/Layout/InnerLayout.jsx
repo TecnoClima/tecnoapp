@@ -9,7 +9,7 @@ import {
   faTools,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import logo from "../../assets/icons/logoTecnoclima.png";
@@ -56,6 +56,7 @@ export default function InnerLayout({ children }) {
   // Opciones de administración (idénticas a AdminPanel)
   const adminOptions = [
     { caption: "Monitoreo", url: "/admin/monitoreo" },
+    { caption: "Órdenes Técnicas", url: "/admin/ordenes-tecnicas" },
     { caption: "Equipos", url: "/admin/equipos" },
     { caption: "Plantas", url: "/admin/plantas" },
     { caption: "Usuarios", url: "/admin/usuarios" },

@@ -22,7 +22,7 @@ export default function workOrderReducer(state = initialState, action) {
       return {
         state,
         workOrderList: state.workOrderList.filter(
-          (o) => o.code !== action.payload.code
+          (o) => o.code !== action.payload.code,
         ),
         orderResult: { success: `Orden ${action.payload.code} eliminada` },
       };
@@ -30,10 +30,6 @@ export default function workOrderReducer(state = initialState, action) {
       if (error) return { ...state, orderResult: { error } };
       return {
         ...state,
-        workOrderList: [
-          action.payload,
-          ...state.workOrderList.filter((o) => o.code !== action.payload.code),
-        ],
         orderResult: { success: action.payload.code },
       };
     case "CHECK_DATA":
@@ -90,12 +86,12 @@ export default function workOrderReducer(state = initialState, action) {
       if (error) return { ...state, orderResult: { error } };
       currentCodeList = state.workOrderList.map((order) => order.code);
       let ordersToAdd = action.payload.filter(
-        (order) => !currentCodeList.includes(order.code)
+        (order) => !currentCodeList.includes(order.code),
       );
       return {
         ...state,
-        // workOrderList: [...state.workOrderList, ...ordersToAdd],
-        workOrderList: ordersToAdd,
+        workOrderList: [...state.workOrderList, ...ordersToAdd],
+        // workOrderList: ordersToAdd,
       };
     case "ORDER_DETAIL":
       return {
@@ -118,7 +114,7 @@ export default function workOrderReducer(state = initialState, action) {
       };
     case "ADD_USAGE":
       index = detail.interventions.findIndex(
-        (e) => e.id === action.payload.intervention
+        (e) => e.id === action.payload.intervention,
       );
       for (let use of action.payload.refrigerant.filter((use) => !!use.code)) {
         detail.interventions[index].refrigerant.push(use);
@@ -135,10 +131,10 @@ export default function workOrderReducer(state = initialState, action) {
       };
     case "DEL_USAGE":
       index = detail.interventions.findIndex(
-        (e) => e.id === action.payload.intervention
+        (e) => e.id === action.payload.intervention,
       );
       array = detail.interventions[index].refrigerant.filter(
-        (usage) => !action.payload.ids.includes(usage.id)
+        (usage) => !action.payload.ids.includes(usage.id),
       );
       detail.interventions[index].refrigerant = array;
       detail.interventions[index].refrigerant[0].total = array

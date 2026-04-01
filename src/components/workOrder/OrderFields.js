@@ -31,7 +31,7 @@ export function OrderField({
           name={name}
           className="select select-xs md:select-sm select-bordered join-item flex-grow"
           onChange={onInput}
-          value={value}
+          value={value || ""}
           disabled={readOnly}
         >
           {displayEmpty && <option value="">Seleccionar...</option>}
@@ -91,7 +91,7 @@ export function NumberField({ field, name, value, onInput, placeholder }) {
         name={name}
         className="input input-xs md:input-sm input-bordered join-item flex-grow"
         placeholder={placeholder}
-        value={value}
+        value={value || ""}
         onChange={onInput}
       />
     </div>
@@ -115,7 +115,7 @@ export function TextAreaField({
         name={name}
         className="textarea textarea-bordered textarea-xs join-item flex-grow min-h-[3.5rem] resize-none"
         placeholder={placeholder}
-        value={value}
+        value={value || ""}
         onChange={onInput}
       />
     </div>

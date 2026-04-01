@@ -37,6 +37,7 @@ const EMPTY_ORDER = {
   // General
   responsible: "",
   description: "",
+  supervisor: "",
 
   registerDate: "",
 };
@@ -104,7 +105,7 @@ export default function TechOrderForm() {
   const { orderCode } = useParams();
   const { list: optionList } = useSelector((state) => state.options);
   const { orderDetail, orderResult } = useSelector((s) => s.workOrder);
-  const { workersList } = useSelector((s) => s.people);
+  const { workersList, supervisors } = useSelector((s) => s.people);
   const { selectedDevice } = useSelector((s) => s.devices);
   const [deviceCode, setDeviceCode] = useState("");
 
@@ -156,7 +157,7 @@ export default function TechOrderForm() {
     const registerDate = registration?.date
       ? registration.date.split("T")[0]
       : "";
-    const { planned, diagnostics, ...restTech } = tech;
+    const { planned, diagnostics, ...restTech } = tech || {};
     if (planned) {
       const { scheduledDate, startDate, endDate } = planned;
       const scheduled = scheduledDate ? scheduledDate.split("T")[0] : "";
@@ -275,7 +276,7 @@ export default function TechOrderForm() {
 
   function handleSuccess() {
     dispatch(workOrderActions.resetOrderResult());
-    navigate("/ots");
+    navigate("/admin/ordenes-tecnicas");
   }
 
   useEffect(() => {
@@ -297,7 +298,7 @@ export default function TechOrderForm() {
         <SuccessModal
           open={true}
           message={`Orden técnica N° ${orderResult.success} guardada exitosamente.`}
-          link={orderCode ? null : `/ots/detail/${orderResult.success}`}
+          link={orderCode ? null : `/ordenes-tecnicas/${orderResult.success}`}
           close={handleSuccess}
         />
       )}
@@ -437,6 +438,16 @@ export default function TechOrderForm() {
                 }
                 displayEmpty
                 value={order.responsible}
+                onInput={handleOrderChange}
+              />
+              <OrderField
+                field="Supervisor"
+                name="supervisor"
+                options={
+                  supervisors?.map((w) => ({ id: w._id, name: w.name })) || []
+                }
+                displayEmpty
+                value={order.supervisor._id || order.supervisor}
                 onInput={handleOrderChange}
               />
               <NumberField
