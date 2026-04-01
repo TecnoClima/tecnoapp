@@ -59,15 +59,15 @@ export const FormSelector = ({
             ...new Set(
               array
                 .sort((a, b) =>
-                  (captions ? a[captions] > b[captions] : a > b) ? 1 : -1
+                  (captions ? a[captions] > b[captions] : a > b) ? 1 : -1,
                 )
                 .map((e) =>
                   JSON.stringify(
                     values
                       ? { value: e[values], caption: e[captions] }
-                      : e[item] || e
-                  )
-                )
+                      : e[item] || e,
+                  ),
+                ),
             ),
           ].map((element, index) => {
             const item = JSON.parse(element);
@@ -86,7 +86,7 @@ export const FormSelector = ({
 export default function WorkOrders() {
   const { year } = useSelector((state) => state.data);
   const { workOrderList, orderResult, reportData } = useSelector(
-    (state) => state.workOrder
+    (state) => state.workOrder,
   );
   const { userData } = useSelector((state) => state.people);
 
@@ -95,7 +95,7 @@ export default function WorkOrders() {
   const [warning, setWarning] = useState(false);
   const [yearList, setYearList] = useState(year);
   const [currentPage, setCurrentPage] = useState(1);
-  const [size, setSize] = useState(10);
+  const [size] = useState(10);
   function handleSelectPage(value) {
     setCurrentPage(Number(value));
   }
@@ -176,7 +176,7 @@ export default function WorkOrders() {
           (i) =>
             `${new Date(i.fecha).toLocaleDateString()} - (${i.personal}) - ${
               i.tarea
-            }`
+            }`,
         )
         .join("\n");
     });
@@ -195,7 +195,7 @@ export default function WorkOrders() {
   useEffect(() => {
     if (!yearList || !userData) return;
     const orderOfTheYear = workOrderList.find(
-      (ot) => new Date(ot.date).getFullYear() === yearList
+      (ot) => new Date(ot.date).getFullYear() === yearList,
     );
     if (!orderOfTheYear) dispatch(workOrderActions.getList(yearList));
   }, [userData, yearList, workOrderList, dispatch]);

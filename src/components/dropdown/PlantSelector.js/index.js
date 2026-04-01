@@ -36,9 +36,9 @@ export function PlantSelector({ disabled, onSelect }) {
           isAdmin
             ? undefined
             : userData.plant
-            ? plantList.find((p) => p.name === userData.plant)
-            : undefined
-        )
+              ? plantList.find((p) => p.name === userData.plant)
+              : undefined,
+        ),
       );
     }
   }, [userData, selectedPlant, plantList, dispatch, isAdmin]);

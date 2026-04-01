@@ -17,9 +17,7 @@ const emptyTask = {
 };
 
 export function CreateSubTask() {
-  const { subTaskResult, list: subtaskList } = useSelector(
-    (state) => state.subTasks,
-  );
+  const { subTaskResult } = useSelector((state) => state.subTasks);
   const { list: optionList } = useSelector((state) => state.options);
   const targetCollection = "subTask";
 

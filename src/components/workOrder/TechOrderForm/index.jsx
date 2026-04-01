@@ -75,26 +75,26 @@ const EMPTY_DIAGNOSTIC = {
   assetsDowntime: "",
 };
 
-const FINAL_STATUS = [
-  {
-    key: "ok",
-    label: "OK",
-    active: "btn-success",
-    inactive: "btn-ghost border-base-300",
-  },
-  {
-    key: "alert",
-    label: "Alerta",
-    active: "btn-warning",
-    inactive: "btn-ghost border-base-300",
-  },
-  {
-    key: "fail",
-    label: "Falla",
-    active: "btn-error",
-    inactive: "btn-ghost border-base-300",
-  },
-];
+// const FINAL_STATUS = [
+//   {
+//     key: "ok",
+//     label: "OK",
+//     active: "btn-success",
+//     inactive: "btn-ghost border-base-300",
+//   },
+//   {
+//     key: "alert",
+//     label: "Alerta",
+//     active: "btn-warning",
+//     inactive: "btn-ghost border-base-300",
+//   },
+//   {
+//     key: "fail",
+//     label: "Falla",
+//     active: "btn-error",
+//     inactive: "btn-ghost border-base-300",
+//   },
+// ];
 
 // ─── component ────────────────────────────────────────────────────────────────
 

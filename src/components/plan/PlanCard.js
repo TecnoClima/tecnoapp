@@ -2,13 +2,13 @@ import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSelector } from "react-redux";
 
-function classCompleted(percent) {
-  const value = Number(percent);
-  if (value === 0) return "pendantTask";
-  if (value < 70) return "coursedTask";
-  if (value <= 99) return "doneTask";
-  if (value === 100) return "completedTask";
-}
+// function classCompleted(percent) {
+//   const value = Number(percent);
+//   if (value === 0) return "pendantTask";
+//   if (value < 70) return "coursedTask";
+//   if (value <= 99) return "doneTask";
+//   if (value === 100) return "completedTask";
+// }
 
 let zero = [139, 0, 0];
 let half = [180, 180, 0];

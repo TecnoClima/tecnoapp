@@ -1,7 +1,5 @@
-import { use, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 export function AdminOptionsNav({ tabs }) {
   const [searchParams] = useSearchParams();
@@ -12,7 +10,7 @@ export function AdminOptionsNav({ tabs }) {
     if (!tab) {
       navigate(`${tabs[0].href}`);
     }
-  }, [tab]);
+  }, [tab, navigate, tabs]);
 
   return (
     <div role="tablist" className="tabs w-full tabs-lifted">

@@ -1,26 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { optionActions } from "../../../../actions/StoreActions";
-import { appConfig } from "../../../../config";
-import { CreateOrderOptionValues } from "../WorkOrders/CreateOrderOptionValues";
+
 import { OptionCard } from "../WorkOrders/OptionCard";
 import { SubTaskList } from "./SubTaskList";
-const { headersRef } = appConfig;
-
-const RESULT_TYPES = [
-  { value: "boolean", label: "Sí / No" },
-  { value: "number", label: "Número" },
-  { value: "text", label: "Texto" },
-  { value: "gps", label: "GPS" },
-];
-
-const GROUPS = ["Sitio", "Equipo"];
-
-const emptyTask = () => ({
-  group: "Equipo",
-  procedure: "",
-  resultType: "boolean",
-});
 
 export function SubtaskOptions() {
   const { list: optionList } = useSelector((state) => state.options);

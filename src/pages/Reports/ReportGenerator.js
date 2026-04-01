@@ -1,6 +1,5 @@
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect } from "react";
 import * as XLSX from "xlsx/xlsx.mjs";
 
 export function ReportGenerator({ data, className, dates }) {

@@ -1,10 +1,7 @@
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { optionActions } from "../../../../actions/StoreActions";
-import { useEffect } from "react";
-import { CreateOrderOptionValues } from "./CreateOrderOptionValues";
-import { appConfig } from "../../../../config";
 import { OptionCard } from "./OptionCard";
-const { headersRef } = appConfig;
 
 export function OrderOptions() {
   const { list: optionList } = useSelector((state) => state.options);

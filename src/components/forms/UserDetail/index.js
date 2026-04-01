@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { peopleActions } from "../../../actions/StoreActions";
-// import { FormInput, FormSelector } from "../../../pages/Admin/Devices";
 import { FormInput, FormSelector } from "../../../components/forms/FormInput";
 
-import { ErrorModal, SuccessModal } from "../../warnings";
 import ModalBase from "../../../Modals/ModalBase";
+import { ErrorModal, SuccessModal } from "../../warnings";
 
 export default function UserDetail(props) {
   const emptyUser = {
@@ -22,7 +21,7 @@ export default function UserDetail(props) {
   const [user, setUser] = useState(props.user);
   const { peopleResult } = useSelector((state) => state.people);
   const [newUser, setNewUser] = useState(
-    user === "new" ? emptyUser : { ...user }
+    user === "new" ? emptyUser : { ...user },
   );
   const dispatch = useDispatch();
 

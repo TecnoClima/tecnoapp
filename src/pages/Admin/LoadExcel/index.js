@@ -134,20 +134,20 @@ export function LoadExcel() {
           let ls = [];
           for (let sp of servicePoints) {
             const servicePoint = options.spList.find(
-              (item) => item?.name?.toUpperCase() === sp.toUpperCase()
+              (item) => item?.name?.toUpperCase() === sp.toUpperCase(),
             );
             if (!servicePoint) {
               ls.push({ plant, area, line, code: spCode, servicePoint: sp });
             } else {
-              const spLine = options.line.find(
-                (item) => item._id === servicePoint.line
-              );
-              const spArea = options.area.find(
-                (item) => item._id === spLine.area
-              );
-              const spPlant = options.plant.find(
-                (item) => item._id === spArea.plant
-              );
+              // const spLine = options.line.find(
+              //   (item) => item._id === servicePoint.line,
+              // );
+              // const spArea = options.area.find(
+              //   (item) => item._id === spLine.area,
+              // );
+              // const spPlant = options.plant.find(
+              //   (item) => item._id === spArea.plant
+              // );
               const loc = {
                 name: sp,
                 line: options.line.find((item) => item.name === line)?.name,
@@ -263,7 +263,7 @@ export function LoadExcel() {
       child = children[field];
       const parent = parents[field];
       return deviceOptions[field].filter((i) =>
-        value ? i[parent] === item._id : true
+        value ? i[parent] === item._id : true,
       );
     }
 
@@ -273,7 +273,7 @@ export function LoadExcel() {
       return deviceOptions[field].filter((element) =>
         value
           ? newOptions[parent].map((item) => item._id).includes(element[parent])
-          : true
+          : true,
       );
     }
 
