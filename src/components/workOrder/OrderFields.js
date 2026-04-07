@@ -46,7 +46,7 @@ export function OrderField({
           name={name}
           className="input input-xs md:input-sm input-bordered join-item flex-grow"
           placeholder={placeholder}
-          value={value}
+          value={value || ""}
           readOnly={readOnly}
           onChange={onInput}
         />

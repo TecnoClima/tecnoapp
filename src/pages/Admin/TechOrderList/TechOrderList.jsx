@@ -11,10 +11,6 @@ export function TechOrderList() {
     dispatch(workOrderActions.getList(2026));
   }, [dispatch]);
 
-  useEffect(() => {
-    console.log("workOrderList", workOrderList);
-  }, [workOrderList]);
-
   return (
     <div className="page-container">
       <div className="flex flex-col h-20 flex-grow gap-4">

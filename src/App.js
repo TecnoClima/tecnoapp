@@ -25,6 +25,7 @@ import Panel from "./pages/Panel";
 import Plan from "./pages/Plan";
 import Reports from "./pages/Reports/Reports";
 import TechOrder from "./pages/TechOrder";
+import TechnicalOrder from "./pages/TechOrderPrint/index.js";
 import WorkOrder from "./pages/WorkOrder";
 import WorkOrders from "./pages/WorkOrders";
 
@@ -141,17 +142,13 @@ function App() {
               }
             />
           )}
-          {/* {access.isLogged && (
+          {access.isLogged && (
             <Route
               exact
-              path={"/orden-tecnica/:code"}
-              element={
-                <InnerLayout>
-                  <TechnicalOrder />
-                </InnerLayout>
-              }
+              path={"/orden-tecnica/:code/imprimir"}
+              element={<TechnicalOrder />}
             />
-          )} */}
+          )}
           {access.isAdmin && (
             <Route
               exact

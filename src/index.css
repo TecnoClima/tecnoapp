@@ -150,3 +150,10 @@
     @apply hidden;
   }
 }
+
+@media print {
+  #signatures {
+    break-before: auto;
+    page-break-before: auto;
+  }
+}

@@ -1,17 +1,25 @@
-import TechOrderHeader from "./TechOrderHeader";
-import { DataField } from "./TechOrderDataField";
-import { TechOrderDeviceData } from "./TechOrderDeviceData";
-import { TechOrderData } from "./TechOrderData";
-import { TechOrderSubTaskList } from "./TechOrderSubTaskList";
-import TechOrderFailureData from "./TechOrderFailureData";
-import { TechOrderSignatures } from "./TechOrderSignatures";
-import { useRef } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPrint } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
+import { TechOrderData } from "../../components/TechnicalOrder.js/TechOrderData";
+import { DataField } from "../../components/TechnicalOrder.js/TechOrderDataField";
+import { TechOrderDeviceData } from "../../components/TechnicalOrder.js/TechOrderDeviceData";
+import TechOrderFailureData from "../../components/TechnicalOrder.js/TechOrderFailureData";
+import TechOrderHeader from "../../components/TechnicalOrder.js/TechOrderHeader";
+import { TechOrderSignatures } from "../../components/TechnicalOrder.js/TechOrderSignatures";
+import { TechOrderSubTaskList } from "../../components/TechnicalOrder.js/TechOrderSubTaskList";
+import { usePrintSignatures } from "../../hooks/print.hooks";
 
 export default function TechnicalOrder() {
   const technicalOrder = useRef(null);
+  const adjustSignatures = usePrintSignatures();
+
+  function handlePrint(e) {
+    e.preventDefault();
+    adjustSignatures();
+    window.print();
+  }
   const order = {
     calification: 5,
     generator: { name: "Nicolas Andrada" },
@@ -70,7 +78,7 @@ export default function TechnicalOrder() {
     <>
       <button
         className="absolute top-2 right-32 btn btn-info btn-outline btn-xs"
-        onClick={generatePDF}
+        onClick={handlePrint}
       >
         <FontAwesomeIcon icon={faPrint} />
         Imprimir
@@ -94,6 +102,8 @@ export default function TechnicalOrder() {
           <TechOrderFailureData order={order} />
         </div>
         {/* ADJUNTOS */}
+        <div className="push-signatures" />
+
         <TechOrderSignatures order={order} />
       </div>
     </>

@@ -1,7 +1,7 @@
 export function TechOrderSignatures({ order }) {
   const { acceptedBy, validatedBy, realizedBy } = order;
   return (
-    <div className="flex w-full border p-4">
+    <div id="signatures" className="flex w-full border p-4">
       <div className="w-60 flex-grow text-center">
         <div className="min-h-20" />
         <div>Aceptado por:</div>

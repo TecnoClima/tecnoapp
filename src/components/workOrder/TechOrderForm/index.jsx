@@ -1,6 +1,7 @@
 import {
   faBookOpen,
   faExchange,
+  faPrint,
   faSearch,
   faSyncAlt,
   faTable,
@@ -9,7 +10,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ModalBase from "../../../Modals/ModalBase";
 import {
   deviceActions,
@@ -332,10 +333,22 @@ export default function TechOrderForm() {
       )}
 
       <div className="flex flex-col min-h-0 flex-grow">
-        <div className="page-title">
-          {orderCode ? `Orden Técnica N° ${orderCode}` : "Nueva Orden Técnica"}
+        <div className="flex w-full items-center flex-wrap gap-2">
+          <div className="page-title">
+            {orderCode
+              ? `Orden Técnica N° ${orderCode}`
+              : "Nueva Orden Técnica"}
+          </div>
+          {orderCode !== undefined && (
+            <Link
+              to={`/orden-tecnica/${orderCode}/imprimir`}
+              className="btn btn-info btn-outline btn-sm ml-auto"
+            >
+              <FontAwesomeIcon icon={faPrint} />
+              Imprimir...
+            </Link>
+          )}
         </div>
-
         <div className="flex flex-col gap-4 flex-grow md:overflow-y-auto md:min-h-0 mb-4">
           {/* ── 1. EQUIPO ── */}
           <WorkOrderCard title="EQUIPO">
@@ -347,7 +360,7 @@ export default function TechOrderForm() {
                       className="flex flex-grow input-sm join-item bg-base-100 border-2 border-info"
                       type="text"
                       placeholder="Código de equipo"
-                      value={deviceCode}
+                      value={deviceCode || ""}
                       onChange={(e) => setDeviceCode(e.target.value)}
                     />
                     <button
@@ -391,7 +404,7 @@ export default function TechOrderForm() {
                 className={selectedDevice.name ? "" : "opacity-0"}
                 disabled={!selectedDevice.name}
                 value={selectedDevice.costCenter}
-                // onInput={handleChange}
+                onInput={() => {}}
                 placeholder="CC-XXX"
               />
             </div>
