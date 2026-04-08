@@ -1,18 +1,18 @@
 import { faPrint } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
+import { workOrderActions } from "../../actions/StoreActions";
 import { TechOrderData } from "../../components/TechnicalOrder/TechOrderData";
+import { DataField } from "../../components/TechnicalOrder/TechOrderDataField";
 import { TechOrderDeviceData } from "../../components/TechnicalOrder/TechOrderDeviceData";
 import TechOrderFailureData from "../../components/TechnicalOrder/TechOrderFailureData";
 import TechOrderHeader from "../../components/TechnicalOrder/TechOrderHeader";
 import { TechOrderSignatures } from "../../components/TechnicalOrder/TechOrderSignatures";
 import { TechOrderSubTaskList } from "../../components/TechnicalOrder/TechOrderSubTaskList";
 import { usePrintSignatures } from "../../hooks/print.hooks";
-import { useDispatch, useSelector } from "react-redux";
-import { workOrderActions } from "../../actions/StoreActions";
-import { useParams } from "react-router-dom";
-import { DataField } from "../../components/TechnicalOrder/TechOrderDataField";
 
 export default function TechnicalOrder() {
   const technicalOrder = useRef(null);
@@ -57,11 +57,11 @@ export default function TechnicalOrder() {
       >
         <TechOrderHeader code={order.code} date={order.registration?.date} />
         <div className="flex w-full flex-wrap rounded-box border p-4 gap-2">
-          <DataField label="Generó">{order.tech?.generatedBy.name}</DataField>
+          <DataField label="Generó">{order.tech?.generatedBy?.name}</DataField>
           <DataField label="Responsable">{order.responsible?.name}</DataField>
           <DataField label="Duración estimada">{`${order.tech?.estimatedDuration} horas`}</DataField>
           <DataField label="Fecha">
-            {order.registration?.date.split("T")[0]}
+            {order.registration?.date?.split("T")[0]}
           </DataField>
         </div>
         <TechOrderDeviceData device={order.device} />

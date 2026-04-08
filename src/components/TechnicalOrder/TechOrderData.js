@@ -45,17 +45,25 @@ export function TechOrderData({ order }) {
         <DataField label="Fecha registro">
           {formatDate(registration?.date)}
         </DataField>
-        <DataField label="Prioridad">{planned?.priority.label}</DataField>
-        <DataField label="Activador">{planned?.activator.label}</DataField>
+        <DataField label="Prioridad">
+          {planned?.priority?.label || "-"}
+        </DataField>
+        <DataField label="Activador">
+          {planned?.activator?.label || "-"}
+        </DataField>
         <DataField label="Fecha y hora de Inicio">
-          {formatDate(planned?.startDate)}
+          {formatDate(planned?.startDate) || ""}
         </DataField>
         <DataField label="Fecha y hora de Fin">
-          {formatDate(planned?.endDate)}
+          {formatDate(planned?.endDate) || ""}
         </DataField>
-        <DataField label="Tiempo de trabajo">{planned?.worktime}</DataField>
-        <DataField label="Tiempo de parada">{planned?.downtime}</DataField>
-        <DataField label="Solicitante">{planned?.requester}</DataField>
+        <DataField label="Tiempo de trabajo">
+          {planned?.worktime || "-"}
+        </DataField>
+        <DataField label="Tiempo de parada">
+          {planned?.downtime || "-"}
+        </DataField>
+        <DataField label="Solicitante">{planned?.requester || "-"}</DataField>
       </Section>
     </div>
   );
