@@ -1,9 +1,8 @@
-import { useParams } from "react-router-dom";
 import logo from "../../assets/icons/logoTecnoclima.png";
 import { companyData } from "../../constants/OrderData";
+import { formatDate } from "../../utils/utils";
 
-export default function TechOrderHeader({ calification, date }) {
-  const { code } = useParams();
+export default function TechOrderHeader({ code, date }) {
   const { name, cuit } = companyData;
 
   return (
@@ -14,12 +13,11 @@ export default function TechOrderHeader({ calification, date }) {
       <div className="w-60 flex-grow flex flex-col items-center">
         <span className="text-lg font-bold">{name}</span>
         <span className="text-sm">{cuit}</span>
-        <span className="uppercase">Orden de trabajo</span>
+        <span className="uppercase">Orden de trabajo técnica</span>
       </div>
       <div className="w-60 flex-grow flex flex-col items-end">
         <span className="font-bold">N°: {code}</span>
-        <span>Fecha: {date}</span>
-        <span>Calificación: {calification}</span>
+        <span>Fecha: {date.split("T")[0]}</span>
       </div>
     </div>
   );

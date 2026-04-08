@@ -1,46 +1,62 @@
+import { formatDate } from "../../utils/utils";
 import { DataField } from "./TechOrderDataField";
+
+function Section({ title, children }) {
+  return (
+    <div>
+      <div className="card-title uppercase underline mb-2">{title}</div>
+      <div className="flex w-full flex-wrap gap-2 rounded-box border p-4">
+        {children}
+      </div>
+    </div>
+  );
+}
 
 export function TechOrderData({ order }) {
   const {
+    // code,
+    // status,
     description,
-    programDate,
-    orderClass,
-    priority,
-    activator,
-    class1,
-    class2,
-    registrationDate,
-    initDate,
-    endDate,
-    noWorkTime,
-    solicitor,
-    solicitation,
-    notes,
+    // supervisor,
+    // responsible,
+    registration,
+    tech,
   } = order;
+  const {
+    //  generatedBy,
+    planned,
+  } = tech ?? {};
+
   return (
-    <div>
-      <div className="card-title uppercase underline mb-2">{`Tarea ${
-        activator === "Plan" ? " " : " no "
-      } planificada`}</div>
-      <div className="flex w-full flex-wrap gap-2 rounded-box border p-4">
+    <div className="flex flex-col gap-4 w-full">
+      {/* <Section title="Información general">
+        <DataField label="Código">{code}</DataField>
+        <DataField label="Estado">{status}</DataField>
+      </Section>
+
+      <Section title="Personas">
+        <DataField label="Supervisor">{supervisor?.name}</DataField>
+        <DataField label="Responsable">{responsible?.name}</DataField>
+        <DataField label="Generado por">{generatedBy?.name}</DataField>
+      </Section>
+ */}
+      <Section title="Tarea Planificada">
         <DataField label="Descripción">{description}</DataField>
-        <DataField label="Fecha Programada">{programDate}</DataField>
-        <DataField label="Tipo de Trabajo">{orderClass}</DataField>
-        <DataField label="Prioridad">{priority}</DataField>
-        <DataField label="Activador">{activator}</DataField>
-        <DataField label="Clasificación 1">{class1}</DataField>
-        <DataField label="Clasificación 2">{class2}</DataField>
-        <DataField label="Fecha del evento">{registrationDate}</DataField>
-        <DataField label="Fecha y hora de inicio">{initDate}</DataField>
-        <DataField label="Fecha y hora de finalización">{endDate}</DataField>
-        <DataField label="Tiempo total de trabajo">
-          {endDate - initDate}
+        <DataField label="Fecha registro">
+          {formatDate(registration?.date)}
         </DataField>
-        <DataField label="Tiempo fuera de Servicio">{noWorkTime}</DataField>
-        <DataField label="Solicitado por">{solicitor.name}</DataField>
-        <DataField label="Número de solicitud">{solicitation}</DataField>
-        <DataField label="Notas">{notes}</DataField>
-      </div>
+        <DataField label="Prioridad">{planned?.priority.label}</DataField>
+        <DataField label="Activador">{planned?.activator.label}</DataField>
+        <DataField label="Fecha y hora de Inicio">
+          {formatDate(planned?.startDate)}
+        </DataField>
+        <DataField label="Fecha y hora de Fin">
+          {formatDate(planned?.endDate)}
+        </DataField>
+        <DataField label="Tiempo de trabajo">{planned?.worktime}</DataField>
+        <DataField label="Tiempo de parada">{planned?.downtime}</DataField>
+        <DataField label="Solicitante">{planned?.requester}</DataField>
+      </Section>
     </div>
   );
 }

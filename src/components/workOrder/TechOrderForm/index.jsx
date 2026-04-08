@@ -160,18 +160,28 @@ export default function TechOrderForm() {
       : "";
     const { planned, diagnostics, ...restTech } = tech || {};
     if (planned) {
-      const { scheduledDate, startDate, endDate } = planned;
+      const { scheduledDate, startDate, endDate, ...restPlanned } = planned;
       const scheduled = scheduledDate ? scheduledDate.split("T")[0] : "";
       const start = startDate ? startDate.split("T")[0] : "";
       const end = endDate ? endDate.split("T")[0] : "";
+      for (const [key, value] of Object.entries(restPlanned)) {
+        restPlanned[key] = value._id || value;
+      }
+
       setPlanned({
-        ...planned,
         scheduledDate: scheduled,
         startDate: start,
         endDate: end,
+        ...restPlanned,
       });
     }
-    if (diagnostics) setDiagnostic(diagnostics);
+    if (diagnostics) {
+      const diagnosticFields = {};
+      for (const [key, value] of Object.entries(diagnostics)) {
+        diagnosticFields[key] = value._id || value;
+      }
+      setDiagnostic(diagnosticFields);
+    }
     if (restTech) setTech(restTech);
     setOrder((prev) => ({
       ...prev,
