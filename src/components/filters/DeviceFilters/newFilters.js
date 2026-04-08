@@ -227,14 +227,14 @@ export default function DeviceFilters({
             Filtros
           </label>
         </div>
-        <div className="drawer-side">
+        <div className="drawer-side h-full">
           <label
             htmlFor="my-drawer"
             aria-label="close sidebar"
             className="drawer-overlay"
             ref={closeSidebar}
           ></label>
-          <div className="menu bg-base-200 text-base-content min-h-full w-80 gap-1 px-1">
+          <div className="menu flex flex-col bg-base-200 text-base-content min-h-full w-80 gap-1 px-1 overflow-y-auto">
             {/* Sidebar content here */}
             <div className="flex w-full justify-between items-start">
               <div className="page-title">Filtros de equipo</div>
@@ -260,7 +260,7 @@ export default function DeviceFilters({
               id="area"
               value={filters.area}
               options={deviceOptions?.area?.filter((a) =>
-                filters?.plant ? a.plant === filters.plant : true
+                filters?.plant ? a.plant === filters.plant : true,
               )}
               onSelect={handleSetRequestFilters}
             />
@@ -271,11 +271,11 @@ export default function DeviceFilters({
                 filters?.area
                   ? l.area === filters.area
                   : filters?.plant
-                  ? deviceOptions.area
-                      .filter((a) => a.plant === filters.plant)
-                      .map((a) => a._id)
-                      .includes(l.area)
-                  : true
+                    ? deviceOptions.area
+                        .filter((a) => a.plant === filters.plant)
+                        .map((a) => a._id)
+                        .includes(l.area)
+                    : true,
               )}
               onSelect={handleSetRequestFilters}
             />
