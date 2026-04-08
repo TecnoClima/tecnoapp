@@ -26,8 +26,6 @@ export default function TechnicalOrder() {
     dispatch(workOrderActions.searchWO(code));
   }, [code, dispatch]);
 
-  useEffect(() => console.log("order", order), [order]);
-
   function handlePrint(e) {
     e.preventDefault();
     adjustSignatures();

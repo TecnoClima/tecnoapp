@@ -193,7 +193,7 @@ export default function TechOrderForm() {
       setSubtasks(
         orderDetail.tech.subtasks
           .map(({ subtask, ...rest }) => ({ ...rest, ...subtask }))
-          .map(mapToFormSubtask)
+          .map(mapToFormSubtask),
       );
     }
     if (tech?.templateId) setTemplateId(tech.templateId);
@@ -564,7 +564,7 @@ export default function TechOrderForm() {
                 name="requester"
                 value={planned.requester || ""}
                 onInput={handlePlannedChange}
-                placeholder="Quien solicita..."
+                placeholder="Nombre y apellido"
               />
             </div>
           </WorkOrderCard>
