@@ -25,7 +25,7 @@ import Panel from "./pages/Panel";
 import Plan from "./pages/Plan";
 import Reports from "./pages/Reports/Reports";
 import TechOrder from "./pages/TechOrder";
-import TechnicalOrder from "./pages/TechOrderPrint/index.js";
+import TechOrderPrint from "./pages/TechOrderPrint/index.js";
 import WorkOrder from "./pages/WorkOrder";
 import WorkOrders from "./pages/WorkOrders";
 
@@ -52,21 +52,21 @@ function App() {
 
   useEffect(
     () => Object.keys(access).length === 3 && setLoading(false),
-    [access],
+    [access]
   );
 
   useEffect(() => {
     console.log(
       "%c🚀 Aplicación web desarrollada por Leo Monay 🚀",
-      "color: #00ff00; font-size: 20px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); background: linear-gradient(45deg, #ff6b6b, #4ecdc4); padding: 10px; border-radius: 10px;",
+      "color: #00ff00; font-size: 20px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); background: linear-gradient(45deg, #ff6b6b, #4ecdc4); padding: 10px; border-radius: 10px;"
     );
     console.log(
       "%c💼 Visita mi portfolio: https://leomonay.github.io/",
-      "color: #ffffff; font-size: 16px; font-weight: bold; background: linear-gradient(45deg, #667eea, #764ba2); padding: 8px; border-radius: 8px; margin-top: 5px;",
+      "color: #ffffff; font-size: 16px; font-weight: bold; background: linear-gradient(45deg, #667eea, #764ba2); padding: 8px; border-radius: 8px; margin-top: 5px;"
     );
     console.log(
       "%c🔗 GitHub: https://github.com/leomonay",
-      "color: #ffffff; font-size: 14px; background: #333; padding: 6px; border-radius: 6px; margin-top: 3px;",
+      "color: #ffffff; font-size: 14px; background: #333; padding: 6px; border-radius: 6px; margin-top: 3px;"
     );
   }, []);
 
@@ -146,7 +146,7 @@ function App() {
             <Route
               exact
               path={"/orden-tecnica/:code/imprimir"}
-              element={<TechnicalOrder />}
+              element={<TechOrderPrint />}
             />
           )}
           {access.isAdmin && (

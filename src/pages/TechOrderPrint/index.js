@@ -1,25 +1,39 @@
 import { faPrint } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
-import { TechOrderData } from "../../components/TechnicalOrder.js/TechOrderData";
-import { DataField } from "../../components/TechnicalOrder.js/TechOrderDataField";
-import { TechOrderDeviceData } from "../../components/TechnicalOrder.js/TechOrderDeviceData";
-import TechOrderFailureData from "../../components/TechnicalOrder.js/TechOrderFailureData";
-import TechOrderHeader from "../../components/TechnicalOrder.js/TechOrderHeader";
-import { TechOrderSignatures } from "../../components/TechnicalOrder.js/TechOrderSignatures";
-import { TechOrderSubTaskList } from "../../components/TechnicalOrder.js/TechOrderSubTaskList";
+import { TechOrderData } from "../../components/TechnicalOrder/TechOrderData";
+import { DataField } from "../../components/TechnicalOrder/TechOrderDataField";
+import { TechOrderDeviceData } from "../../components/TechnicalOrder/TechOrderDeviceData";
+import TechOrderFailureData from "../../components/TechnicalOrder/TechOrderFailureData";
+import TechOrderHeader from "../../components/TechnicalOrder/TechOrderHeader";
+import { TechOrderSignatures } from "../../components/TechnicalOrder/TechOrderSignatures";
+import { TechOrderSubTaskList } from "../../components/TechnicalOrder/TechOrderSubTaskList";
 import { usePrintSignatures } from "../../hooks/print.hooks";
+import { useDispatch, useSelector } from "react-redux";
+import { workOrderActions } from "../../actions/StoreActions";
+import { useParams } from "react-router-dom";
 
 export default function TechnicalOrder() {
   const technicalOrder = useRef(null);
   const adjustSignatures = usePrintSignatures();
+  const { code } = useParams();
 
   function handlePrint(e) {
     e.preventDefault();
     adjustSignatures();
     window.print();
   }
+
+  const { orderDetail } = useSelector((s) => s.workOrder);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(workOrderActions.searchWO(code));
+  }, [code, dispatch]);
+
+  useEffect(() => console.log(orderDetail), [orderDetail]);
+
   const order = {
     calification: 5,
     generator: { name: "Nicolas Andrada" },

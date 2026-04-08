@@ -183,7 +183,7 @@ export default function TechOrderForm() {
       setSubtasks(
         orderDetail.tech.subtasks
           .map(({ subtask, ...rest }) => ({ ...rest, ...subtask }))
-          .map(mapToFormSubtask),
+          .map(mapToFormSubtask)
       );
     }
     if (tech?.templateId) setTemplateId(tech.templateId);
@@ -299,7 +299,7 @@ export default function TechOrderForm() {
         <SuccessModal
           open={true}
           message={`Orden técnica N° ${orderResult.success} guardada exitosamente.`}
-          link={orderCode ? null : `/ordenes-tecnicas/${orderResult.success}`}
+          link={orderCode ? null : `/orden-tecnica/${orderResult.success}`}
           close={handleSuccess}
         />
       )}
@@ -579,7 +579,9 @@ export default function TechOrderForm() {
                 <div className="flex gap-4 ml-auto">
                   <button
                     type="button"
-                    className={`btn btn-sm btn-outline ${templateName ? "btn-primary" : "btn-error"}`}
+                    className={`btn btn-sm btn-outline ${
+                      templateName ? "btn-primary" : "btn-error"
+                    }`}
                     onClick={() => setTemplateModal(true)}
                   >
                     <FontAwesomeIcon
@@ -589,7 +591,9 @@ export default function TechOrderForm() {
                   </button>
                   <button
                     type="button"
-                    className={`btn btn-sm btn-outline ${templateName ? "btn-error" : "btn-primary"}`}
+                    className={`btn btn-sm btn-outline ${
+                      templateName ? "btn-error" : "btn-primary"
+                    }`}
                     onClick={() => setAddSubtaskModal(true)}
                   >
                     <FontAwesomeIcon icon={faTools} /> Agregar subtarea
