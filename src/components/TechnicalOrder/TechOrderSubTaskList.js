@@ -17,12 +17,12 @@ export function TechOrderSubTaskList({ subtasks = [] }) {
             <div className="border p-1">{item.subtask?.devicePart.label}</div>
             <div className="border p-1">{item.subtask.procedure}</div>
             <div className="border p-1">
-              {item.subtask.options ? (
+              {item.subtask.options?.[0] ? (
                 <div className="flex justify-center gap-6">
                   {item.subtask.options.map((option) => (
                     <div key={option} className="flex items-center gap-2">
                       <input
-                        name={option}
+                        name={item.subtask._id}
                         type="radio"
                         className="radio"
                         readOnly
@@ -33,7 +33,7 @@ export function TechOrderSubTaskList({ subtasks = [] }) {
                   ))}
                 </div>
               ) : (
-                <>{item.value}</>
+                <div>{item.value}</div>
               )}
             </div>
           </Fragment>

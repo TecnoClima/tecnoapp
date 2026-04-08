@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import TaskList from "../../components/Panel/TaskLists";
 import { getDeviceFromList } from "../../actions/deviceActions";
-import { planActions } from "../../actions/StoreActions";
+import { planActions, workOrderActions } from "../../actions/StoreActions";
 import AssignedWO from "../../components/Panel/AssignedWO";
-import { workOrderActions } from "../../actions/StoreActions";
+import TaskList from "../../components/Panel/TaskLists";
 
 export default function Panel() {
   const { assignedOrders } = useSelector((state) => state.workOrder);
@@ -74,7 +73,7 @@ export default function Panel() {
         (date) =>
           new Date(date.date) < new Date() &&
           new Date(date.date) > new Date(mostRecentDone.date) &&
-          date.completed < 100
+          date.completed < 100,
       );
       return !!hasReallyPendant;
     });
@@ -84,26 +83,24 @@ export default function Panel() {
         (element) =>
           pendantCodes.includes(element.code) &&
           new Date(element.date) < new Date() &&
-          element.completed < 100
-      )
+          element.completed < 100,
+      ),
     );
     setCurrent(
       plan.filter(
         (element) =>
           new Date(element.date).toLocaleDateString() ===
-          lastMonday.toLocaleDateString()
-      )
+          lastMonday.toLocaleDateString(),
+      ),
     );
     setNext(
       plan.filter(
         (element) =>
           new Date(element.date).toLocaleDateString() ===
-          nextMonday.toLocaleDateString()
-      )
+          nextMonday.toLocaleDateString(),
+      ),
     );
   }, [plan]);
-
-  useEffect(() => console.log("isFetching", isFetching), [isFetching]);
 
   return (
     <div className="page-container">
