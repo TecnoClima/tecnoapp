@@ -123,7 +123,7 @@ export default function TechOrderForm() {
   const [planned, setPlanned] = useState(EMPTY_PLANNED);
   const [diagnostic, setDiagnostic] = useState(EMPTY_DIAGNOSTIC);
   const [saving, setSaving] = useState(false);
-  useGetPlantWorkers();
+  useGetPlantWorkers({ plant: order?.device?.plant });
 
   useEffect(() => {
     dispatch(optionActions.getList());
@@ -457,7 +457,11 @@ export default function TechOrderForm() {
                 field="Responsable"
                 name="responsible"
                 options={
-                  workersList?.map((w) => ({ id: w._id, name: w.name })) || []
+                  workersList
+                    ?.filter(({ plant }) =>
+                      selectedDevice ? selectedDevice.plant === plant : true,
+                    )
+                    .map((w) => ({ id: w._id, name: w.name })) || []
                 }
                 displayEmpty
                 value={order.responsible}
@@ -467,7 +471,11 @@ export default function TechOrderForm() {
                 field="Supervisor"
                 name="supervisor"
                 options={
-                  supervisors?.map((w) => ({ id: w._id, name: w.name })) || []
+                  supervisors
+                    ?.filter(({ plant }) =>
+                      selectedDevice ? selectedDevice.plant === plant : true,
+                    )
+                    .map((w) => ({ id: w._id, name: w.name })) || []
                 }
                 displayEmpty
                 value={order.supervisor._id || order.supervisor}
