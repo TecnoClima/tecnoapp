@@ -22,7 +22,7 @@ export default function deviceReducer(state = initialState, action) {
       let newList = [...state.deviceFullList];
       if (success) {
         let index = state.deviceFullList.findIndex(
-          (d) => d.code === success.code
+          (d) => d.code === success.code,
         );
         newList[index] = success;
       }
@@ -54,12 +54,13 @@ export default function deviceReducer(state = initialState, action) {
         deviceResult: action.payload,
       };
     case "DEVICE_DETAIL":
+      console.log("DEVICE_DETAIL", action.payload);
       if (action.payload && action.payload.error)
         return { ...state, deviceResult: { error: action.payload.error } };
       return {
         ...state,
         selectedDevice: action.payload,
-        deviceResult: { success: action.payload.code },
+        deviceResult: { success: action.payload?.code },
         deviceFullList: state.deviceFullList[0]
           ? state.deviceFullList
               .map((d) => d.code)

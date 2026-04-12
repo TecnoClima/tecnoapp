@@ -116,13 +116,15 @@ export default function WorkOrder() {
 
   // if orderDetail, fill order with detail
   useEffect(() => {
-    if (!orderDetail.code) return;
-    if (orderDetail.type === "tech") {
-      navigate(`/orden-tecnica/${orderDetail.code}`);
+    if (
+      orderDetail?.type === "tech" ||
+      (!orderCode && userData.plant === "TOYOTA")
+    ) {
+      navigate(`/orden-tecnica/${orderDetail.code || "nueva"}`);
     }
     const editOrder = { ...orderDetail };
     const device = orderDetail.device;
-    dispatch(deviceActions.setDevice(device));
+    if (device) dispatch(deviceActions.setDevice(device));
     delete editOrder.device;
     setInterventions(orderDetail.interventions);
     delete editOrder.interventions;

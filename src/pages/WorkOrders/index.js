@@ -232,7 +232,10 @@ export default function WorkOrders() {
             {isAdmin && <ReasignateOrders />}
             <Link
               to="/ots/new"
-              onClick={() => dispatch(deviceActions.resetDevice())}
+              onClick={() => {
+                dispatch(deviceActions.resetDevice());
+                dispatch(deviceActions.resetResult());
+              }}
               className="btn btn-sm btn-success flex-grow"
             >
               <FontAwesomeIcon icon={faToolbox} />
