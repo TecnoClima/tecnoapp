@@ -1,11 +1,17 @@
 import { faCommentDots, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { setPermissions } from "./permissions";
 
 export default function SubtaskItem({ subtask, onChange }) {
   const { _id, procedure, options, value, comments } = subtask;
+  const { userData } = useSelector((state) => state.people);
+  const { orderDetail: order } = useSelector((state) => state.workOrder);
 
   const [enableComment, setEnableComment] = useState(!!comments);
+
+  const permissions = setPermissions(userData, order);
 
   function handleValueChange(e) {
     onChange(_id, { value: e.target.value });
@@ -39,6 +45,7 @@ export default function SubtaskItem({ subtask, onChange }) {
                     key={opt}
                     value={opt}
                     onClick={handleValueChange}
+                    disabled={!permissions.updateSubtasks}
                   >
                     {opt}
                   </button>
@@ -50,6 +57,7 @@ export default function SubtaskItem({ subtask, onChange }) {
               className="input input-sm input-bordered w-60"
               placeholder="Valor"
               value={value}
+              disabled={!permissions.updateSubtasks}
               onChange={handleValueChange}
             />
           )}
@@ -57,6 +65,7 @@ export default function SubtaskItem({ subtask, onChange }) {
             <button
               onClick={() => setEnableComment(true)}
               className={`btn btn-sm btn-info btn-outline ml-auto md::ml-0`}
+              disabled={!permissions.updateSubtasks}
             >
               <FontAwesomeIcon icon={faPlus} />
               <FontAwesomeIcon icon={faCommentDots} />

@@ -54,7 +54,6 @@ export default function deviceReducer(state = initialState, action) {
         deviceResult: action.payload,
       };
     case "DEVICE_DETAIL":
-      console.log("DEVICE_DETAIL", action.payload);
       if (action.payload && action.payload.error)
         return { ...state, deviceResult: { error: action.payload.error } };
       return {
