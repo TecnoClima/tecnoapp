@@ -24,7 +24,13 @@ export default function WorkOrderListItem({
         </div>
         <div className="pt-1 w-80 flex-grow ">
           <div className="flex w-full">
-            <ClassBadge cls={order.class} />
+            <ClassBadge
+              cls={
+                order.class ||
+                order.tech?.planned?.classification?.label ||
+                "Sin especificar"
+              }
+            />
             <StatusBadge className="text-xs" order={order} />
           </div>
           <div className="flex gap-3 py-1 px-2">
@@ -45,7 +51,7 @@ export default function WorkOrderListItem({
           <div className="text-xs bg-neutral/50 px-1 ">Solicitó</div>
           <div className="px-1">
             {`${new Date(order.date).toLocaleDateString()} - 
-    ${order.solicitor}`}
+    ${order.solicitor || order.requester || ""}`}
           </div>
           <div className="text-xs bg-neutral/50 px-1 ">Supervisa:</div>
           <div className="px-1">{order.supervisor}</div>

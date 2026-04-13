@@ -299,14 +299,13 @@ export default function TechOrderForm() {
   }, [selectedDevice]);
 
   function handleClose() {
-    setSaving(true);
     setOrder({ ...order, status: "Cerrada" });
     setTimeout(handleSave, 1000);
   }
 
   function handleSuccess() {
     dispatch(workOrderActions.resetOrderResult());
-    navigate("/admin/ordenes-tecnicas");
+    navigate("/ots");
   }
 
   useEffect(() => {

@@ -71,9 +71,15 @@ function DropdowOptions({
   className = "",
   top,
 }) {
-  const options = [...new Set(list.map((order) => order[field]))].sort((a, b) =>
-    a > b ? 1 : -1
-  );
+  const options = [
+    ...new Set(
+      list.map((order) => {
+        return typeof order[field] === "string"
+          ? order[field].trim()
+          : order[field];
+      }),
+    ),
+  ].sort((a, b) => (a > b ? 1 : -1));
   function handleClick(e) {
     e.preventDefault();
     onClick(e);
@@ -219,12 +225,12 @@ export default function OrdersFilters({
   const applyFilters = useCallback(
     (filters) => {
       const newList = workOrderList.filter((order) =>
-        checkFilters(order, filters)
+        checkFilters(order, filters),
       );
       setFilteredList(newList);
       setFilters(filters);
     },
-    [workOrderList, setFilteredList, setFilters]
+    [workOrderList, setFilteredList, setFilters],
   );
 
   function removeKey(e) {
@@ -386,7 +392,7 @@ export default function OrdersFilters({
                     e.preventDefault();
                     setTimelapse(
                       timelapses.find((t) => t.label === e.currentTarget.value)
-                        .label
+                        .label,
                     );
                   }}
                   onDelete={null}

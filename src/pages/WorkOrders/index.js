@@ -284,7 +284,7 @@ export default function WorkOrders() {
                 {isAdmin && <div className="w-11">Eliminar</div>}
               </div>
               {filteredList
-                .filter(({ type }) => type !== "tech")
+                // .filter(({ type }) => type !== "tech")
                 .slice((currentPage - 1) * size, currentPage * size)
                 .map((order) => (
                   <WorkOrderListItem

@@ -141,7 +141,7 @@ export default function WorkOrder() {
       if (!order[key]) check = false;
     }
 
-    if (!order.description && !interventions[0]) check = false;
+    if (!order.description && !interventions?.[0]) check = false;
     setAllowSaving(check);
   }, [interventions, device, order]);
 
