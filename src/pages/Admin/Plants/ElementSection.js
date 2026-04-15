@@ -23,6 +23,7 @@ export default function ElementSection(props) {
     setData,
     data,
     enableCreation,
+    disabled,
   } = props;
   const dispatch = useDispatch();
   const { plantResult } = useSelector((state) => state.plants);
@@ -62,14 +63,16 @@ export default function ElementSection(props) {
         )}
         <div className="flex w-full items-center justify-between gap-4 mb-1">
           <div className="card-title">{headersRef[item]}</div>
-          <button
-            className="btn btn-success btn-sm"
-            onClick={() => setCreation(true)}
-            disabled={!enableCreation}
-          >
-            <FontAwesomeIcon icon={faPlus} />
-            CREAR
-          </button>
+          {!disabled && (
+            <button
+              className="btn btn-success btn-sm"
+              onClick={() => setCreation(true)}
+              disabled={!enableCreation}
+            >
+              <FontAwesomeIcon icon={faPlus} />
+              CREAR
+            </button>
+          )}
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -87,11 +90,11 @@ export default function ElementSection(props) {
                       item === "servicePoint"
                         ? "btn-outline btn-secondary"
                         : data[item] && data[item].name === name
-                        ? "btn-primary"
-                        : "btn-outline btn-primary"
+                          ? "btn-primary"
+                          : "btn-outline btn-primary"
                     } flex w-20 min-h-8 h-full py-1 flex-grow justify-start items-center`}
                     key={"divCuerpo" + name}
-                    onClick={(e) => handleSetData(e)}
+                    onClick={disabled ? undefined : (e) => handleSetData(e)}
                   >
                     <div>
                       <div className="text-start">
@@ -111,30 +114,35 @@ export default function ElementSection(props) {
                     </div>
                   </button>
 
-                  <button
-                    className="btn join-item btn-error h-full min-h-0"
-                    title="Eliminar"
-                    onClick={(e) => handleDeleteData(e, element.code)}
-                  >
-                    <i className="fas fa-trash-alt" />
-                  </button>
-                  <button
-                    className="btn join-item btn-info btn-sm h-full min-h-0"
-                    title="Edit"
-                    key={"edit" + element}
-                    value={element}
-                    onClick={() => setEditElement(element)}
-                  >
-                    <i className="fas fa-pencil-alt" />
-                  </button>
-                  {editElement && (
-                    <CreateElement
-                      close={() => setEditElement(null)}
-                      save={update}
-                      item={item}
-                      element={editElement}
-                      data={data}
-                    />
+                  {!disabled && (
+                    <>
+                      <button
+                        className="btn join-item btn-error h-full min-h-0"
+                        title="Eliminar"
+                        onClick={(e) => handleDeleteData(e, element.code)}
+                      >
+                        <i className="fas fa-trash-alt" />
+                      </button>
+                      <button
+                        className="btn join-item btn-info btn-sm h-full min-h-0"
+                        title="Edit"
+                        key={"edit" + element}
+                        value={element}
+                        onClick={() => setEditElement(element)}
+                      >
+                        <i className="fas fa-pencil-alt" />
+                      </button>
+
+                      {editElement && (
+                        <CreateElement
+                          close={() => setEditElement(null)}
+                          save={update}
+                          item={item}
+                          element={editElement}
+                          data={data}
+                        />
+                      )}
+                    </>
                   )}
                 </div>
               );

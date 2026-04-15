@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import { plantActions } from "../../../actions/StoreActions";
+import { checkHasPlant, checkIsAdmin } from "../../../utils/Permissions";
 
 export function PlantSelector({ disabled, onSelect }) {
   const [searchParams] = useSearchParams();
@@ -19,7 +20,8 @@ export function PlantSelector({ disabled, onSelect }) {
     }
   }, [plantCode, dispatch, plantList]);
 
-  const isAdmin = userData.access === "Admin";
+  const isAdmin = checkIsAdmin(userData);
+  const hasPlant = checkHasPlant(userData);
 
   useEffect(() => {
     if (requested) return;
@@ -31,15 +33,11 @@ export function PlantSelector({ disabled, onSelect }) {
 
   useEffect(() => {
     if (!plantCode && !selectedPlant?.name && plantList[0]) {
-      dispatch(
-        plantActions.setPlant(
-          isAdmin
-            ? undefined
-            : userData.plant
-              ? plantList.find((p) => p.name === userData.plant)
-              : undefined,
-        ),
-      );
+      if (userData.plant) {
+        const plant = plantList.find((p) => p.name === userData.plant);
+        dispatch(plantActions.setPlant(plant));
+        onSelect && onSelect(plant);
+      }
     }
   }, [userData, selectedPlant, plantList, dispatch, isAdmin]);
 
@@ -60,7 +58,7 @@ export function PlantSelector({ disabled, onSelect }) {
         className="select join-item select-sm w-20 flex-grow px-1"
         name="plant"
         value={selectedPlant?.name}
-        disabled={disabled}
+        disabled={disabled || hasPlant}
         onChange={handleSelect}
       >
         <option value="">Seleccione</option>

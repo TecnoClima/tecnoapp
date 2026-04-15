@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deviceActions } from "../../../actions/StoreActions";
 import { appConfig } from "../../../config";
+import { checkHasPlant } from "../../../utils/Permissions";
 import ErrorMessage from "../../forms/ErrorMessage";
 const { headersRef } = appConfig;
 // const unassigned = "SIN PROGRAMA ASIGNADO";
@@ -160,6 +161,7 @@ export default function DeviceFilters({
   const [errors, setErrors] = useState({});
   const closeSidebar = useRef(null);
   const dispatch = useDispatch();
+  const hasPlant = checkHasPlant(userData);
 
   // get the filters
   useEffect(() => {
@@ -248,7 +250,7 @@ export default function DeviceFilters({
                 <FontAwesomeIcon icon={faTimes} className="h-5 mx-1" />
               </button>
             </div>
-            {userData.access === "Admin" && !hidePlant && (
+            {!hasPlant && !hidePlant && (
               <FilterSelect
                 id="plant"
                 value={filters.plant}

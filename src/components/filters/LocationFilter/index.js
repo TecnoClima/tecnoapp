@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { plantActions } from "../../../actions/StoreActions";
+import { checkHasPlant } from "../../../utils/Permissions";
 import { FilterInput, FilterSelect } from "../DeviceFilters/newFilters";
 
 export default function LocationFilter(props) {
@@ -13,14 +14,21 @@ export default function LocationFilter(props) {
   } = useSelector((state) => state.plants);
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState(
-    userData.plant ? { plant: userData.plant } : {}
+    userData.plant ? { plant: userData.plant } : {},
   );
+  const hasPlant = checkHasPlant(userData);
+
+  useEffect(() => {
+    if (userData) {
+      setFilters({ plant: userData.plant });
+    }
+  }, [userData]);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const newFilters = {};
-    if (plantList.length === 1) {
+    const newFilters = userData.plant ? { plant: userData.plant } : {};
+    if (!newFilters.plant) {
       newFilters.plant = plantList[0].name;
       if (areaList.length === 1) {
         newFilters.area = areaList[0].name;
@@ -96,6 +104,7 @@ export default function LocationFilter(props) {
           value={filters.plant}
           options={plantList.map((p) => p.name)}
           onSelect={setFilter}
+          disabled={hasPlant}
           noLabel
           placeholder="Planta"
         />

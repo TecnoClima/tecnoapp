@@ -313,6 +313,11 @@ export default function TechOrderForm() {
   }, [orderResult]);
 
   const canSave = !!selectedDevice._id && !saving;
+  const canClose =
+    !!selectedDevice._id &&
+    subtasks.length > 0 &&
+    !subtasks.find((s) => !s.value);
+
   const percentProgress = order?.tech?.subtasks
     ? order.tech.subtasks.filter(
         ({ value }) => value !== null && value !== undefined && value !== "",
@@ -796,7 +801,7 @@ export default function TechOrderForm() {
             <button
               className="btn btn-sm btn-success ml-2"
               onClick={handleClose}
-              disabled={!canSave || !permissions.closeOrder}
+              disabled={!canSave && !permissions.closeOrder && canClose}
             >
               <FontAwesomeIcon icon={faTableCellsRowLock} />
               CERRAR

@@ -1,10 +1,10 @@
 export function setPermissions(userData, order) {
   const isNewOrder = !order?.code;
 
-  const isAdmin = userData.access === "admin";
+  const isAdmin = userData.access?.toLowerCase() === "admin";
   const isSupervisor =
-    userData.access === "supervisor" &&
-    order?.supervisor?._id === userData.idNumber;
+    userData.access?.toLowerCase() === "supervisor" &&
+    order?.supervisor?.idNumber === userData.id;
 
   const isAuthor = order?.generatedBy?._id === userData._id;
   const isResponsible = order?.responsible?._id === userData._id;

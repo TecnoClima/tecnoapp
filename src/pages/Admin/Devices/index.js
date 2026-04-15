@@ -1,29 +1,29 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { deviceActions } from "../../../actions/StoreActions";
-import CreateDevice from "./CreateDevice";
-import DeviceReport from "./DeviceReport";
-import { FormSelector } from "../../../components/forms/FormInput";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendarAlt,
   faEye,
   faSnowflake,
 } from "@fortawesome/free-regular-svg-icons";
 import {
+  faBackspace,
   faBolt,
+  faEdit,
   faFan,
   faGlobe,
+  faPlus,
   faStar,
   faTable,
   faTools,
-  faEdit,
   faTrashAlt,
-  faBackspace,
-  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { deviceActions } from "../../../actions/StoreActions";
+import { FormSelector } from "../../../components/forms/FormInput";
 import Pagination from "../../../components/Paginate/Pagination";
+import CreateDevice from "./CreateDevice";
+import DeviceReport from "./DeviceReport";
 
 // servicePoints,active
 export default function DeviceAdmin() {
@@ -38,23 +38,25 @@ export default function DeviceAdmin() {
   const [nameFilter, setNameFilter] = useState("");
   const dispatch = useDispatch();
   const [page, setPage] = useState({ first: 0, size: 30 });
+  const userPlant = userData?.plant;
 
   useEffect(() => {
     if (loading) return;
     if (filteredList[0]) setLoading(false);
     if (!filteredList[0]) {
-      dispatch(
-        deviceActions.getFullList(
-          userData.access === "Admin" ? undefined : userData.plant
-        )
-      );
+      dispatch(deviceActions.getFullList(userPlant || undefined));
       setLoading(true);
     }
-  }, [loading, userData, filteredList, dispatch]);
+  }, [loading, userPlant, filteredList, dispatch]);
 
   useEffect(() => {
     if (deviceFullList && deviceFullList[0]) setFilteredList(deviceFullList);
   }, [deviceFullList]);
+  useEffect(() => {
+    if (userPlant) {
+      setFilters({ plant: userPlant });
+    }
+  }, [userPlant]);
 
   useEffect(() => {
     if (filteredList[0])
@@ -63,25 +65,26 @@ export default function DeviceAdmin() {
           caption: "Planta",
           name: "plant",
           values: [...new Set(filteredList.map((device) => device.plant))].sort(
-            (a, b) => (a > b ? 1 : -1)
+            (a, b) => (a > b ? 1 : -1),
           ),
+          disabled: !!userPlant,
         },
         {
           caption: "Area",
           name: "area",
           values: [...new Set(filteredList.map((device) => device.area))].sort(
-            (a, b) => (a > b ? 1 : -1)
+            (a, b) => (a > b ? 1 : -1),
           ),
         },
         {
           caption: "Linea",
           name: "line",
           values: [...new Set(filteredList.map((device) => device.line))].sort(
-            (a, b) => (a > b ? 1 : -1)
+            (a, b) => (a > b ? 1 : -1),
           ),
         },
       ]);
-  }, [filteredList]);
+  }, [filteredList, userPlant]);
 
   useEffect(
     () =>
@@ -97,9 +100,9 @@ export default function DeviceAdmin() {
           )
             check = false;
           return check;
-        })
+        }),
       ),
-    [deviceFullList, filters, nameFilter]
+    [deviceFullList, filters, nameFilter],
   );
 
   function setfilter(e) {
@@ -109,7 +112,10 @@ export default function DeviceAdmin() {
     value && value !== "Seleccione"
       ? (newFilters[name] = value)
       : delete newFilters[name];
-    setFilters(newFilters);
+    setFilters({
+      newFilters,
+      ...(userPlant ? { plant: userPlant } : {}),
+    });
   }
   function deleteFilter(e) {
     e.preventDefault();
@@ -157,6 +163,7 @@ export default function DeviceAdmin() {
               options={field.values}
               value={filters[field.name] || ""}
               onSelect={setfilter}
+              disabled={field.disabled}
             />
             <button
               value={field.name}
@@ -165,7 +172,7 @@ export default function DeviceAdmin() {
                 filters[field.name] ? "opacity-100" : "opacity-0"
               }`}
               onClick={deleteFilter}
-              disabled={!filters[field.name]}
+              disabled={!filters[field.name] || field.disabled}
             >
               <FontAwesomeIcon icon={faBackspace} />
             </button>
@@ -248,8 +255,8 @@ export default function DeviceAdmin() {
                     {device.powerKcal
                       ? Math.floor(device.powerKcal / 3000)
                       : device.power
-                      ? Math.floor(device.power / 3000)
-                      : "-"}
+                        ? Math.floor(device.power / 3000)
+                        : "-"}
                   </td>
                   <td className="text-center">
                     {device.refrigerant?.refrigerante ||
@@ -338,8 +345,8 @@ export default function DeviceAdmin() {
                     {device.powerKcal
                       ? Math.floor(device.powerKcal / 3000)
                       : device.power
-                      ? Math.floor(device.power / 3000)
-                      : "-"}{" "}
+                        ? Math.floor(device.power / 3000)
+                        : "-"}{" "}
                     TR)
                   </div>
                   <div className="device-info-item">

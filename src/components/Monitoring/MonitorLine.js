@@ -86,7 +86,7 @@ export default function MonitorLine({
                 {valorTemp}
               </div>
             </button>
-          )
+          ),
         )}
       </div>
     </div>

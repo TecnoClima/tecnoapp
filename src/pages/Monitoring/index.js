@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import { monitorActions } from "../../actions/monitoringActions";
 import FilterInput from "../../components/Monitoring/FilterInput";
 import MonitorLine from "../../components/Monitoring/MonitorLine";
+import { checkHasPlant } from "../../utils/Permissions";
 
 export default function Monitoring() {
+  const { userData } = useSelector((state) => state.people);
   const [data, setData] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -12,21 +15,30 @@ export default function Monitoring() {
   useEffect(() => {
     monitorActions.list((arg) => setData(arg));
   }, []);
+  const hasPlant = checkHasPlant(userData);
+
+  const imagesByPlant = {
+    "SAN NICOLAS": ["ternium.jpg", "logo siderar.jpg", "Screenshot_7.jpg"],
+  };
+  function filterByPlant({ imagen }) {
+    return hasPlant
+      ? (imagesByPlant[userData.plant] || []).includes(imagen)
+      : true;
+  }
 
   // Filtrar datos basado en el texto ingresado
   const filteredData = useMemo(() => {
     if (!filterText.trim()) {
-      return data;
+      return data.filter(filterByPlant);
     }
-
-    return data.filter((item) => {
+    return data.filter(filterByPlant).filter((item) => {
       const searchText = filterText.toLowerCase();
       return (
         item.equipo?.toLowerCase().includes(searchText) ||
         item.nombre?.toLowerCase().includes(searchText)
       );
     });
-  }, [data, filterText]);
+  }, [data, filterText, userData, hasPlant]);
 
   // Calcular datos paginados
   const paginatedData = useMemo(() => {

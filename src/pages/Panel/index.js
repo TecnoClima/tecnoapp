@@ -15,6 +15,7 @@ export default function Panel() {
   const [current, setCurrent] = useState([]);
   const [next, setNext] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
+  // const isAdmin = userData?.access === "admin";
 
   useEffect(() => {
     dispatch(workOrderActions.getAssignedOrders());
@@ -27,12 +28,14 @@ export default function Panel() {
   }, [isFetching, plan]);
 
   useEffect(() => {
-    if (userData && userData.user) {
-      const { plant, user, access } = userData;
+    if (userData?.user) {
+      const hasPlant = !!userData.plant;
       const year = new Date().getFullYear();
-      plant && access !== "admin"
-        ? setConditions({ year, plant, user })
-        : setConditions({ year });
+      const filters = { year };
+      const isAdmin = userData.access.toLowerCase() === "admin";
+      if (hasPlant) filters.plant = userData.plant;
+      if (!isAdmin) filters.user = userData.user;
+      setConditions(filters);
     }
   }, [userData]);
 

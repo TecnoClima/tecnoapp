@@ -12,18 +12,31 @@ import { appConfig } from "../../../config";
 const { headersRef } = appConfig;
 
 export default function AdminUsers() {
-  const { userList, userOptions } = useSelector((state) => state.people);
+  const { userList, userOptions, userData } = useSelector(
+    (state) => state.people,
+  );
   const { plantList } = useSelector((state) => state.plants);
-  const [options, setOption] = useState({ active: true });
+  const [options, setOptions] = useState({ active: true });
   const dispatch = useDispatch();
   const [userDetail, setUserDetail] = useState(null);
   const [filteredList, setFilteredList] = useState([]);
   const [nameFilter, setNameFilter] = useState("");
+  const userPlant = userData?.plant;
+  // ? plantList.find(({ name }) => name === userData.plant)
+  // : undefined;
 
   useEffect(() => {
     dispatch(peopleActions.getOptions());
     dispatch(plantActions.getPlants());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (userPlant) {
+      setOptions((prev) => ({ ...prev, plant: userPlant }));
+    }
+  }, [userPlant]);
+
+  useEffect(() => console.log("options", options), [options]);
 
   function setUserFilters(e) {
     const item = e.target.name;
@@ -36,12 +49,15 @@ export default function AdminUsers() {
     } else {
       newOption[item] = checkBox ? !checked : value;
     }
-    setOption(newOption);
+    setOptions({
+      ...newOption,
+      // , ...(userPlant ? { plant: userPlant } : {})
+    });
   }
 
   useEffect(
     () => dispatch(peopleActions.getAllUsers({ active: "all" })),
-    [dispatch]
+    [dispatch],
   );
 
   useEffect(() => {
@@ -64,7 +80,7 @@ export default function AdminUsers() {
         )
           check = false;
         return check;
-      })
+      }),
     );
   }, [userList, options, nameFilter]);
 
@@ -87,7 +103,9 @@ export default function AdminUsers() {
             label="Planta"
             options={[...plantList.map((p) => p.name), "SIN ASIGNAR"]}
             name="plant"
+            value={options.plant || ""}
             onSelect={setUserFilters}
+            disabled={!!userPlant}
           />
         </div>
         <div className="w-60 flex-grow">
