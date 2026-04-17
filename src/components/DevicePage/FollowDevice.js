@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deviceActions } from "../../actions/StoreActions";
-import { useEffect, useState } from "react";
 
 export default function FollowDevice() {
   const { userData } = useSelector((state) => state.people);
@@ -20,7 +20,7 @@ export default function FollowDevice() {
         following: !selectedDevice.following,
         follower: userData.user,
         followDate: new Date(),
-      })
+      }),
     );
   }
 
@@ -43,6 +43,7 @@ export default function FollowDevice() {
             value=""
             id="flexCheckDefault"
             checked={selectedDevice.following || false}
+            readOnly
             onChange={() => {}}
           />
         )}

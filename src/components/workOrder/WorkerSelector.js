@@ -9,6 +9,7 @@ export default function WorkerSelector({
   label,
   defaultValue,
   action,
+  order,
   permissions,
 }) {
   const [openModal, setOpenModal] = useState(false);
@@ -38,10 +39,13 @@ export default function WorkerSelector({
 
   const id = selected;
   const name = workersList.find(
-    (worker) => worker.idNumber === Number(id)
+    (worker) => worker.idNumber === Number(id),
   )?.name;
   const isEnabled =
-    permissions?.admin || permissions?.author || permissions?.supervisor;
+    !order?.code ||
+    permissions?.admin ||
+    permissions?.author ||
+    permissions?.supervisor;
 
   return (
     <div className="flex sm:w-1/3 flex-grow">

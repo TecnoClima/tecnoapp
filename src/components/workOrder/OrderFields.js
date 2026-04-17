@@ -12,7 +12,7 @@ export function OrderField({
 }) {
   return (
     <div className={`join ${className || ""}`}>
-      <label
+      <div
         className="relative label input-xs md:input-sm md:text-xs bg-neutral w-28 join-item font-bold border border-base-200 text-ellipsis whitespace-nowrap overflow-hidden"
         placeholder="Search"
       >
@@ -25,7 +25,7 @@ export function OrderField({
             Req
           </div>
         )}
-      </label>
+      </div>
       {options ? (
         <select
           name={name}
@@ -57,14 +57,22 @@ export function OrderField({
 
 // Local field wrappers that match OrderField's visual style but support
 // type="date", type="number", and textarea.
-export function DateField({ field, name, value, onInput }) {
+export function DateField({ field, name, value, onInput, required }) {
   return (
     <div className="join">
       <div
         title={field}
-        className="label input-xs md:input-sm text-ellipsis whitespace-nowrap overflow-hidden md:text-xs bg-neutral w-28 join-item font-bold border border-base-200"
+        className="relative label input-xs md:input-sm text-ellipsis whitespace-nowrap overflow-hidden md:text-xs bg-neutral w-28 join-item font-bold border border-base-200"
       >
         {field}
+        {required && (
+          <div
+            title="campo requerido"
+            className="absolute top-1 right-1 badge badge-primary badge-xs font-normal"
+          >
+            Req
+          </div>
+        )}
       </div>
       <input
         type="date"
@@ -77,7 +85,14 @@ export function DateField({ field, name, value, onInput }) {
   );
 }
 
-export function NumberField({ field, name, value, onInput, placeholder }) {
+export function NumberField({
+  field,
+  name,
+  value,
+  onInput,
+  placeholder,
+  required,
+}) {
   return (
     <div className="join">
       <div
@@ -85,6 +100,14 @@ export function NumberField({ field, name, value, onInput, placeholder }) {
         className="relative label input-xs md:input-sm md:text-xs bg-neutral w-28 join-item font-bold border border-base-200 text-ellipsis whitespace-nowrap overflow-hidden"
       >
         {field}
+        {required && (
+          <div
+            title="campo requerido"
+            className="absolute top-1 right-1 badge badge-primary badge-xs font-normal"
+          >
+            Req
+          </div>
+        )}
       </div>
       <input
         type="number"
@@ -105,11 +128,20 @@ export function TextAreaField({
   value,
   onInput,
   placeholder,
+  required,
 }) {
   return (
     <div className={`join join-vertical md:join-horizontal ${className}`}>
-      <div className="label input-xs md:text-xs bg-neutral md:w-28 join-item font-bold border border-base-200 flex md:items-start md:pt-2 h-8 md:h-full">
+      <div className="relative label input-xs md:text-xs bg-neutral md:w-28 join-item font-bold border border-base-200 flex md:items-start md:pt-2 h-8 md:h-full">
         {field}
+        {required && (
+          <div
+            title="campo requerido"
+            className="absolute top-1 right-1 badge badge-primary badge-xs font-normal"
+          >
+            Req
+          </div>
+        )}
       </div>
       <textarea
         name={name}

@@ -123,10 +123,11 @@ export default function WorkOrder() {
       navigate(`/orden-tecnica/${orderDetail.code || "nueva"}`);
     }
     const editOrder = { ...orderDetail };
-    const device = orderDetail.device;
+    const { device, interventions: orderDetailInterventions } =
+      orderDetail || {};
     if (device) dispatch(deviceActions.setDevice(device));
     delete editOrder.device;
-    setInterventions(orderDetail.interventions);
+    if (orderDetailInterventions) setInterventions(orderDetailInterventions);
     delete editOrder.interventions;
     setMinProgress(orderDetail.completed || 0);
     setForPlan(!!editOrder.taskDate);
@@ -305,9 +306,6 @@ export default function WorkOrder() {
   }
   useEffect(() => orderResult && setSaving(false), [orderResult]);
 
-  // const isClosed = order.status === "Cerrada";
-  // const toClose = order.completed === 99 && !isClosed;
-
   return (
     <div className="page-container">
       {warnings[0] && (
@@ -360,7 +358,7 @@ export default function WorkOrder() {
           className="xl:max-w-[90%]"
         >
           <div className="flex flex-col overflow-y-auto h-[90%]">
-            <DeviceList close={() => setDeviceTable(false)} />
+            <DeviceList close={() => setDeviceTable(false)} hideLinks />
           </div>
         </ModalBase>
       )}
@@ -396,6 +394,7 @@ export default function WorkOrder() {
             label={"Responsable"}
             defaultValue={order.responsible}
             permissions={permissions}
+            order={order}
             action={(value) =>
               handleInputOrderData({ name: "responsible", value })
             }

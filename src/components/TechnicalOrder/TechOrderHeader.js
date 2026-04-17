@@ -1,6 +1,5 @@
 import logo from "../../assets/icons/logoTecnoclima.png";
 import { companyData } from "../../constants/OrderData";
-import { formatDate } from "../../utils/utils";
 
 export default function TechOrderHeader({ code, date }) {
   const { name, cuit } = companyData;

@@ -29,7 +29,9 @@ import {
 } from "../OrderFields";
 import WorkOrderCard from "../WorkOrderCard";
 import AddSubtaskModal from "./AddSubtaskModal";
+import { CloseButton } from "./SaveButton";
 import SubtasksSection from "./SubtasksSection";
+import { emptyToNull, validateOrderForClose } from "./TechOrderHelper";
 import TemplateModal from "./TemplateModal";
 import { mapToFormSubtask, toBackendSubtask } from "./helpers";
 import { setPermissions } from "./permissions";
@@ -69,13 +71,12 @@ const EMPTY_PLANNED = {
 const EMPTY_DIAGNOSTIC = {
   // Failure / Diagnostics
   failureType: "",
-  failureCause: "",
+  cause: "",
   method: "",
   severity: "",
   damageType: "",
   diagnostics: "",
   finalStatus: "",
-  cause: "",
   assetsDowntime: "",
 };
 
@@ -181,7 +182,7 @@ export default function TechOrderForm() {
     if (diagnostics) {
       const diagnosticFields = {};
       for (const [key, value] of Object.entries(diagnostics)) {
-        diagnosticFields[key] = value._id || value;
+        diagnosticFields[key] = value?._id || value;
       }
       setDiagnostic(diagnosticFields);
     }
@@ -262,11 +263,19 @@ export default function TechOrderForm() {
     ]);
   }
 
+  function handleClose(e) {
+    handleSave(e, { status: "Cerrada" });
+  }
+
   // ── save ──────────────────────────────────────────────────────────────────
-  function handleSave(e) {
+  function handleSave(e, overrides = {}) {
     e?.preventDefault();
     setSaving(true);
-    const { _id, code, ...restOrder } = order;
+
+    const finalOrder = { ...order, ...overrides };
+
+    const { _id, code, ...restOrder } = finalOrder;
+
     const payload = {
       type: "tech",
       device: selectedDevice._id,
@@ -275,14 +284,16 @@ export default function TechOrderForm() {
         ...tech,
         generatedBy: tech.generatedBy?._id || "",
         planned,
-        diagnostics: { ...diagnostic },
+        diagnostics: emptyToNull(diagnostic),
         ...(templateId && { templateId }),
         subtasks: subtasks.map(toBackendSubtask),
       },
     };
+
+    const { generatedBy, ...restTech } = payload.tech;
+    payload.tech = restTech;
+
     if (orderCode) {
-      const { generatedBy, ...restTech } = payload.tech;
-      payload.tech = restTech;
       dispatch(workOrderActions.updateTechOrder(orderDetail._id, payload));
     } else {
       dispatch(workOrderActions.newWorkOrder(payload));
@@ -297,11 +308,6 @@ export default function TechOrderForm() {
       });
     }
   }, [selectedDevice]);
-
-  function handleClose() {
-    setOrder({ ...order, status: "Cerrada" });
-    setTimeout(handleSave, 1000);
-  }
 
   function handleSuccess() {
     dispatch(workOrderActions.resetOrderResult());
@@ -318,10 +324,8 @@ export default function TechOrderForm() {
     subtasks.length > 0 &&
     !subtasks.find((s) => !s.value);
 
-  const percentProgress = order?.tech?.subtasks
-    ? order.tech.subtasks.filter(
-        ({ value }) => value !== null && value !== undefined && value !== "",
-      ).length / (order.tech.subtasks.length || 1)
+  const percentProgress = subtasks
+    ? subtasks.filter(({ value }) => !!value).length / (subtasks.length || 1)
     : "-";
 
   // ── render ────────────────────────────────────────────────────────────────
@@ -496,6 +500,7 @@ export default function TechOrderForm() {
                 display={!permissions.changeResponsible}
                 value={order.responsible}
                 onInput={handleOrderChange}
+                required={!order.responsible}
               />
               <OrderField
                 field="Supervisor"
@@ -511,6 +516,7 @@ export default function TechOrderForm() {
                 disabled={!permissions.changeSupervisor}
                 value={order.supervisor._id || order.supervisor}
                 onInput={handleOrderChange}
+                required={!(order.supervisor._id || order.supervisor)}
               />
               <NumberField
                 field="Duración estimada (hs)"
@@ -526,6 +532,7 @@ export default function TechOrderForm() {
                 value={order.registerDate}
                 disabled={permissions.changePlan}
                 onInput={handleOrderChange}
+                required={!order.registerDate}
               />
             </div>
           </WorkOrderCard>
@@ -557,6 +564,7 @@ export default function TechOrderForm() {
                 displayEmpty
                 disabled={permissions.changePlan}
                 onInput={handlePlannedChange}
+                required={!planned.priority}
               />
               <OrderField
                 field="Activador"
@@ -566,6 +574,7 @@ export default function TechOrderForm() {
                 displayEmpty
                 disabled={permissions.changePlan}
                 onInput={handlePlannedChange}
+                required={!planned.activator}
               />
               <OrderField
                 field="Clasificación"
@@ -576,6 +585,7 @@ export default function TechOrderForm() {
                 disabled={permissions.changePlan}
                 onInput={handlePlannedChange}
                 placeholder="Tipo de trabajo..."
+                required={!planned.classification}
               />
               <DateField
                 field="Inicio"
@@ -599,6 +609,7 @@ export default function TechOrderForm() {
                 disabled={permissions.changePlan}
                 onInput={handlePlannedChange}
                 placeholder="Horas"
+                required={!planned.worktime}
               />
               <NumberField
                 field="Tiempo parada (h)"
@@ -616,6 +627,7 @@ export default function TechOrderForm() {
                 disabled={permissions.changePlan}
                 onInput={handlePlannedChange}
                 placeholder="Nombre y apellido"
+                required={!planned.requester}
               />
             </div>
           </WorkOrderCard>
@@ -657,7 +669,7 @@ export default function TechOrderForm() {
                       templateName ? "btn-error" : "btn-primary"
                     }`}
                     onClick={() => setAddSubtaskModal(true)}
-                    disabeld={!permissions.updateSubtasks}
+                    disabled={!permissions.updateSubtasks}
                   >
                     <FontAwesomeIcon icon={faTools} /> Agregar subtarea
                   </button>
@@ -701,6 +713,7 @@ export default function TechOrderForm() {
                 displayEmpty
                 onInput={handleDiagnosticChange}
                 placeholder="Descripción del fallo..."
+                required={!diagnostic.failureType}
               />
               <OrderField
                 field="Causa falla"
@@ -711,6 +724,7 @@ export default function TechOrderForm() {
                 displayEmpty
                 onInput={handleDiagnosticChange}
                 placeholder="Causa raíz..."
+                required={!diagnostic.cause}
               />
               <OrderField
                 field="Detección"
@@ -720,6 +734,7 @@ export default function TechOrderForm() {
                 options={options.detection || []}
                 displayEmpty
                 onInput={handleDiagnosticChange}
+                required={!diagnostic.method}
               />
               <OrderField
                 field="Severidad"
@@ -729,6 +744,7 @@ export default function TechOrderForm() {
                 options={options.severity || []}
                 displayEmpty
                 onInput={handleDiagnosticChange}
+                required={!diagnostic.severity}
               />
               <OrderField
                 field="Daño"
@@ -739,6 +755,7 @@ export default function TechOrderForm() {
                 disabled={!permissions.diagnostics}
                 onInput={handleDiagnosticChange}
                 placeholder="Tipo de daño..."
+                required={!diagnostic.damageType}
               />
               <NumberField
                 field="Interrupción otros activos"
@@ -787,7 +804,7 @@ export default function TechOrderForm() {
               value={
                 percentProgress === "-"
                   ? "-"
-                  : Math.round(percentProgress * 100)
+                  : `${Math.round(percentProgress * 100)} %`
               }
               readOnly
             />
@@ -798,14 +815,24 @@ export default function TechOrderForm() {
             >
               <i className="fas fa-save" /> Guardar
             </button>
-            <button
-              className="btn btn-sm btn-success ml-2"
+            <CloseButton
               onClick={handleClose}
+              missingRequiredFields={
+                validateOrderForClose({
+                  device: selectedDevice,
+                  ...order,
+                  tech: {
+                    planned,
+                    diagnostics: diagnostic,
+                  },
+                }).missingFields
+              }
+              missingsubtaskValues={subtasks.filter(({ value }) => !value)}
               disabled={!canSave && !permissions.closeOrder && canClose}
             >
               <FontAwesomeIcon icon={faTableCellsRowLock} />
               CERRAR
-            </button>
+            </CloseButton>
           </div>
         </WorkOrderCard>
       </div>

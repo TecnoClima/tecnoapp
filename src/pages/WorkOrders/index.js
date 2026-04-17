@@ -193,9 +193,8 @@ export default function WorkOrders() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!yearList) return;
     dispatch(workOrderActions.getList(yearList));
-  }, [yearList, dispatch]);
+  }, [dispatch]);
 
   useEffect(() => {
     const date = filters.dateMin || filters.dateMax || null;

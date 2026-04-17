@@ -98,7 +98,7 @@ export default function AddIntervention(props) {
         let owner = workersList.find(
           (worker) =>
             cylinder.user &&
-            [worker.id, worker.idNumber].includes(cylinder.user.id)
+            [worker.id, worker.idNumber].includes(cylinder.user.id),
         );
         cylinder.owner = owner ? owner.name : "";
       }
@@ -110,10 +110,10 @@ export default function AddIntervention(props) {
 
   function saveIntervention() {
     const date = new Date(
-      `${intervention.date}T${intervention.time}:00`
+      `${intervention.date}T${intervention.time}:00`,
     ).toISOString();
     const endDate = new Date(
-      `${intervention.endDate}T${intervention.endTime}:00`
+      `${intervention.endDate}T${intervention.endTime}:00`,
     ).toISOString();
     if (intervention.id) {
       let update = {};
@@ -146,11 +146,11 @@ export default function AddIntervention(props) {
 
       const keptGases = gasUsages.map((gas) => gas.id);
       const deletedGases = data.refrigerant.filter(
-        (e) => !!e.code && !keptGases.includes(e.id)
+        (e) => !!e.code && !keptGases.includes(e.id),
       );
       if (deletedGases[0])
         dispatch(
-          deleteCylinderUsage(intervention.id, userData.id, deletedGases)
+          deleteCylinderUsage(intervention.id, userData.id, deletedGases),
         );
     } else {
       select({ ...intervention, refrigerant: gasUsages });
@@ -175,7 +175,7 @@ export default function AddIntervention(props) {
     dispatch(
       peopleActions.getWorkers({
         plant: userData.access === "Admin" ? undefined : userData.plant,
-      })
+      }),
     );
   }, [userData, dispatch]);
 
@@ -191,14 +191,14 @@ export default function AddIntervention(props) {
     !intervention.date || !intervention.time
       ? "Indicar Fecha Inicio con fecha y hora"
       : (intervention.endDate && !intervention.endTime) ||
-        (intervention.endTime && !intervention.endDate)
-      ? "Fecha Fin se indica con fecha y hora"
-      : intervention.date > intervention.endDate
-      ? "La Fecha Fin debe ser posterior a la Fecha Inicio"
-      : intervention.date === intervention.endDate &&
-        intervention.time > intervention.endTime
-      ? "La Hora Fin debe ser posterior a la Hora Inicio"
-      : null;
+          (intervention.endTime && !intervention.endDate)
+        ? "Fecha Fin se indica con fecha y hora"
+        : intervention.date > intervention.endDate
+          ? "La Fecha Fin debe ser posterior a la Fecha Inicio"
+          : intervention.date === intervention.endDate &&
+              intervention.time > intervention.endTime
+            ? "La Hora Fin debe ser posterior a la Hora Inicio"
+            : null;
 
   const displayPeoplePicker = intervention.date && !errorDate;
 
@@ -215,8 +215,8 @@ export default function AddIntervention(props) {
             className="flex-grow"
             label="Fecha Inicio"
             name="date"
-            value={intervention.date}
-            time={intervention.time}
+            value={intervention.date || ""}
+            time={intervention.time || ""}
             timeName="time"
             handleChange={handleChange}
             max={today}
@@ -227,8 +227,8 @@ export default function AddIntervention(props) {
             className="flex-grow"
             label="Fecha Fin"
             name="endDate"
-            value={intervention.endDate}
-            disabled={!intervention.date}
+            value={intervention.endDate || ""}
+            disabled={!intervention.date || ""}
             time={intervention.endTime}
             timeName="endTime"
             handleChange={handleChange}
@@ -367,7 +367,7 @@ export default function AddIntervention(props) {
                 </td>
                 <td className="p-0">
                   <b>{`${Number(
-                    gasUsages.map((e) => e.total).reduce((a, b) => a + b, 0)
+                    gasUsages.map((e) => e.total).reduce((a, b) => a + b, 0),
                   )} kg.`}</b>
                 </td>
                 <td></td>
