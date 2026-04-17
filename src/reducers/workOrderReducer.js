@@ -84,13 +84,13 @@ export default function workOrderReducer(state = initialState, action) {
       };
     case "ORDER_LIST":
       if (error) return { ...state, orderResult: { error } };
-      currentCodeList = state.workOrderList.map((order) => order.code);
-      let ordersToAdd = action.payload.filter(
-        (order) => !currentCodeList.includes(order.code),
-      );
+      // currentCodeList = state.workOrderList.map((order) => order.code);
+      // let ordersToAdd = action.payload.filter(
+      //   (order) => !currentCodeList.includes(order.code),
+      // );
       return {
         ...state,
-        workOrderList: [...state.workOrderList, ...ordersToAdd],
+        workOrderList: action.payload,
         // workOrderList: ordersToAdd,
       };
     case "ORDER_DETAIL":

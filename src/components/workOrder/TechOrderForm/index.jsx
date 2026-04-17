@@ -315,6 +315,13 @@ export default function TechOrderForm() {
   }
 
   useEffect(() => {
+    return () => {
+      const year = new Date().getFullYear();
+      dispatch(workOrderActions.getList(year));
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
     if (orderResult) setSaving(false);
   }, [orderResult]);
 
