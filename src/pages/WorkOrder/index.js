@@ -89,7 +89,8 @@ export default function WorkOrder() {
   useEffect(() => {
     setPermissions({
       author:
-        order.completed < 99 && (!order.code || order.userId === userData.id),
+        !(order.completed > 99) &&
+        (!order.code || order.userId === userData.id),
       admin: userData.access === "Admin",
       supervisor:
         userData.access === "Supervisor" &&
