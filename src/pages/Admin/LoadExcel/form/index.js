@@ -14,8 +14,8 @@ export function LoadLocations(props) {
         !!loc &&
         !locations
           .slice(0, i)
-          .find((sp) => !!sp && sp.servicePoint === loc.servicePoint)
-    )
+          .find((sp) => !!sp && sp.servicePoint === loc.servicePoint),
+    ),
   );
   const [toCreate, setToCreate] = useState([]);
   const [keys, setKeys] = useState([]);
@@ -66,117 +66,119 @@ export function LoadLocations(props) {
 
   useEffect(
     () => plantResult.success && dispatch(deviceActions.allOptions()),
-    [dispatch, plantResult]
+    [dispatch, plantResult],
   );
+
+  const hasPosted = plantResult.success || plantResult.error;
 
   return (
     <ModalBase
       open={true}
-      onClose={close}
+      onClose={handleClose}
       title="Lugares de servicios no encontrados en base de datos"
-      className="md:max-w-full"
+      className=""
     >
-      <form
-        className="flex flex-col gap-2 max-h-[75vh]"
-        onSubmit={(e) => handleSubmit(e)}
-      >
-        <p>
-          Por favor revise que hayan sido escritos correctamente y tilde los que
-          desee dar de alta en este momento
-        </p>
-        <button
-          className="btn btn-info btn-outline btn-sm mr-auto"
-          onClick={handleSelectAll}
+      {!hasPosted && (
+        <form
+          className="flex flex-col gap-2 max-h-[75vh]"
+          onSubmit={(e) => handleSubmit(e)}
         >
-          Seleccionar Todos
-        </button>
-        <div className="flex-grow overflow-y-auto">
-          <table className="table no-padding overflow-x-auto max-h-96">
-            <thead className="text-center">
-              <tr className="sticky top-0 bg-base-100">
-                {keys
-                  .filter((key) => key !== "checked")
-                  .map((key, index) => (
-                    <th key={index}>{headersRef[key] || key}</th>
-                  ))}
-                <th scope="col">Cargar</th>
-              </tr>
-            </thead>
-            <tbody>
-              {newLocations.map((location, index) => (
-                <tr
-                  key={index}
-                  className={
-                    location.checked ? "bg-success/20 text-success" : ""
-                  }
-                >
+          <p>
+            Por favor revise que hayan sido escritos correctamente y tilde los
+            que desee dar de alta en este momento
+          </p>
+          <button
+            className="btn btn-info btn-outline btn-sm mr-auto"
+            onClick={handleSelectAll}
+          >
+            Seleccionar Todos
+          </button>
+          <div className="flex-grow overflow-y-auto">
+            <table className="table no-padding overflow-x-auto max-h-96">
+              <thead className="text-center">
+                <tr className="sticky top-0 bg-base-100">
                   {keys
-                    .filter((key) => !extraKeys.includes(key))
-                    .map((key, i) => (
-                      <td key={i}>{location[key]}</td>
+                    .filter((key) => key !== "checked")
+                    .map((key, index) => (
+                      <th key={index}>{headersRef[key] || key}</th>
                     ))}
-                  {extraKeys.map((key, i) => (
-                    <td key={i}>
-                      <div className="flex w-full justify-center">
-                        <input
-                          className="checkbox"
-                          type="checkbox"
-                          name={key}
-                          id={index}
-                          checked={location[key] || false}
-                          onChange={(e) => onCheck(e)}
-                        />
-                      </div>
-                    </td>
-                  ))}
+                  <th scope="col">Cargar</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="flex flex-column w-100 align-items-center">
-          {plantResult.success && plantResult.success[0] && (
-            <div className="d-flex flex-column align-items-center gap-2">
-              <div className="fw-bold text-success">
-                Lugares de servicio creados: {plantResult.success.length}
-              </div>
-              <button
-                className="btn btn-info"
-                onClick={(e) => handleClose(e, true)}
-              >
-                OK
-              </button>
-            </div>
-          )}
-          {plantResult.errors && plantResult.errors[0] && (
-            <div className="alert alert-danger" role="alert">
-              Se encontraron los siguientes errores:
-              <ul>
-                {plantResult.errors.map((sp) => (
-                  <li>
-                    <div className="w-100 border border-danger px-1 rounded-3">
-                      <div className="fw-bold" style={{ fontSize: "80%" }}>
-                        {`${sp.plant}>${sp.area}>${sp.line}>${sp.servicePoint}`}
-                      </div>
-                      <div>{sp.error}</div>
-                    </div>
-                  </li>
+              </thead>
+              <tbody>
+                {newLocations.map((location, index) => (
+                  <tr
+                    key={index}
+                    className={
+                      location.checked ? "bg-success/20 text-success" : ""
+                    }
+                  >
+                    {keys
+                      .filter((key) => !extraKeys.includes(key))
+                      .map((key, i) => (
+                        <td key={i}>{location[key]}</td>
+                      ))}
+                    {extraKeys.map((key, i) => (
+                      <td key={i}>
+                        <div className="flex w-full justify-center">
+                          <input
+                            className="checkbox"
+                            type="checkbox"
+                            name={key}
+                            id={index}
+                            checked={location[key] || false}
+                            onChange={(e) => onCheck(e)}
+                          />
+                        </div>
+                      </td>
+                    ))}
+                  </tr>
                 ))}
-              </ul>
+              </tbody>
+            </table>
+          </div>
+          <button
+            className="btn btn-success mx-auto mt-4"
+            type="submit"
+            disabled={!toCreate.length}
+          >
+            Cargar
+          </button>
+        </form>
+      )}
+
+      <div className="flex flex-col max-w-full items-center">
+        {plantResult.success && plantResult.success[0] && (
+          <div className="flex flex-col items-center gap-2">
+            <div className="font-bold text-success">
+              Lugares de servicio creados: {plantResult.success.length}
             </div>
-          )}
-          {!plantResult.success && (
             <button
-              className="btn btn-success mx-auto mt-4"
-              type="submit"
-              disabled={!toCreate.length}
+              className="btn btn-info"
+              onClick={(e) => handleClose(e, true)}
             >
-              Cargar
+              OK
             </button>
-          )}
-        </div>
-      </form>
+          </div>
+        )}
+        {plantResult.errors && plantResult.errors[0] && (
+          <div className="alert alert-danger flex flex-col" role="alert">
+            Se encontraron los siguientes errores:
+            <ul>
+              {plantResult.errors.map((sp) => (
+                <li>
+                  <div className="w-100 border border-danger px-1 rounded-3">
+                    <div className="fw-bold" style={{ fontSize: "80%" }}>
+                      {`${sp.plant}>${sp.area}>${sp.line}>${sp.servicePoint}`}
+                    </div>
+                    <div>{sp.error}</div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </ModalBase>
   );
 }

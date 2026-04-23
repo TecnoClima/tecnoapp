@@ -126,28 +126,19 @@ export function LoadExcel() {
           }
         const errors = [];
         for (let device of rows) {
-          console.log("device", device);
-          const { plant, area, line, spCode } = device;
+          const { plant, area, line, spCode } = device; // device que estoy dando de alta.
 
           let error = {};
-          const servicePoints = device.servicePoints.split(";");
+          const servicePoints = device.servicePoints.split(";"); //servicepoints del device que estoy creando
           let ls = [];
           for (let sp of servicePoints) {
-            const servicePoint = options.spList.find(
-              (item) => item?.name?.toUpperCase() === sp.toUpperCase(),
+            const servicePoint = options.spList.find((item) =>
+              item?.name?.toUpperCase().includes(sp.toUpperCase()),
             );
+
             if (!servicePoint) {
               ls.push({ plant, area, line, code: spCode, servicePoint: sp });
             } else {
-              // const spLine = options.line.find(
-              //   (item) => item._id === servicePoint.line,
-              // );
-              // const spArea = options.area.find(
-              //   (item) => item._id === spLine.area,
-              // );
-              // const spPlant = options.plant.find(
-              //   (item) => item._id === spArea.plant
-              // );
               const loc = {
                 name: sp,
                 line: options.line.find((item) => item.name === line)?.name,
@@ -171,7 +162,7 @@ export function LoadExcel() {
           } else {
             device.servicePoints = servicePoints;
           }
-          console.log("keys", keys);
+
           for (let key of keys) {
             if (!["code", "spCode"].includes(key)) {
               const { examples } = data[key];
@@ -216,7 +207,6 @@ export function LoadExcel() {
             errors.push({ device: device.name, ...error });
         }
         if (errors.find((e) => e.ls)) setAddLocations(true);
-        console.log("errors", errors);
         if (errors.length) {
           setErrors(errors);
         } else {
@@ -317,8 +307,6 @@ export function LoadExcel() {
   useEffect(() => {
     if (deviceResult.errors?.[0]) setOpenErrors(true);
   }, [deviceResult.errors]);
-
-  useEffect(() => console.log("errors", errors), [errors]);
 
   return (
     <div className="page-container">
