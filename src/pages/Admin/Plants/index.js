@@ -45,7 +45,7 @@ export default function AdminPlants() {
           deleteAction={plantActions.deletePlant}
           getAction={plantActions.getPlants}
           enableCreation={true}
-          disabled
+          disabled={!!userData?.plant}
         />
 
         <ElementSection

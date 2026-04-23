@@ -15,7 +15,7 @@ export function CloseButton({
   const [display, setDisplay] = useState(false);
 
   return (
-    <div>
+    <div className=" w-full sm:w-fit">
       {displayAlertError && (
         <div
           className={`absolute bottom-full alert alert-error right-0 w-80 max-w-full transition-all ${display ? "opacity-100 translate-y-0" : "translate-y-full opacity-0"}`}
@@ -37,7 +37,7 @@ export function CloseButton({
         </div>
       )}
       <button
-        className="relative btn btn-sm btn-success ml-2"
+        className="relative btn btn-sm btn-success sm:ml-2 w-full sm:w-fit"
         onClick={displayAlertError ? undefined : onClick}
         onMouseEnter={displayAlertError ? () => setDisplay(true) : undefined}
         onMouseLeave={displayAlertError ? () => setDisplay(false) : undefined}

@@ -804,10 +804,11 @@ export default function TechOrderForm() {
 
         {/* ── Footer ── */}
         <WorkOrderCard className="mt-auto">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-center gap-2">
             <OrderField
               field="Avance"
               name="progress"
+              className="w-full sm:w-fit"
               value={
                 percentProgress === "-"
                   ? "-"
@@ -816,7 +817,7 @@ export default function TechOrderForm() {
               readOnly
             />
             <button
-              className="btn btn-sm btn-info ml-auto"
+              className="btn btn-sm btn-info ml-auto w-full sm:w-fit"
               onClick={handleSave}
               disabled={!canSave || !permissions.canSave}
             >
