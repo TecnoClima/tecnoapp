@@ -113,7 +113,7 @@ export default function DeviceAdmin() {
       ? (newFilters[name] = value)
       : delete newFilters[name];
     setFilters({
-      newFilters,
+      ...newFilters,
       ...(userPlant ? { plant: userPlant } : {}),
     });
   }
@@ -132,6 +132,7 @@ export default function DeviceAdmin() {
 
   // Calcular la lista paginada
   const paginatedList = filteredList.slice(page.first, page.first + page.size);
+  useEffect(() => console.log("filters", filters), [filters]);
 
   return (
     <div className="page-container">
