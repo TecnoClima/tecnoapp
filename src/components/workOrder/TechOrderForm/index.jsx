@@ -823,7 +823,7 @@ export default function TechOrderForm() {
               readOnly
             />
             <button
-              className="btn btn-sm btn-info ml-auto w-full sm:w-fit"
+              className="relative btn btn-sm btn-info ml-auto w-full sm:w-fit"
               onClick={handleSave}
               disabled={!canSave || !permissions.canSave}
             >

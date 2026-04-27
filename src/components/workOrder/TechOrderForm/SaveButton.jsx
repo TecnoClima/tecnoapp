@@ -15,11 +15,9 @@ export function CloseButton({
   const [display, setDisplay] = useState(false);
 
   return (
-    <div className=" w-full sm:w-fit">
-      {displayAlertError && (
-        <div
-          className={`absolute bottom-full alert alert-error right-0 w-80 max-w-full transition-all ${display ? "opacity-100 translate-y-0" : "translate-y-full opacity-0"}`}
-        >
+    <div className="flex w-full sm:w-fit">
+      {displayAlertError && display && (
+        <div className="absolute bottom-full alert alert-error transition-all duration-[3s] overflow-hidden max-w-80 right-0">
           <div>
             <div className="font-bold">Faltan datos</div>
             <ul className="list-disc pl-4">
