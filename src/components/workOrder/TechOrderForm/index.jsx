@@ -158,24 +158,26 @@ export default function TechOrderForm() {
       registration,
       ...restOrder
     } = orderDetail;
-    const registerDate = registration?.date
-      ? registration.date.split("T")[0]
-      : "";
+    const registerDate = registration?.date || "";
     const { planned, diagnostics, ...restTech } = tech || {};
     if (planned) {
-      const { scheduledDate, startDate, endDate, ...restPlanned } = planned;
-      const scheduled = scheduledDate ? scheduledDate.split("T")[0] : "";
-      const start = startDate ? startDate.split("T")[0] : "";
-      const end = endDate ? endDate.split("T")[0] : "";
+      const {
+        //  scheduledDate, startDate, endDate,
+        ...restPlanned
+      } = planned;
+      // const scheduled = scheduledDate ? scheduledDate.split("T")[0] : "";
+      // const start = startDate ? startDate.split("T")[0] : "";
+      // const end = endDate ? endDate.split("T")[0] : "";
+      // for (const [key, value] of Object.entries(restPlanned)) {
       for (const [key, value] of Object.entries(restPlanned)) {
         if (value !== null && value !== undefined)
           restPlanned[key] = value._id || value;
       }
 
       setPlanned({
-        scheduledDate: scheduled,
-        startDate: start,
-        endDate: end,
+        // scheduledDate: scheduled,
+        // startDate: start,
+        // endDate: end,
         ...restPlanned,
       });
     }
@@ -540,6 +542,7 @@ export default function TechOrderForm() {
                 disabled={permissions.changePlan}
                 onInput={handleOrderChange}
                 required={!order.registerDate}
+                addTime
               />
             </div>
           </WorkOrderCard>
@@ -562,6 +565,7 @@ export default function TechOrderForm() {
                 value={planned.scheduledDate}
                 disabled={permissions.changePlan}
                 onInput={handlePlannedChange}
+                addTime
               />
               <OrderField
                 field="Prioridad"
@@ -600,6 +604,7 @@ export default function TechOrderForm() {
                 value={planned.startDate}
                 disabled={permissions.changePlan}
                 onInput={handlePlannedChange}
+                addTime
               />
               <DateField
                 field="Fin"
@@ -607,6 +612,7 @@ export default function TechOrderForm() {
                 value={planned.endDate}
                 disabled={permissions.changePlan}
                 onInput={handlePlannedChange}
+                addTime
               />
               <NumberField
                 field="Tiempo trabajo (h)"
