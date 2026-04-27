@@ -119,7 +119,7 @@ export default function WorkOrder() {
   useEffect(() => {
     if (
       orderDetail?.type === "tech" ||
-      (!orderCode && userData.plant === "TOYOTA")
+      (!orderCode && ["TOYOTA", "SIDERCA"].includes(userData.plant))
     ) {
       navigate(`/orden-tecnica/${orderDetail.code || "nueva"}`);
     }
