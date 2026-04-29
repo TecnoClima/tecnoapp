@@ -19,7 +19,7 @@ const requiredFields = {
   ],
 };
 
-export function validateOrderForClose(order) {
+export function validateOrderForClose(order, options) {
   const missingFields = [];
 
   // Helper para validar vacío
@@ -36,12 +36,18 @@ export function validateOrderForClose(order) {
     }
   });
 
-  // 🔹 diagnostics
-  requiredFields.diagnostic.forEach((field) => {
-    if (isEmpty(order?.tech?.diagnostics?.[field])) {
-      missingFields.push(`diagnostics.${field}`);
-    }
-  });
+  const classification = options?.classification?.find(
+    (c) => c.id === order?.tech?.planned?.classification,
+  )?.name;
+
+  if (classification !== "Inspección") {
+    // 🔹 diagnostics
+    requiredFields.diagnostic.forEach((field) => {
+      if (isEmpty(order?.tech?.diagnostics?.[field])) {
+        missingFields.push(`diagnostics.${field}`);
+      }
+    });
+  }
 
   // 🔹 planned
   requiredFields.planned.forEach((field) => {

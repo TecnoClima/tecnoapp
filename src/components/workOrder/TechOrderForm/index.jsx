@@ -605,6 +605,7 @@ export default function TechOrderForm() {
                 disabled={permissions.changePlan}
                 onInput={handlePlannedChange}
                 addTime
+                required={!planned.startDate}
               />
               <DateField
                 field="Fin"
@@ -613,6 +614,7 @@ export default function TechOrderForm() {
                 disabled={permissions.changePlan}
                 onInput={handlePlannedChange}
                 addTime
+                required={!planned.endDate}
               />
               <NumberField
                 field="Tiempo trabajo (h)"
@@ -829,24 +831,29 @@ export default function TechOrderForm() {
             >
               <i className="fas fa-save" /> Guardar
             </button>
-            <CloseButton
-              onClick={handleClose}
-              missingRequiredFields={
-                validateOrderForClose({
-                  device: selectedDevice,
-                  ...order,
-                  tech: {
-                    planned,
-                    diagnostics: diagnostic,
-                  },
-                }).missingFields
-              }
-              missingsubtaskValues={subtasks.filter(({ value }) => !value)}
-              disabled={!canSave && !permissions.closeOrder && canClose}
-            >
-              <FontAwesomeIcon icon={faTableCellsRowLock} />
-              CERRAR
-            </CloseButton>
+            {orderCode && (
+              <CloseButton
+                onClick={handleClose}
+                missingRequiredFields={
+                  validateOrderForClose(
+                    {
+                      device: selectedDevice,
+                      ...order,
+                      tech: {
+                        planned,
+                        diagnostics: diagnostic,
+                      },
+                    },
+                    options,
+                  ).missingFields
+                }
+                missingsubtaskValues={subtasks.filter(({ value }) => !value)}
+                disabled={!canSave && !permissions.closeOrder && canClose}
+              >
+                <FontAwesomeIcon icon={faTableCellsRowLock} />
+                CERRAR
+              </CloseButton>
+            )}
           </div>
         </WorkOrderCard>
       </div>

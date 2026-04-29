@@ -1,8 +1,8 @@
 import { useSearchParams } from "react-router-dom";
 import { AdminOptionsNav } from "../../../components/Admin/Options/OptionsNavigation";
-import { OrderOptions } from "../../../components/Admin/Options/WorkOrders/OrderOptions";
 import { SubtaskOptions } from "../../../components/Admin/Options/Subtasks/SubtaskOptions";
 import { TechTaskTemplates } from "../../../components/Admin/Options/TechTaskTemplate/TechTaskTemplates";
+import { OrderOptions } from "../../../components/Admin/Options/WorkOrders/OrderOptions";
 import { adminOptionsTabs } from "../../../constants/routes";
 
 export function AdminOptions() {
@@ -12,7 +12,7 @@ export function AdminOptions() {
   const components = {
     Ordenes: <OrderOptions />,
     Subtareas: <SubtaskOptions />,
-    Tareas: <TechTaskTemplates />,
+    Tareas: <TechTaskTemplates editable={true} />,
   };
 
   return (

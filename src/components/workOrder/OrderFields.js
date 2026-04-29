@@ -211,8 +211,10 @@ export function TextAreaField({
   required,
 }) {
   return (
-    <div className={`join join-vertical md:join-horizontal ${className}`}>
-      <div className="relative label input-xs md:text-xs bg-neutral md:w-28 join-item font-bold border border-base-200 flex md:items-start md:pt-2 h-8 md:h-full">
+    <div
+      className={`join join-vertical md:join-horizontal md:items-stretch ${className}`}
+    >
+      <div className="relative label input-xs md:text-xs bg-neutral md:w-28 join-item font-bold border border-base-200 flex md:items-start md:pt-2 h-8 md:h-auto">
         {field}
         {required && (
           <div

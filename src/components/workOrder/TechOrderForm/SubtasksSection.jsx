@@ -13,6 +13,7 @@ import {
 } from "@dnd-kit/sortable";
 
 import { CSS } from "@dnd-kit/utilities";
+import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 import { faGripVertical } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SubtaskItem from "./SubtaskItem";
@@ -29,7 +30,13 @@ function reorderSubtasks(list, fromIndex, toIndex) {
   }));
 }
 
-function SortableItem({ subtask, onItemChange }) {
+function SortableItem({
+  subtask,
+  onItemChange,
+  schemaOnly,
+  handleDelete,
+  handleEdit,
+}) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: subtask._id.toString() });
 
@@ -50,13 +57,25 @@ function SortableItem({ subtask, onItemChange }) {
       </button>
 
       <div className="flex-1">
-        <SubtaskItem subtask={subtask} onChange={onItemChange} />
+        <SubtaskItem
+          subtask={subtask}
+          onChange={onItemChange}
+          schemaOnly={schemaOnly}
+        />
       </div>
+      {schemaOnly && handleDelete && (
+        <button
+          className="btn btn-sm btn-error"
+          onClick={() => handleDelete(subtask._id)}
+        >
+          <FontAwesomeIcon icon={faTrashAlt} />
+        </button>
+      )}
     </div>
   );
 }
 
-export default function SubtasksSection({ subtasks, setSubtasks }) {
+export default function SubtasksSection({ subtasks, setSubtasks, schemaOnly }) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 5 },
@@ -84,6 +103,10 @@ export default function SubtasksSection({ subtasks, setSubtasks }) {
     });
   }
 
+  function handleDelete(id) {
+    setSubtasks((prev) => prev.filter((s) => s._id !== id));
+  }
+
   return (
     <DndContext
       sensors={sensors}
@@ -100,6 +123,8 @@ export default function SubtasksSection({ subtasks, setSubtasks }) {
               key={st._id}
               subtask={st}
               onItemChange={handleItemChange}
+              schemaOnly={schemaOnly}
+              handleDelete={handleDelete}
             />
           ))}
         </div>
