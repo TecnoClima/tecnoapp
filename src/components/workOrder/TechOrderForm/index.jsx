@@ -64,7 +64,7 @@ const EMPTY_PLANNED = {
   requester: "",
   classification: "",
   originDate: "",
-  scheduledDate: "",
+  // scheduledDate: "",
   approvalDate: "",
 };
 
@@ -161,23 +161,13 @@ export default function TechOrderForm() {
     const registerDate = registration?.date || "";
     const { planned, diagnostics, ...restTech } = tech || {};
     if (planned) {
-      const {
-        //  scheduledDate, startDate, endDate,
-        ...restPlanned
-      } = planned;
-      // const scheduled = scheduledDate ? scheduledDate.split("T")[0] : "";
-      // const start = startDate ? startDate.split("T")[0] : "";
-      // const end = endDate ? endDate.split("T")[0] : "";
-      // for (const [key, value] of Object.entries(restPlanned)) {
+      const { ...restPlanned } = planned;
       for (const [key, value] of Object.entries(restPlanned)) {
         if (value !== null && value !== undefined)
           restPlanned[key] = value._id || value;
       }
 
       setPlanned({
-        // scheduledDate: scheduled,
-        // startDate: start,
-        // endDate: end,
         ...restPlanned,
       });
     }
@@ -559,14 +549,14 @@ export default function TechOrderForm() {
                 disabled={permissions.changePlan}
                 placeholder="Descripción del trabajo..."
               />
-              <DateField
+              {/* <DateField
                 field="Fecha evento"
                 name="scheduledDate"
                 value={planned.scheduledDate}
                 disabled={permissions.changePlan}
                 onInput={handlePlannedChange}
                 addTime
-              />
+              /> */}
               <OrderField
                 field="Prioridad"
                 name="priority"
