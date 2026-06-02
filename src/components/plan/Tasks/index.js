@@ -25,7 +25,7 @@ export default function PlanTask() {
     if (!(selectedPlant?.name && year)) return;
     dispatch(planActions.getStrategies({ plant: selectedPlant.name, year }));
     dispatch(
-      planActions.getPlanDevices({ plantName: selectedPlant.name, year })
+      planActions.getPlanDevices({ plantName: selectedPlant.name, year }),
     );
     setFilters({});
   }, [dispatch, selectedPlant, year]);
@@ -40,27 +40,33 @@ export default function PlanTask() {
       return;
     }
 
-    const filtered = devicePlanList.filter((d) => {
-      const {
-        line,
-        area,
-        plant,
-        device,
-        type,
-        powerMin,
-        powerMax,
-        powerUnit,
-        ageMin,
-        ageMax,
-        recMin,
-        recMax,
-        refrigerant,
-        category,
-        environment,
-        service,
-        status,
-      } = currentFilters;
+    const {
+      device,
+      type,
+      powerMin,
+      powerMax,
+      powerUnit,
+      ageMin,
+      ageMax,
+      recMin,
+      recMax,
+      refrigerant,
+      category,
+      environment,
+      service,
+      status,
+    } = currentFilters;
+    const plant = deviceOptions?.plant?.find(
+      (p) => p._id === currentFilters.plant,
+    )?.name;
+    const area = deviceOptions?.area?.find(
+      (a) => a._id === currentFilters.area,
+    )?.name;
+    const line = deviceOptions?.line?.find(
+      (l) => l._id === currentFilters.line,
+    )?.name;
 
+    const filtered = devicePlanList.filter((d) => {
       if (plant && d.plant !== plant) return false;
       if (area && d.area !== area) return false;
       if (line && d.line !== line) return false;
