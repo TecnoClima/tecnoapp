@@ -18,14 +18,13 @@ export default function PlanDevice(props) {
   ); // programa nuevo
   const [save, setSave] = useState(false);
 
-  useEffect(
-    () =>
-      setSave(
-        newProgram?.name &&
-          !(JSON.stringify(startProgram) === JSON.stringify(newProgram)),
+  useEffect(() => {
+    setSave(
+      !(
+        JSON.stringify(startProgram?.name) === JSON.stringify(newProgram?.name)
       ),
-    [startProgram, newProgram],
-  );
+    );
+  }, [startProgram, newProgram]);
 
   useEffect(
     () => setStartProgram(device.strategy || { frequency: device.frequency }),
