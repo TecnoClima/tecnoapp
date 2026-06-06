@@ -14,7 +14,7 @@ export default function LocationFilter(props) {
   } = useSelector((state) => state.plants);
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState(
-    userData.plant ? { plant: userData.plant } : {},
+    userData.plant ? { plant: userData.plant } : {}
   );
   const hasPlant = checkHasPlant(userData);
 
@@ -29,14 +29,14 @@ export default function LocationFilter(props) {
   useEffect(() => {
     const newFilters = userData.plant ? { plant: userData.plant } : {};
     if (!newFilters.plant) {
-      newFilters.plant = plantList[0].name;
+      newFilters.plant = plantList[0]?.name;
       if (areaList.length === 1) {
-        newFilters.area = areaList[0].name;
-        if (lineList.length === 1) newFilters.line = lineList[0].name;
+        newFilters.area = areaList[0]?.name;
+        if (lineList.length === 1) newFilters.line = lineList[0]?.name;
       }
     }
     setFilters(newFilters);
-  }, [plantList, areaList, lineList]);
+  }, [plantList, areaList, lineList, userData]);
 
   /**
    *    This function gets missing data if any list is not there.
