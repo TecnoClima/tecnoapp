@@ -16,12 +16,12 @@ export function setDeviceStrategy(planDevices) {
       .then((response) => response.json())
       .then((json) => {
         const { errors, created } = json;
-        if (errors.length > 0)
+        if (errors?.length > 0)
           alert(
             `Error${errors.length > 1 && "es"}:` +
               errors.map((item) => `${item.code}: ${item.detail}`)
           );
-        if (created.device.length > 0)
+        if (created?.device.length > 0)
           dispatch({
             type: "UPDATE_DEVICE_PLAN",
             payload: created,

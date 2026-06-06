@@ -11,24 +11,34 @@ export default function PlanDevice(props) {
   const [program, setProgram] = useState(
     device.strategy
       ? programs.find((program) => program.name === device.strategy.name)
-      : undefined,
+      : undefined
   ); //programa elegido de la lista de programas
   const [newProgram, setNewProgram] = useState(
-    device.strategy || { frequency: device.frequency },
+    device.strategy || { frequency: device.frequency }
   ); // programa nuevo
-  const [save, setSave] = useState(false);
+  const [enableSave, setEnableSave] = useState(false);
 
   useEffect(() => {
-    setSave(
-      !(
-        JSON.stringify(startProgram?.name) === JSON.stringify(newProgram?.name)
-      ),
+    const {
+      name: startName,
+      frequency: startFrequency,
+      responsible: startResponsible,
+    } = startProgram;
+    const {
+      name: newName,
+      frequency: newFrequency,
+      responsible: newresponsible,
+    } = newProgram;
+    setEnableSave(
+      startName !== newName ||
+        startFrequency !== newFrequency ||
+        startResponsible?.id !== newresponsible?.id
     );
   }, [startProgram, newProgram]);
 
   useEffect(
     () => setStartProgram(device.strategy || { frequency: device.frequency }),
-    [device],
+    [device]
   );
 
   function handleProperty(key, value) {
@@ -49,19 +59,19 @@ export default function PlanDevice(props) {
     setNewProgram(
       value === ""
         ? {}
-        : { name: value, year: program?.year, plant: program?.plant },
+        : { name: value, year: program?.year, plant: program?.plant }
     );
   }
 
   function handleSave() {
     let program = { ...newProgram };
-    if (!program.frequency) program.frequency = 48;
+    if (program?.name && !program.frequency) program.frequency = 48;
     onSave({ device: [device.code], program });
     setStartProgram(program);
   }
 
   const plantPrograms = programs.filter(
-    (program) => program.plant === device.plant,
+    (program) => program.plant === device.plant
   );
 
   return (
@@ -91,10 +101,8 @@ export default function PlanDevice(props) {
               : device.power + "Frig"
           }
                                 ${device.refrigerant})${
-                                  device.gasAmount
-                                    ? ` - ${device.gasAmount}g`
-                                    : ""
-                                }`}
+            device.gasAmount ? ` - ${device.gasAmount}g` : ""
+          }`}
         </div>
       </div>
       <div className="flex flex-col md:flex-row md:items-center flex-wrap gap-1">
@@ -163,8 +171,8 @@ export default function PlanDevice(props) {
               handleProperty(
                 "responsible",
                 program.people.find(
-                  (worker) => worker.id === Number(event.target.value),
-                ),
+                  (worker) => worker.id === Number(event.target.value)
+                )
               )
             }
             disabled={!newProgram.name}
@@ -185,7 +193,7 @@ export default function PlanDevice(props) {
             onSelect={(e) =>
               handleProperty(
                 "frequency",
-                e.target.value ? Number(e.target.value) : undefined,
+                e.target.value ? Number(e.target.value) : undefined
               )
             }
             value={newProgram.frequency}
@@ -202,7 +210,7 @@ export default function PlanDevice(props) {
           <button
             className="btn btn-success btn-sm ml-auto h-full"
             onClick={handleSave}
-            disabled={!save}
+            disabled={!enableSave}
           >
             <div className="flex flex-col justify-center">
               <FontAwesomeIcon icon={faSave} className="mb-2" />
